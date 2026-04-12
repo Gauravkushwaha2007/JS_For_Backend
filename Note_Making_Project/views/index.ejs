@@ -24,7 +24,9 @@
             <div class="task px-3 py-4 w-72 bg-zinc-800 text-white rounded-md ">
                 <h1 class="text-white text-3xl tracking-tighter"><%= file%></h1>
                 <a class="text-blue-600 inline-block mt-3" href="/files/<%=file%>">Read more</a>
-                <button class="text-white bg-blue-600 px-2 ml-24 align-right rounded-md" type="delete">Delete</button>
+                <form action="/delete/<%=file%>" method="post">
+                    <button class="text-white bg-blue-600 px-2 ml-24 align-right rounded-md" type="delete">Delete</button>
+                </form>
             </div>
             <% }) %>
 

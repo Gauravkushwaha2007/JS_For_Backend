@@ -1,1 +1,0 @@
-EJS is a Clone of HTML but with power of Js (Embeded JavaScript).

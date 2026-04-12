@@ -31,6 +31,13 @@ app.get('/files/:filename',((req, res)=>{
     }));
 }));
 
+app.post('/delete/:filename',((req, res)=>{
+    fs.unlink(`./files/${req.params.filename}`,(e)=>{
+        e? console.log("Error Accured", e) : console.log('Sucessfully Delete');
+        res.redirect('/');
+    })
+}))
+
 
 const Port = 3000;
 app.listen(Port,(()=>{
