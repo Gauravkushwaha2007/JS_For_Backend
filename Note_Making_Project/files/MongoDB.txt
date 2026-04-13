@@ -1,1 +1,1 @@
-Mongo DB is widely used Database almost in every plateform , Large scaled.
+MongoDb is a database plateform use to create clusters

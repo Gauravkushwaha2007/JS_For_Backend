@@ -20,7 +20,7 @@ app.get('/',((req, res)=>{
 app.post('/creat',((req,res)=>{
     // console.log("title hai ", req.body.title);
     fs.writeFile(`./files/${req.body.title.split(' ').join("")}.txt`, req.body.detail,((error)=>{
-        error? console.log(e) : console.log('File created')
+        error? console.log(error) : console.log('File created')
     }))
     res.redirect('/');
 }));
@@ -44,11 +44,14 @@ app.get('/rename/:filename',((req, res)=>{
 }));
 
 app.post('/rename/:filename', ((req, res)=>{
-    fs.rename(`/files/${req.params.filename}`, `/files/${req.body.newname}`,((e)=>{
+    if(!req.body.newname){res.send('Enter valid name');}
+    fs.rename(`./files/${req.params.filename}`, `./files/${req.body.newname}`,((e)=>{
         e? console.log("Couldn't rename file") : console.log('File renamed');
         res.redirect('/');
     }))
 }))
+
+
 
 
 const Port = 3000;
