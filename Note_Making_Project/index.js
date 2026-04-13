@@ -36,6 +36,18 @@ app.post('/delete/:filename',((req, res)=>{
         e? console.log("Error Accured", e) : console.log('Sucessfully Delete');
         res.redirect('/');
     })
+}));
+
+app.get('/rename/:filename',((req, res)=>{
+    const file = req.params.filename;
+    res.render('rename', {filename: file});
+}));
+
+app.post('/rename/:filename', ((req, res)=>{
+    fs.rename(`/files/${req.params.filename}`, `/files/${req.body.newname}`,((e)=>{
+        e? console.log("Couldn't rename file") : console.log('File renamed');
+        res.redirect('/');
+    }))
 }))
 
 
@@ -43,4 +55,3 @@ const Port = 3000;
 app.listen(Port,(()=>{
     console.log(`Server running at place http://localhost:${Port}`);
 }))
-

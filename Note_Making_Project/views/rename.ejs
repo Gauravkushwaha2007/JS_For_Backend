@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= filename %></title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+<body class="min-h-screen bg-zinc-900 p-10">
+
+    <a class=" bg-zinc-600 rounded-md px-3 py-2 text-white" href="/">Go back</a>
+
+    <form action="/rename/<%filename%>" method="post">
+        <div class="mt-5">
+            <input class="text-zinc-400 w-1/4 " type="text" placeholder="<%= filename %>">
+            <input class="text-white w-1/4 px-1 py-2" type="text" placeholder="Enter new name" name="newname">
+            <button class="mt-5 px-2 py-1 bg-yellow-600 text-white rounded-md">Update</button>
+        </div>
+    </form>
+            
+</body>
+</html>
