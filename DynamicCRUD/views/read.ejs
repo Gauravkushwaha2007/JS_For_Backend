@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/stylesheets/style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Hamara Page</title>
+</head>
+<body>
+    <div class= "w-full h-full p-10 bg-zinc-900 text-white">
+        <a class="text-blue-500 bg-zinc-800 px-2 py-1 rounded-md " href="/"> Back Home</a>
+        <h2 class="text-3xl tracking-tighter mt-2">All Users</h2>
+
+        <div class="Users mt-7 flex gap-3 flex-wrap ">
+
+            <% users.forEach((user)=>{%>
+            
+            <div class="user p-3 bg-zinc-800 rounded-md max-w-72">
+                <div class="img h-52 bg-zinc-600 rounded-md overflow-hidden">
+                    <img class="object-fit-cover w-full h-full object-center" src="<%= user.image %>" alt="User Image">
+                </div>
+                <h3 class="mt-5 text-2xl text-yellow"><%= user.name %></h3>
+                <h4 class=""><%= user.email %></h4>
+                <div class="flex gap-3 mt-5 justify-between">
+                    <a class="px-2 rounded-md text-yellow bg-zinc-700" href="/update">Edit</a>
+                    <form action="/delete/<%= user.name%>" method="post">
+                        <button class="px-2 rounded-md text-red bg-zinc-700">Delete</button>
+                    </form>
+                </div>
+            </div>
+            <%}) %>
+        </div>
+
+    </div>
+
+</body>
+</html>
