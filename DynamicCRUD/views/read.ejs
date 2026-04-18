@@ -23,8 +23,8 @@
                 <h3 class="mt-5 text-2xl text-yellow"><%= user.name %></h3>
                 <h4 class=""><%= user.email %></h4>
                 <div class="flex gap-3 mt-5 justify-between">
-                    <a class="px-2 rounded-md text-yellow bg-zinc-700" href="/update">Edit</a>
-                    <form action="/delete/<%= user.name%>" method="post">
+                    <a class="px-2 rounded-md text-yellow bg-zinc-700" href="/update/<%= user._id %>">Edit</a>
+                    <form action="/delete/<%= user.name %>" method="post">
                         <button class="px-2 rounded-md text-red bg-zinc-700">Delete</button>
                     </form>
                 </div>

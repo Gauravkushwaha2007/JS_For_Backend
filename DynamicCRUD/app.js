@@ -13,10 +13,6 @@ app.get('/',((req, res)=>{
     res.render('index');
 }));
 
-app.get('/read', async (req, res)=>{
-    const users = await UserModel.find();
-    res.render('read',{users});
-});
 
 app.post('/create', async (req, res)=>{
     const {name,email,image} = req.body;
@@ -27,6 +23,28 @@ app.post('/create', async (req, res)=>{
     });
     res.redirect('/read');
 });
+
+
+app.get('/read', async (req, res)=>{
+    const users = await UserModel.find();
+    res.render('read',{users});
+});
+
+
+app.get('/update/:userId', async (req, res)=>{
+    let userId = req.params.userId;
+    let user = await UserModel.findById(userId);
+    res.render('update',{user});
+});
+
+
+app.post('/update/:id',async (req, res)=>{
+    let {name, email, image} = req.body;
+    await UserModel.findByIdAndUpdate(req.params.id, {name, email, image} ,{new: true});
+    res.redirect('/read');
+});
+
+
 
 app.post('/delete/:name', async (req, res)=>{
     const deletedUser = await UserModel.findOneAndDelete({name: `${req.params.name}`});
