@@ -115,6 +115,22 @@ app.post('/logout', ((req, res)=>{
     res.redirect('/login');
 }));
 
+
+app.get('/like/:id', isLoggedIn, async (req, res)=>{
+    let post = await postModel.findOne({_id: req.params.id});
+    if(post.like.includes(req.user.userid)){
+        //unlike
+        post.like.pull(req.user.userid)
+    }else{
+        //like
+        post.like.push(req.user.userid);
+    }
+    await post.save();
+    res.redirect('/profile');
+    
+});
+
+
 function isLoggedIn(req, res, next){
     if(req.cookies.token === '') res.redirect('/login');
     else{

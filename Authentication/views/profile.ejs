@@ -13,7 +13,7 @@
 
         <form action="/post" method="post">
             <textarea class="block mt-5 p-3 border-2 border-zinc-800 rounded-md outline-none resize-none bg-transparent w-1/4" name="content" placeholder="What's on your mind"></textarea>
-            <input class="mt-2 w-40 rounded-md bg-blue-600 px-4 py-2 block" type="submit" value="Create +">
+            <input class="mt-3 w-40 rounded-md bg-blue-600 px-4 py-2 block" type="submit" value="Create +">
         </form>
 
         <div class="posts mt-20">
@@ -34,8 +34,13 @@
                             </p>
 
                             <div class="flex items-center gap-6 text-sm">
-                                <a class="flex items-center gap-1 text-zinc-400 hover:text-blue-500 cursor-pointer transition">
-                                    ❤️ <span>Like</span>
+                                <a href="/like/<%= post._id %>" class="flex items-center gap-1 text-zinc-400 hover:text-blue-500 cursor-pointer transition">
+                                    <% if(post.like.includes(user._id)){ %>
+                                        ❤️
+                                    <% }else{ %>
+                                        🤍
+                                    <% } %>
+                                     <span><%= post.like.length %></span>
                                 </a>
                                 <a class="flex items-center gap-1 text-zinc-400 hover:text-green-500 cursor-pointer transition" href="/update/<%= post._id%>">
                                     ✏️ <span>Edit</span>
