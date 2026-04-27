@@ -93,6 +93,23 @@ app.post('/post', isLoggedIn, async (req, res)=>{
 
 
 
+app.get('/update/:id', isLoggedIn, async (req, res)=>{
+    let post = await postModel.findOne({_id: req.params.id});
+    res.render('update', {post});
+});
+
+app.post('/update/:id', isLoggedIn, async(req, res)=>{
+    let post = await postModel.findOneAndUpdate({_id: req.params.id},{content: req.body.content}, {new: true});
+    res.redirect('/profile');
+});
+
+
+
+app.post('/delete/:id', isLoggedIn, async (req, res)=>{
+    let post = await postModel.findByIdAndDelete(req.params.id);
+    res.redirect('/profile');
+})
+
 app.post('/logout', ((req, res)=>{
     res.cookie('token', '');
     res.redirect('/login');

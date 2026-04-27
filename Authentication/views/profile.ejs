@@ -37,12 +37,14 @@
                                 <a class="flex items-center gap-1 text-zinc-400 hover:text-blue-500 cursor-pointer transition">
                                     ❤️ <span>Like</span>
                                 </a>
-                                <a class="flex items-center gap-1 text-zinc-400 hover:text-green-500 cursor-pointer transition">
+                                <a class="flex items-center gap-1 text-zinc-400 hover:text-green-500 cursor-pointer transition" href="/update/<%= post._id%>">
                                     ✏️ <span>Edit</span>
                                 </a>
-                                <a class="flex items-center gap-1 text-red-500 hover:text-green-500 cursor-pointer transition">
-                                    🚮<span>Delete</span>
-                                </a>
+                                <form action="/delete/<%= post._id %>" method="post">
+                                    <button class="flex items-center gap-1 text-red-500 hover:text-green-500 cursor-pointer transition" type="submit" value="delete">
+                                        🚮<span>Delete</span>
+                                    </button>
+                                </form>
                             </div>
                         </div>
                     <%})%>
