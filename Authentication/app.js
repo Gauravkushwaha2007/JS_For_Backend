@@ -2,14 +2,15 @@ const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const jwt = require('jsonwebtoken');
-const userModel = require('./models/userModel');
 const bcrypt = require('bcrypt');
+const userModel = require('./models/userModel');
+const postModel = require('./models/post');
 
 const app = express();
 
-app.set('view engine', 'ejs');
-app.use(express.json());
-app.use(express.static(path.join(__dirname, 'public')));
+app.set('view engine', 'ejs')
+app.use(express.json())
+app.use(express.static(path.join(__dirname, 'public')))
 app.use(express.urlencoded({extended: true}))
 app.use(cookieParser())
 
@@ -37,7 +38,7 @@ app.post('/register', async (req, res)=>{
     
                 let token = jwt.sign({email: email, userid: user._id}, 'GauravSecret');
                 res.cookie('token', token);
-                res.send('Registered Successfully');
+                res.redirect('/profile');
             })
         })
     }
@@ -60,9 +61,9 @@ app.post('/login', async (req, res)=>{
             res.send('Something went wrong');
         }
         if(result){
-            let token = jwt.sign({email: user.email}, 'GauravSecret');
+            let token = jwt.sign({email: user.email, userid: user._id}, 'GauravSecret');
             res.cookie('token', token);
-            res.status(200).send(`Welcome ${user.name}`);
+            res.status(200).redirect('/profile');
         }else{
             res.send('User not found');
         }
@@ -71,10 +72,24 @@ app.post('/login', async (req, res)=>{
 
 
 
-app.get('/profile', isLoggedIn, ((req, res)=>{
-    console.log(req.user);
-    res.redirect('/login');
-}));
+app.get('/profile', isLoggedIn, async (req, res)=>{
+    let user = await userModel.findOne({email: req.user.email}).populate('posts');
+    res.render('profile',{user});
+
+});
+
+
+app.post('/post', isLoggedIn, async (req, res)=>{
+    let {content} = req.body;
+    let user = await userModel.findOne({email: req.user.email});
+    let post = await postModel.create({
+        content,
+        user: user._id
+    })
+    user.posts.push(post._id);
+    await user.save();
+    res.redirect('/profile');
+});
 
 
 
@@ -84,7 +99,7 @@ app.post('/logout', ((req, res)=>{
 }));
 
 function isLoggedIn(req, res, next){
-    if(req.cookies.token === '') res.send('You must be login first');
+    if(req.cookies.token === '') res.redirect('/login');
     else{
         let data = jwt.verify(req.cookies.token, 'GauravSecret');
         req.user = data;

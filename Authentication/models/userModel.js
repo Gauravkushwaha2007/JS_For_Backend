@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-mongoose.connect('mongodb://127.0.0.1:27017/AuthApp');
+mongoose.connect('mongodb://127.0.0.1:27017/MiniProject');
 
 const userSchema = mongoose.Schema({
     name: String,
