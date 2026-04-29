@@ -3,8 +3,10 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
+const crypto = require('crypto')
 const userModel = require('./models/userModel');
 const postModel = require('./models/post');
+const upload = require('./models/upload');
 
 const app = express();
 
@@ -15,9 +17,21 @@ app.use(express.urlencoded({extended: true}))
 app.use(cookieParser())
 
 
+
 app.get('/',((req, res)=>{
     res.render('index');
 }));
+
+app.get('/upload/profile', ((req, res)=>{
+    res.render('uploadProfile');
+}));
+
+app.post('/upload/profile',isLoggedIn, upload.single('image'), async(req, res)=>{
+    let user = await userModel.findOne({email: req.user.email});
+    user.profilePic = req.file.filename;
+    await user.save()
+    res.redirect('/profile');
+});
 
 app.post('/register', async (req, res)=>{
     let {name, email, password, age} = req.body;
