@@ -1,0 +1,17 @@
+1. Node.js is not a Language, Framework, or Library ---> it is a JavaScript Runtime Environment.
+
+2. Earlier, JavaScript did not have the functionality to create a Backend(Server) directly.
+
+3. Ryan Dahl thought that JavaScript should also be able to work outside the Browser and be used for Backend development.
+
+4. The power to create this environment came with the help of Chrome's V8 Engine, which is written in C++
+
+5. But problem was, how to use JavaScript code for backend(server)
+
+6. Ryan Dahl worked to create an environment where JavaScript can run outside the Browser and perform backend tasks like create Server.
+
+7. This environment provides features that JavaScript can interact with the Operating System, Files, Network, etc
+
+8. This environment is known as Node.js.
+
+9. We write JavaScript code, Node.js receives that code, and with the help of the V8 Engine it can create Server.
