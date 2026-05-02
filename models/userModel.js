@@ -8,7 +8,6 @@ const userSchema = mongoose.Schema({
         type: Array,
         default: []
     },
-    isAdmin: Boolean,
     orders: {
         type: Array,
         defautl: []
@@ -18,4 +17,4 @@ const userSchema = mongoose.Schema({
 
 })
 
-module.exports = mongoose.model('user', 'userSchema');
+module.exports = mongoose.model('user', userSchema);

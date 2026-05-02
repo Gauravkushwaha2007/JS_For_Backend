@@ -6,4 +6,5 @@ productRouter.get('/products', (req, res)=>{
     res.send('Product Page');
 });
 
+
 module.exports = productRouter;

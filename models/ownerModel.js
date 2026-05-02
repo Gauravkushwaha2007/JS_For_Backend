@@ -9,7 +9,7 @@ const ownerSchema = mongoose.Schema({
         defautl: []
     },
     picture: String,
-    inc: String
+    inctax: String
 });
 
-module.exports = mongoose.model('user', 'ownerSchema');
+module.exports = mongoose.model('owner', ownerSchema);

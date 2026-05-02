@@ -1,1 +1,0 @@
-MongoDb is a database plateform use to create clusters
