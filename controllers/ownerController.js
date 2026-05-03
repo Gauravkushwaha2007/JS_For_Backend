@@ -1,6 +1,6 @@
 const ownerModel = require('../models/ownerModel');
 const bcrypt = require('bcrypt');
-const generateToken = require('../config/generateToken');
+const generateToken = require('../utils/generateToken');
 
 // REGISTER
 const ownerRegister = async (req, res)=>{

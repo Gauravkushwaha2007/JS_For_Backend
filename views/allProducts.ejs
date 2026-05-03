@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>All Products</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-50">
+
+  <div class="flex min-h-screen">
+
+    <!-- Sidebar -->
+    <div class="w-64 bg-white border-r p-6">
+
+      <h1 class="text-2xl font-bold mb-8">Scatch</h1>
+
+      <div class="space-y-2 text-gray-700">
+        <p class="font-semibold">Sort by</p>
+        <select class="w-full p-2 border rounded">
+          <option>Popular</option>
+          <option>Newest</option>
+          <option>Price Low to High</option>
+          <option>Price High to Low</option>
+        </select>
+      </div>
+
+      <div class="mt-8 space-y-2 text-gray-700">
+        <p class="font-semibold">Categories</p>
+        <p class="hover:text-blue-500 cursor-pointer">New Collection</p>
+        <p class="hover:text-blue-500 cursor-pointer">All Products</p>
+        <p class="hover:text-blue-500 cursor-pointer">Discounted Products</p>
+      </div>
+
+      <div class="mt-8 space-y-2 text-gray-700">
+        <p class="font-semibold">Filter by</p>
+        <p class="hover:text-blue-500 cursor-pointer">Availability</p>
+        <p class="hover:text-blue-500 cursor-pointer">Discount</p>
+      </div>
+
+    </div>
+
+    <!-- Main Content -->
+    <div class="flex-1 p-10">
+
+      <!-- Top bar -->
+      <div class="mb-8 flex justify-between items-center">
+        <h2 class="text-xl font-semibold">All Products</h2>
+      </div>
+
+      <!-- Product Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+        <!-- Product Card -->
+        <div class="bg-white rounded-xl shadow overflow-hidden">
+
+          <!-- Image -->
+          <div class="h-48 bg-gray-200 flex items-center justify-center">
+            <span class="text-gray-400">Image</span>
+          </div>
+
+          <!-- Details -->
+          <div class="p-4 flex justify-between items-center">
+            <div>
+              <h3 class="font-semibold">Backpack</h3>
+              <p class="text-gray-500">₹1100</p>
+            </div>
+
+            <button class="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200">
+              +
+            </button>
+          </div>
+
+        </div>
+
+        <!-- Product 2 -->
+        <div class="bg-white rounded-xl shadow overflow-hidden">
+          <div class="h-48 bg-gray-200 flex items-center justify-center">
+            <span class="text-gray-400">Image</span>
+          </div>
+          <div class="p-4 flex justify-between items-center">
+            <div>
+              <h3 class="font-semibold">Multipurpose</h3>
+              <p class="text-gray-500">₹100</p>
+            </div>
+            <button class="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200">
+              +
+            </button>
+          </div>
+        </div>
+
+        <!-- Product 3 -->
+        <div class="bg-white rounded-xl shadow overflow-hidden">
+          <div class="h-48 bg-gray-200 flex items-center justify-center">
+            <span class="text-gray-400">Image</span>
+          </div>
+          <div class="p-4 flex justify-between items-center">
+            <div>
+              <h3 class="font-semibold">Pink Attack</h3>
+              <p class="text-gray-500">₹1400</p>
+            </div>
+            <button class="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200">
+              +
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</body>
+</html>

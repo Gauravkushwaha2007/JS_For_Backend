@@ -2,7 +2,7 @@
 const userModel = require('../models/userModel');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const generateToken = require('../config/generateToken');
+const generateToken = require('../utils/generateToken');
 
 
 //REGISTER

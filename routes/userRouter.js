@@ -9,13 +9,13 @@ userRouter.get('/', (req, res)=>{
 });
 
 userRouter.get('/register', (req,res)=>{
-    res.send('register page');
+    res.render('register');
 });
 
 userRouter.post('/register', registerUser);
 
 userRouter.get('/login', (req, res)=>{
-    res.send('login page');
+    res.render('login');
 });
 
 userRouter.post('/login', loginUser)

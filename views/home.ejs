@@ -1,19 +1,157 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Flash Demo</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scatch - Premium Bags</title>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+  body { font-family: 'Inter', sans-serif; }
+
+  .card-hover {
+    transition: all 0.3s ease;
+  }
+  .card-hover:hover {
+    transform: translateY(-6px);
+  }
+</style>
 </head>
-<body>
 
-    <h1>Flash Message Demo</h1>
+<body class="bg-[#0a0a0a] text-white">
 
-    <% if(success.length > 0){ %>
-        <div style="padding:10px; background:lightgreen;">
-            <%= success %>
+<!-- NAVBAR -->
+<nav class="w-full px-6 py-4 flex items-center justify-between border-b border-zinc-800 bg-[#0a0a0a]/80 backdrop-blur-md fixed top-0 left-0">
+
+  <!-- Logo -->
+  <div class="flex items-center gap-2">
+    <div class="w-8 h-8 bg-white rounded-lg"></div>
+    <h1 class="text-xl font-bold tracking-wide">Scatch</h1>
+  </div>
+
+  <!-- Links -->
+  <div class="hidden md:flex gap-8 text-sm text-zinc-400">
+    <a href="#" class="hover:text-white">Home</a>
+    <a href="#products" class="hover:text-white">Shop</a>
+    <a href="/products/allProducts" class="hover:text-white">Collections</a>
+    <a href="#" class="hover:text-white">About</a>
+  </div>
+
+  <!-- Actions -->
+  <div class="flex gap-3">
+    <a href="/users/login" class="px-4 py-2 text-sm border border-zinc-700 rounded-xl hover:bg-white hover:text-black transition">Login</a>
+    <a href="/users/register" class="px-4 py-2 text-sm bg-white text-black rounded-xl hover:bg-zinc-200 transition">Sign Up</a>
+  </div>
+
+</nav>
+
+<!-- HERO -->
+<section class="pt-28 px-6 text-center">
+
+  <h2 class="text-4xl md:text-6xl font-bold leading-tight">
+    Premium Bags for <br> Everyday Style
+  </h2>
+
+  <p class="text-zinc-500 mt-4 text-sm md:text-base">
+    Discover modern, durable & luxury bags crafted for your lifestyle.
+  </p>
+
+  <a href="/products/allProducts" class="inline-block mt-6 px-6 py-3 bg-white text-black rounded-xl font-medium hover:bg-zinc-200 transition">
+    Explore Collection
+  </a>
+
+</section>
+
+<!-- PRODUCTS -->
+<section id="products" class="px-6 mt-16">
+
+  <h3 class="text-2xl font-semibold mb-6">Top Picks</h3>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+
+    <!-- Product Card -->
+    <div class="bg-[#111] border border-zinc-800 rounded-2xl p-4 card-hover">
+      <div class="h-40 bg-zinc-800 rounded-xl mb-4"></div>
+      <h4 class="font-semibold">Urban Backpack</h4>
+      <p class="text-sm text-zinc-500">Minimal & durable design</p>
+      <div class="flex justify-between items-center mt-3">
+        <span class="font-bold">$49</span>
+        <button class="text-sm px-3 py-1 bg-white text-black rounded-lg">Buy</button>
+      </div>
+    </div>
+
+    <div class="bg-[#111] border border-zinc-800 rounded-2xl p-4 card-hover">
+      <div class="h-40 bg-zinc-800 rounded-xl mb-4"></div>
+      <h4 class="font-semibold">Travel Pro Bag</h4>
+      <p class="text-sm text-zinc-500">Perfect for long trips</p>
+      <div class="flex justify-between items-center mt-3">
+        <span class="font-bold">$79</span>
+        <button class="text-sm px-3 py-1 bg-white text-black rounded-lg">Buy</button>
+      </div>
+    </div>
+
+    <div class="bg-[#111] border border-zinc-800 rounded-2xl p-4 card-hover">
+      <div class="h-40 bg-zinc-800 rounded-xl mb-4"></div>
+      <h4 class="font-semibold">Classic Leather Bag</h4>
+      <p class="text-sm text-zinc-500">Premium leather finish</p>
+      <div class="flex justify-between items-center mt-3">
+        <span class="font-bold">$99</span>
+        <button class="text-sm px-3 py-1 bg-white text-black rounded-lg">Buy</button>
+      </div>
+    </div>
+
+  </div>
+
+</section>
+
+
+<section class="mt-20 px-6 overflow-hidden">
+  <div class="border-t border-zinc-800 pt-10">
+    <div class="flex flex-wrap justify-between gap-10 mb-20 text-sm">
+      <div class="space-y-4">
+        <h4 class="text-white font-semibold">Support</h4>
+        <ul class="text-zinc-500 space-y-2">
+          <li><a href="#" class="hover:text-white transition">Customer Care</a></li>
+          <li><a href="#" class="hover:text-white transition">Shipping Policy</a></li>
+          <li><a href="#" class="hover:text-white transition">Returns</a></li>
+        </ul>
+      </div>
+      <div class="space-y-4">
+        <h4 class="text-white font-semibold">Company</h4>
+        <ul class="text-zinc-500 space-y-2">
+          <li><a href="#" class="hover:text-white transition">Our Story</a></li>
+          <li><a href="#" class="hover:text-white transition">Sustainability</a></li>
+          <li><a href="#" class="hover:text-white transition">Terms</a></li>
+        </ul>
+      </div>
+      <div class="max-w-xs text-right ml-auto">
+        <p class="text-zinc-400">Stay updated with our latest releases and exclusive offers.</p>
+        <div class="mt-4 flex gap-2">
+          <input type="text" placeholder="Email" class="bg-zinc-900 border border-zinc-800 rounded-lg px-4 py-2 text-xs outline-none focus:border-zinc-500 w-full">
+          <button class="bg-white text-black px-4 py-2 rounded-lg text-xs font-bold transition active:scale-95">Join</button>
         </div>
-    <% } %>
+      </div>
+    </div>
 
-    <a href="/test">Click to trigger flash</a>
+<div class="select-none pointer-events-none mt-10 overflow-hidden px-4">
+  <h1 style="font-family: 'Archivo Black', sans-serif;" 
+      class="text-[18vw] md:text-[22vw] font-black leading-none tracking-[-0.07em] text-white text-center opacity-90">
+    Scatch
+  </h1>
+</div>
+  </div>
+</section>
+
+<footer class="pb-10 px-6 flex flex-col md:flex-row justify-between items-center text-zinc-600 text-xs gap-4">
+  <p>© 2026 Scatch. Crafting excellence.</p>
+  <div class="flex gap-6 uppercase tracking-widest">
+    <a href="#" class="hover:text-white transition">Instagram</a>
+    <a href="#" class="hover:text-white transition">Twitter</a>
+    <a href="#" class="hover:text-white transition">Behance</a>
+  </div>
+</footer>
 
 </body>
 </html>
