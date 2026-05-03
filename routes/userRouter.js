@@ -4,6 +4,7 @@ const {registerUser, loginUser} = require('../controllers/userController');
 const userRouter = express.Router();
 
 userRouter.get('/', (req, res)=>{
+    // res.flash("erorr", "Yo are gaurav")
     res.send('User page');
 });
 

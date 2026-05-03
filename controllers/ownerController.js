@@ -26,7 +26,7 @@ const ownerRegister = async (req, res)=>{
 
         res.cookie('token', token,{
             httpOnly: true,
-            secure: process.env.NODE_ENV === 'production'
+            secure: false
         });
 
         return res.status(201).send('Owner created successfully');

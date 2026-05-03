@@ -1,12 +1,26 @@
 const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
+const session = require('express-session');
+const flash = require('connect-flash');
+
+
 const db = require('./config/dbConnection')
 const userRouter = require('./routes/userRouter')
 const productRouter = require('./routes/productRouter')
-const ownerRouter = require('./routes/ownerRouter');
+const ownerRouter = require('./routes/ownerRouter')
+const router = require('./routes/index');
+require('dotenv').config()
 
 const app = express();
+
+
+app.use(session({
+    secret: 'secretkey',
+    resave: false,
+    saveUninitialized: true
+}));
+app.use(flash());
 
 
 app.use(express.json())
@@ -15,8 +29,8 @@ app.use(express.urlencoded({extended: true}))
 app.use(cookieParser())
 app.set('view engine', 'ejs')
 
-
-app.use('/', userRouter);
+app.use('/', router)
+app.use('/users', userRouter);
 app.use('/products', productRouter);
 app.use('/owner', ownerRouter);
 
