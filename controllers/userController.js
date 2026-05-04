@@ -54,7 +54,7 @@ const loginUser = async (req, res)=>{
                 httpOnly: true
             })
         }
-        res.send('Login success');
+        res.render('home', {user: user});
     }
     catch(error){
         return res.send('Some wrong');

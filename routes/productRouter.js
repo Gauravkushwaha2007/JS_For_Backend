@@ -1,7 +1,8 @@
 const express = require('express');
 const isLoggedIn = require('../middlewares/authMiddleware');
 const productModel = require('../models/productModel')
-const {createProduct} = require('../controllers/productController')
+const {createProduct, deleteProduct} = require('../controllers/productController')
+const upload = require('../config/multer')
 
 const productRouter = express.Router();
 
@@ -18,7 +19,9 @@ productRouter.get('/create', isLoggedIn, (req, res)=>{
     res.render('createProduct');
 })
 
-productRouter.post('/create', createProduct);
+productRouter.post('/create', upload.single('image'), createProduct);
+
+productRouter.post('/delete/:id', isLoggedIn, deleteProduct)
 
 
 module.exports = productRouter;

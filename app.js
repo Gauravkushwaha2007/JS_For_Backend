@@ -10,6 +10,7 @@ const userRouter = require('./routes/userRouter')
 const productRouter = require('./routes/productRouter')
 const ownerRouter = require('./routes/ownerRouter')
 const router = require('./routes/index');
+const attachUser = require('./middlewares/attachUser')
 require('dotenv').config()
 
 const app = express();
@@ -22,11 +23,11 @@ app.use(session({
 }));
 app.use(flash());
 
-
 app.use(express.json())
 app.use(express.static(path.join(__dirname, 'public')))
 app.use(express.urlencoded({extended: true}))
 app.use(cookieParser())
+app.use(attachUser)
 app.set('view engine', 'ejs')
 
 app.use('/', router)

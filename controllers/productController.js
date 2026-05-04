@@ -1,11 +1,11 @@
 const express = require('express')
 const productModel = require('../models/productModel');
-
+const upload = require('../config/multer');
 
 const createProduct = async (req, res) => {
-
     try {
         let { name, price, bgColor, textColor, panelColor, discount } = req.body;
+        let imagePath = req.file? req.file.filename: null;
 
         await productModel.create({
             name,
@@ -13,7 +13,8 @@ const createProduct = async (req, res) => {
             bgColor,
             textColor,
             panelColor,
-            discount
+            discount,
+            image: imagePath
         });
 
         res.redirect('/products/allProducts');
@@ -23,5 +24,16 @@ const createProduct = async (req, res) => {
     }
 }
 
+const deleteProduct = async (req, res)=>{
+    try{
+        let product = await productModel.findByIdAndDelete(req.params.id);
+        res.redirect('/products/allProducts')
+    }
+    catch(error){
+        console.error(error.message);
+        res.send('Delete failed')
+    }
+}
 
-module.exports = { createProduct };
+
+module.exports = { createProduct, deleteProduct };

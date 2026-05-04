@@ -3,114 +3,165 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>All Products</title>
+  <title>All Products | Scatch</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Custom utility for dropdown animation */
+    .dropdown-menu {
+      display: none;
+    }
+    .dropdown-menu.show {
+      display: block;
+    }
+  </style>
 </head>
 
-<body class="bg-gray-50">
+<body class="bg-gray-50 font-sans">
 
   <div class="flex min-h-screen">
 
     <!-- Sidebar -->
-    <div class="w-64 bg-white border-r p-6">
+    <div class="w-64 bg-white border-r p-6 hidden md:block">
+      <h1 class="text-3xl font-bold mb-10 tracking-tight text-blue-600">Scatch</h1>
 
-      <h1 class="text-2xl font-bold mb-8">Scatch</h1>
+      <div class="space-y-6">
+        <div>
+          <p class="font-bold text-xs uppercase text-gray-400 mb-3 tracking-widest">Sort by</p>
+          <select class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+            <option>Popular</option>
+            <option>Newest</option>
+            <option>Price Low to High</option>
+            <option>Price High to Low</option>
+          </select>
+        </div>
 
-      <div class="space-y-2 text-gray-700">
-        <p class="font-semibold">Sort by</p>
-        <select class="w-full p-2 border rounded">
-          <option>Popular</option>
-          <option>Newest</option>
-          <option>Price Low to High</option>
-          <option>Price High to Low</option>
-        </select>
+        <div>
+          <p class="font-bold text-xs uppercase text-gray-400 mb-3 tracking-widest">Categories</p>
+          <div class="space-y-2 text-sm text-gray-600">
+            <p class="hover:text-blue-600 cursor-pointer transition-colors">New Collection</p>
+            <p class="text-blue-600 font-medium cursor-pointer">All Products</p>
+            <p class="hover:text-blue-600 cursor-pointer transition-colors">Discounted Products</p>
+          </div>
+        </div>
+
+        <div>
+          <p class="font-bold text-xs uppercase text-gray-400 mb-3 tracking-widest">Filter by</p>
+          <div class="space-y-2 text-sm text-gray-600">
+            <p class="hover:text-blue-600 cursor-pointer transition-colors">Availability</p>
+            <p class="hover:text-blue-600 cursor-pointer transition-colors">Discount</p>
+          </div>
+        </div>
       </div>
-
-      <div class="mt-8 space-y-2 text-gray-700">
-        <p class="font-semibold">Categories</p>
-        <p class="hover:text-blue-500 cursor-pointer">New Collection</p>
-        <p class="hover:text-blue-500 cursor-pointer">All Products</p>
-        <p class="hover:text-blue-500 cursor-pointer">Discounted Products</p>
-      </div>
-
-      <div class="mt-8 space-y-2 text-gray-700">
-        <p class="font-semibold">Filter by</p>
-        <p class="hover:text-blue-500 cursor-pointer">Availability</p>
-        <p class="hover:text-blue-500 cursor-pointer">Discount</p>
-      </div>
-
     </div>
 
     <!-- Main Content -->
-    <div class="flex-1 p-10">
-
+    <div class="flex-1 p-6 md:p-10">
+      
       <!-- Top bar -->
-      <div class="mb-8 flex justify-between items-center">
-        <h2 class="text-xl font-semibold">All Products</h2>
+      <div class="mb-10 flex justify-between items-center">
+        <div>
+          <a href="/" class="text-sm text-blue-500 hover:underline mb-2 inline-block">← Back to Home</a>
+          <h2 class="text-3xl font-bold text-gray-800">All Products</h2>
+        </div>
+        <div class="bg-blue-100 text-blue-600 px-4 py-2 rounded-full text-sm font-semibold">
+            <%= products.length %> Items Found
+        </div>
       </div>
 
       <!-- Product Grid -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-
-        <!-- Product Card -->
-        <div class="bg-white rounded-xl shadow overflow-hidden">
-
-          <!-- Image -->
-          <div class="h-48 bg-gray-200 flex items-center justify-center">
-            <span class="text-gray-400">Image</span>
-          </div>
-
-          <!-- Details -->
-          <div class="p-4 flex justify-between items-center">
-            <div>
-              <h3 class="font-semibold">Backpack</h3>
-              <p class="text-gray-500">₹1100</p>
+      <% if(products.length > 0 ){ %>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+          <% products.forEach((product) => { %>
+            
+            <!-- Modern Product Card -->
+            <div class="group bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-300 relative">
+              
+              <!-- Three Dot Menu -->
+              <div class="absolute top-3 right-3 z-20">
+                <button onclick="toggleMenu(event, 'menu-<%= product._id %>')" class="p-2 bg-white/90 backdrop-blur shadow-sm rounded-full hover:bg-gray-100 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/>
+                    </svg>
+                </button>
+                
+                <!-- Dropdown -->
+                <div id="menu-<%= product._id %>" class="dropdown-menu absolute right-0 mt-2 w-36 bg-white border border-gray-100 rounded-xl shadow-xl overflow-hidden ring-1 ring-black ring-opacity-5">
+                    <form action="/products/delete/<%= product._id %>" method="post" onsubmit="return confirm('Pakka delete karna hai?')">
+                        <button type="submit" class="w-full text-left px-4 py-3 text-sm text-red-500 hover:bg-red-50 font-medium flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+                                <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+                            </svg>
+                            Delete
+                        </button>
+                    </form>
+                </div>
+              </div>
+    
+              <!-- Image Section -->
+              <div class="h-56 bg-gray-50 flex items-center justify-center relative overflow-hidden">
+                <img src="/uploads/<%= product.image %>" alt="<%= product.name %>" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                <% if(product.discount > 0) { %>
+                    <span class="absolute bottom-3 left-3 bg-green-500 text-white text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider">Sale</span>
+                <% } %>
+              </div>
+    
+              <!-- Product Info -->
+              <div class="p-5" style="background-color: <%= product.panelColor %>;">
+                <div class="flex justify-between items-start">
+                    <div class="flex-1">
+                        <h3 class="font-bold text-lg leading-tight mb-1" style="color: <%= product.textColor %>;"><%= product.name %></h3>
+                        <p class="text-xl font-black opacity-90" style="color: <%= product.textColor %>;">₹<%= product.price %></p>
+                    </div>
+        
+                    <button class="ml-4 w-12 h-12 rounded-full flex items-center justify-center transition-all shadow-lg hover:scale-110 active:scale-95" style="background-color: white; color: <%= product.panelColor %>;">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+                      </svg>
+                    </button>
+                </div>
+              </div>
             </div>
 
-            <button class="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200">
-              +
-            </button>
-          </div>
-
-        </div>
-
-        <!-- Product 2 -->
-        <div class="bg-white rounded-xl shadow overflow-hidden">
-          <div class="h-48 bg-gray-200 flex items-center justify-center">
-            <span class="text-gray-400">Image</span>
-          </div>
-          <div class="p-4 flex justify-between items-center">
-            <div>
-              <h3 class="font-semibold">Multipurpose</h3>
-              <p class="text-gray-500">₹100</p>
-            </div>
-            <button class="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200">
-              +
-            </button>
-          </div>
-        </div>
-
-        <!-- Product 3 -->
-        <div class="bg-white rounded-xl shadow overflow-hidden">
-          <div class="h-48 bg-gray-200 flex items-center justify-center">
-            <span class="text-gray-400">Image</span>
-          </div>
-          <div class="p-4 flex justify-between items-center">
-            <div>
-              <h3 class="font-semibold">Pink Attack</h3>
-              <p class="text-gray-500">₹1400</p>
-            </div>
-            <button class="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200">
-              +
-            </button>
-          </div>
-        </div>
-
+          <% }) %>
       </div>
 
+      <% } else { %>
+        <div class="text-center py-20 bg-white rounded-3xl border-2 border-dashed border-gray-200">
+            <h3 class="text-xl text-gray-400 font-medium">No products found in the store.</h3>
+            <p class="text-gray-400 mt-2">Try adding some from the admin panel.</p>
+        </div>
+      <% } %>
     </div>
 
   </div>
+
+  <script>
+    // Menu toggle logic
+    function toggleMenu(event, menuId) {
+        event.stopPropagation(); // Card click event ko rokne ke liye
+        
+        const menu = document.getElementById(menuId);
+        const isOpen = menu.classList.contains('show');
+        
+        // Sabhi open menus band karein
+        closeAllMenus();
+        
+        // Agar pehle band tha, toh khol dein
+        if (!isOpen) {
+            menu.classList.add('show');
+        }
+    }
+
+    function closeAllMenus() {
+        document.querySelectorAll('.dropdown-menu').forEach(m => m.classList.remove('show'));
+    }
+
+    // Window par click karne se menu band ho jaye
+    window.onclick = function() {
+        closeAllMenus();
+    }
+  </script>
 
 </body>
 </html>
