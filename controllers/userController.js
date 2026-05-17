@@ -79,9 +79,15 @@ const addToCart = async (req, res)=>{
         if(!product) {
             return res.send('Product Not Found');
         }
-        user.cart.push(product._id);
+
+        if(user.cart.includes(product._id)){
+            return res.redirect('/users/cart/products')
+        }else{
+            user.cart.push(product._id);
+        }
+
         await user.save()
-        res.redirect('/products/allProducts')
+        res.redirect('/users/cart/products')
     }
     catch(eror){
         console.error(error.message)
@@ -89,7 +95,24 @@ const addToCart = async (req, res)=>{
     
 }
     
+//Remove-to-cart
+const removeToCart = async (req, res)=>{
+    try{
+        const user = await userModel.findOne({email: req.user.email});
+        if(!user){
+            return res.redirect('/users/cart/products');
+        }
+        user.cart.pull(req.params.productId);
+        await user.save();
+        res.redirect('/users/cart/products')
+    }
+    catch(error){
+        console.error(error.message);
+    }
+}
 
+
+// Cart-Products-Page
 const cartProducts = async (req, res)=>{
     try{
         let user = await userModel.findOne({email: req.user.email}).populate('cart');
@@ -105,4 +128,4 @@ const cartProducts = async (req, res)=>{
     }
 }
 
-module.exports = {registerUser, loginUser, addToCart, cartProducts}
+module.exports = {registerUser, loginUser, addToCart, cartProducts, removeToCart}

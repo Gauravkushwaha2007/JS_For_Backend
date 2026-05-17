@@ -1,6 +1,6 @@
 const express = require('express');
 const isLoggedIn = require('../middlewares/authMiddleware')
-const {registerUser, loginUser, addToCart, cartProducts} = require('../controllers/userController');
+const {registerUser, loginUser, addToCart, cartProducts, removeToCart} = require('../controllers/userController');
 
 const userRouter = express.Router();
 
@@ -22,6 +22,7 @@ userRouter.post('/login', loginUser);
 
 
 userRouter.post('/cart/add-to-cart/:productId', isLoggedIn, addToCart);
+userRouter.post('/cart/remove-product/:productId', isLoggedIn, removeToCart)
 userRouter.get('/cart/products', isLoggedIn, cartProducts)
 
 module.exports = userRouter;
