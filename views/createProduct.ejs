@@ -27,13 +27,18 @@
       <div class="max-w-3xl bg-white p-8 rounded-xl shadow">
 
         <h2 class="text-2xl font-semibold mb-6">Create New Product</h2>
-
-        <form action="/products/create" method="post" class="space-y-6" enctype="multipart/form-data">
+        <form action="<%= product? '/products/edit/'+ product._id : '/products/create'%>" method="post" class="space-y-6" enctype="multipart/form-data">
           <!-- Product Details -->
           <div>
             <h3 class="font-semibold mb-3 text-gray-700">Product Details</h3>
 
             <!-- Image -->
+            <% if(product && product.image){ %>
+              <img 
+                src="/uploads/<%= product.image %>" 
+                class="w-32 mb-4 rounded"
+              />
+            <% } %>         
             <input type="file" name="image"
               class="mb-4 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 
               file:rounded file:border-0 file:text-sm file:font-semibold 
@@ -41,13 +46,16 @@
 
             <div class="grid grid-cols-2 gap-4">
               <input type="text" name="name" placeholder="Product Name"
+                value="<%= product? product.name: '' %>"
                 class="p-3 border rounded w-full" required>
 
               <input type="number" name="price" placeholder="Product Price"
+                value="<%= product? product.price: ''%>"
                 class="p-3 border rounded w-full" required>
             </div>
 
             <input type="number" name="discount" placeholder="Discount Price"
+              value="<%= product? product.discount: '' %>"
               class="p-3 border rounded w-full mt-4">
           </div>
 
@@ -57,21 +65,21 @@
 
             <div class="grid grid-cols-2 gap-4">
               <input type="text" name="bgColor" placeholder="Background Color (e.g. #ffffff)"
-                class="p-3 border rounded w-full">
+                class="p-3 border rounded w-full" value="<%= product? product.bgColor: '' %>">
 
               <input type="text" name="panelColor" placeholder="Panel Color"
-                class="p-3 border rounded w-full">
+                class="p-3 border rounded w-full" value="<%= product? product.panelColor: '' %>">
             </div>
 
             <input type="text" name="textColor" placeholder="Text Color"
-              class="p-3 border rounded w-full mt-4">
+              class="p-3 border rounded w-full mt-4" value="<%= product? product.textColor: '' %>">
           </div>
 
           <!-- Submit -->
           <button
             type="submit"
             class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded font-semibold">
-            Create New Product
+            <%= product? "Update Product": "Create New Product"%>
           </button>
 
         </form>

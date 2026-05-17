@@ -1,9 +1,9 @@
-
 const userModel = require('../models/userModel');
+const productModel = require('../models/productModel');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const generateToken = require('../utils/generateToken');
-
+const sendmail = require('../utils/mailer');
 
 //REGISTER
 const registerUser = async (req, res)=>{
@@ -27,6 +27,11 @@ const registerUser = async (req, res)=>{
             httpOnly: true,
             secure: false
         })
+        await sendmail(user.email,
+            "Welcome Dost",
+            `<h2> Hellow ${user.name} </h2>
+            <h3> kaise ho dost Ye mera fist trial hai </h3>`
+        );
         res.send('User created successfully')
         
     }
@@ -61,6 +66,43 @@ const loginUser = async (req, res)=>{
         console.log(error.message);
     }
 }
+
+
+//Add-to-cart
+const addToCart = async (req, res)=>{
+    try{
+        let user =  await userModel.findOne({email: req.user.email});
+        if(!user) {
+            return res.send('Some wrong');
+        }
+        let product = await productModel.findById(req.params.productId);
+        if(!product) {
+            return res.send('Product Not Found');
+        }
+        user.cart.push(product._id);
+        await user.save()
+        res.redirect('/products/allProducts')
+    }
+    catch(eror){
+        console.error(error.message)
+    }
+    
+}
     
 
-module.exports = {registerUser, loginUser}
+const cartProducts = async (req, res)=>{
+    try{
+        let user = await userModel.findOne({email: req.user.email}).populate('cart');
+        if(!user){
+            return res.redirect('/users/login');
+        }
+        let products = user.cart;
+        res.render('cartProducts', {products: products});
+
+    }
+    catch(error){
+        console.error(error.message);
+    }
+}
+
+module.exports = {registerUser, loginUser, addToCart, cartProducts}

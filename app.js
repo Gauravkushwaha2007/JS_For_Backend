@@ -1,3 +1,4 @@
+require('dotenv').config()
 const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
@@ -11,7 +12,6 @@ const productRouter = require('./routes/productRouter')
 const ownerRouter = require('./routes/ownerRouter')
 const router = require('./routes/index');
 const attachUser = require('./middlewares/attachUser')
-require('dotenv').config()
 
 const app = express();
 

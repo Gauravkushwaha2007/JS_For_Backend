@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cart | KushNova</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100 font-sans">
+
+<div class="max-w-6xl mx-auto py-10 px-4">
+
+  <h1 class="text-3xl font-bold mb-8">🛒 Your Items</h1>
+
+  <% if(products.length > 0 ){ %>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+    <!-- LEFT: Products -->
+    <div class="lg:col-span-2 space-y-6">
+
+      <% let total = 0; %>
+
+      <% products.forEach((product) => { %>
+        <% total = total+product.price; %>
+
+        <div class="flex items-center bg-white p-4 rounded-xl shadow-sm">
+
+          <!-- Image -->
+          <img src="/uploads/<%= product.image %>" class="w-24 h-24 object-cover rounded-lg">
+
+          <!-- Info -->
+          <div class="ml-4 flex-1">
+            <h2 class="font-semibold text-lg"><%= product.name %></h2>
+            <p class="text-gray-500 text-sm">₹<%= product.price %></p>
+
+            <!-- Quantity -->
+            <div class="flex items-center mt-2 space-x-2">
+              <button class="px-2 py-1 bg-gray-200 rounded">-</button>
+              <span>1</span>
+              <button class="px-2 py-1 bg-gray-200 rounded">+</button>
+            </div>
+          </div>
+
+          <!-- Remove -->
+          <form action="/users/cart/remove-product/<%= product._id %>" method="post">
+            <button class="text-red-500 hover:text-red-700 text-sm">
+              Remove
+            </button>
+          </form>
+
+        </div>
+
+      <% }) %>
+
+    </div>
+
+    <!-- RIGHT: Summary -->
+    <div class="bg-white p-6 rounded-xl shadow-sm h-fit">
+
+      <h2 class="text-xl font-bold mb-4">Order Summary</h2>
+
+      <div class="flex justify-between mb-2">
+        <span>Items</span>
+        <span><%= products.length %></span>
+      </div>
+
+      <div class="flex justify-between mb-2">
+        <span>Total Price</span>
+        <span>₹<%= total %></span>
+      </div>
+
+      <div class="flex justify-between mb-4">
+        <span>Delivery</span>
+        <span class="text-green-500">Free</span>
+      </div>
+
+      <hr class="my-4">
+
+      <div class="flex justify-between font-bold text-lg">
+        <span>Final Amount</span>
+        <span>₹<%= total %></span>
+      </div>
+
+      <!-- Checkout -->
+      <button class="w-full mt-6 bg-black text-white py-3 rounded-lg hover:bg-gray-800 transition">
+        Proceed to Checkout
+      </button>
+
+    </div>
+
+  </div>
+
+  <% } else { %>
+
+    <!-- Empty Cart -->
+    <div class="text-center py-20">
+      <h2 class="text-2xl text-gray-400">🛒 Your cart is empty</h2>
+      <a href="/products/allProducts" class="mt-4 inline-block bg-black text-white px-6 py-2 rounded-lg">
+        Shop Now
+      </a>
+    </div>
+
+  <% } %>
+
+</div>
+
+</body>
+</html>

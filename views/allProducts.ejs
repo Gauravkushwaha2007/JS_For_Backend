@@ -39,6 +39,7 @@
           <p class="font-bold text-xs uppercase text-gray-400 mb-3 tracking-widest">Categories</p>
           <div class="space-y-2 text-sm text-gray-600">
             <p class="hover:text-blue-600 cursor-pointer transition-colors">New Collection</p>
+            <a href="/users/cart/products">Your Products</a>
             <p class="text-blue-600 font-medium cursor-pointer">All Products</p>
             <p class="hover:text-blue-600 cursor-pointer transition-colors">Discounted Products</p>
           </div>
@@ -61,6 +62,7 @@
       <div class="mb-10 flex justify-between items-center">
         <div>
           <a href="/" class="text-sm text-blue-500 hover:underline mb-2 inline-block">← Back to Home</a>
+          <a href="/products/create" class=" bg-blue-500 rounded-md px-2 py-1 text-sm ml-10 text-white hover:bg-blue-600 inline-block">Create new ← </a>
           <h2 class="text-3xl font-bold text-gray-800">All Products</h2>
         </div>
         <div class="bg-blue-100 text-blue-600 px-4 py-2 rounded-full text-sm font-semibold">
@@ -95,6 +97,15 @@
                             Delete
                         </button>
                     </form>
+                    <a href="/products/edit/<%= product._id %>" 
+                      class="w-full text-left px-4 py-3 text-sm text-red-500 hover:bg-yellow-50 font-medium flex items-center gap-2">
+
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+                            <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+                        </svg>
+                        Edit
+                    </a>
                 </div>
               </div>
     
@@ -113,12 +124,13 @@
                         <h3 class="font-bold text-lg leading-tight mb-1" style="color: <%= product.textColor %>;"><%= product.name %></h3>
                         <p class="text-xl font-black opacity-90" style="color: <%= product.textColor %>;">₹<%= product.price %></p>
                     </div>
-        
-                    <button class="ml-4 w-12 h-12 rounded-full flex items-center justify-center transition-all shadow-lg hover:scale-110 active:scale-95" style="background-color: white; color: <%= product.panelColor %>;">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
-                        <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
-                      </svg>
-                    </button>
+                    <form action="/users/cart/add-to-cart/<%= product._id %>" method="post">
+                      <button class="ml-4 w-12 h-12 rounded-full flex items-center justify-center transition-all shadow-lg hover:scale-110 active:scale-95" style="background-color: white; color: <%= product.panelColor %>;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
+                          <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+                        </svg>
+                      </button>
+                    </form>
                 </div>
               </div>
             </div>

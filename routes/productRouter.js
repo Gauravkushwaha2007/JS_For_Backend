@@ -1,14 +1,14 @@
 const express = require('express');
 const isLoggedIn = require('../middlewares/authMiddleware');
 const productModel = require('../models/productModel')
-const {createProduct, deleteProduct} = require('../controllers/productController')
+const {createProduct, deleteProduct, getEditProduct, postEditProduct} = require('../controllers/productController')
 const upload = require('../config/multer')
 
 const productRouter = express.Router();
 
 productRouter.get('/allProducts', async(req, res)=>{
-    let product = await productModel.find();
-    res.render('allProducts', {products: product});
+    let products = await productModel.find();
+    res.render('allProducts', {products: products});
 });
 
 productRouter.get('/product', isLoggedIn, (req, res)=>{
@@ -16,12 +16,15 @@ productRouter.get('/product', isLoggedIn, (req, res)=>{
 });
 
 productRouter.get('/create', isLoggedIn, (req, res)=>{
-    res.render('createProduct');
+    res.render('createProduct',{product: null});
 })
 
 productRouter.post('/create', upload.single('image'), createProduct);
 
 productRouter.post('/delete/:id', isLoggedIn, deleteProduct)
+
+productRouter.get('/edit/:id', isLoggedIn, getEditProduct)
+productRouter.post('/edit/:id', isLoggedIn, upload.single('image'), postEditProduct)
 
 
 module.exports = productRouter;
