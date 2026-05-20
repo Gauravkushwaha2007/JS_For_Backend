@@ -69,43 +69,64 @@ const loginUser = async (req, res)=>{
 }
 
 
-//Add-to-cart
+//Add-to-cart with AJAX
 const addToCart = async (req, res)=>{
     try{
         let user =  await userModel.findOne({email: req.user.email});
         let product = await productModel.findById(req.params.productId);
         if(!product) {
-            return res.send('Product Not Found');
+            return res.status(404).json({
+                success: false,
+                message: 'Product not found'
+            });
         }
 
-        if(user.cart.includes(product._id)){
-            return res.redirect('/users/cart/products')
-        }else{
-            user.cart.push(product._id);
+        if(user.cart.some((i)=> i.toString() === product._id.toString())){
+            return res.json({
+                success: false,
+                message: "Already in Cart"
+            })
         }
-
+        user.cart.push(product._id);
         await user.save()
-        res.redirect('/users/cart/products')
+        res.json({
+            success: true,
+            message: "Added to Cart"
+        })
     }
-    catch(eror){
-        console.error(error.message)
+    catch(error){
+        console.error(error.message);
+        res.status(500).json({
+            success: false,
+            message: "Some Wrong"
+        })
     }
 }
     
 
-//Remove-to-cart
+//Remove-to-cart with AJAX
 const removeToCart = async (req, res)=>{
     try{
         const user = await userModel.findOne({email: req.user.email});
         if(!user){
-            return res.redirect('/users/cart/products');
+            res.status(401).json({
+                success: false,
+                message: 'User not found'
+            })
         }
         user.cart.pull(req.params.productId);
         await user.save();
-        res.redirect('/users/cart/products')
+        res.json({
+            success: true,
+            message: "Removed from cart"
+        })
     }
     catch(error){
         console.error(error.message);
+        res.status(500).json({
+            success: false,
+            message: 'Something went wrong'
+        })
     }
 }
 

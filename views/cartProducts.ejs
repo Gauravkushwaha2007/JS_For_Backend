@@ -25,7 +25,7 @@
       <% products.forEach((product) => { %>
         <% total = total+product.price; %>
 
-        <div class="flex items-center bg-white p-4 rounded-xl shadow-sm">
+        <div id="product-<%= product._id %>" class="flex items-center bg-white p-4 rounded-xl shadow-sm">
 
           <!-- Image -->
           <img src="/uploads/<%= product.image %>" class="w-24 h-24 object-cover rounded-lg">
@@ -44,11 +44,9 @@
           </div>
 
           <!-- Remove -->
-          <form action="/users/cart/remove-product/<%= product._id %>" method="post">
-            <button class="text-red-500 hover:text-red-700 text-sm">
+            <button onclick="removeToCart('<%= product._id %>')" class="text-red-500 hover:text-red-700 text-sm">
               Remove
             </button>
-          </form>
 
         </div>
 
@@ -105,6 +103,27 @@
   <% } %>
 
 </div>
+
+
+<script>
+  async function removeToCart(productId) {
+    try{
+      let res = await fetch(`/users/cart/remove-product/${productId}`,{
+        method: 'POST'
+      });
+      let data = await res.json()
+      if(data.success){
+        alert('Removed Successfully👊')
+        let productCard = document.getElementById(`product-${productId}`);
+        productCard.remove();
+      }
+    }
+    catch(error){
+      console.log(error);
+    }
+  }
+</script>
+
 
 </body>
 </html>

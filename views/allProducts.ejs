@@ -124,13 +124,11 @@
                         <h3 class="font-bold text-lg leading-tight mb-1" style="color: <%= product.textColor %>;"><%= product.name %></h3>
                         <p class="text-xl font-black opacity-90" style="color: <%= product.textColor %>;">₹<%= product.price %></p>
                     </div>
-                    <form action="/users/cart/add-to-cart/<%= product._id %>" method="post">
-                      <button class="ml-4 w-12 h-12 rounded-full flex items-center justify-center transition-all shadow-lg hover:scale-110 active:scale-95" style="background-color: white; color: <%= product.panelColor %>;">
+                      <button onclick="addToCart('<%= product._id%>')" class="ml-4 w-12 h-12 rounded-full flex items-center justify-center transition-all shadow-lg hover:scale-110 active:scale-95" style="background-color: white; color: <%= product.panelColor %>;">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
                           <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
                         </svg>
                       </button>
-                    </form>
                 </div>
               </div>
             </div>
@@ -147,6 +145,23 @@
     </div>
 
   </div>
+
+
+
+  <script>
+    //addToCart
+    async function addToCart (productId){
+      let res = await fetch(`/users/cart/add-to-cart/${productId}`,{
+          method: "POST"
+      });
+      let data = await res.json();
+      if(data.success){
+        alert('Added To Cart');
+      }
+    }
+  </script>
+
+
 
   <script>
     // Menu toggle logic
