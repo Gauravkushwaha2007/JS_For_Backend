@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken');
 const generateToken = require('../utils/generateToken');
 const sendmail = require('../utils/mailer');
 
+
 //REGISTER
 const registerUser = async (req, res)=>{
     try{
@@ -41,7 +42,7 @@ const registerUser = async (req, res)=>{
 };
 
 
-//LOGIN 
+//LOGIN
 const loginUser = async (req, res)=>{
     try{
         let {email, password} = req.body
@@ -72,9 +73,6 @@ const loginUser = async (req, res)=>{
 const addToCart = async (req, res)=>{
     try{
         let user =  await userModel.findOne({email: req.user.email});
-        if(!user) {
-            return res.send('Some wrong');
-        }
         let product = await productModel.findById(req.params.productId);
         if(!product) {
             return res.send('Product Not Found');
@@ -92,9 +90,9 @@ const addToCart = async (req, res)=>{
     catch(eror){
         console.error(error.message)
     }
-    
 }
     
+
 //Remove-to-cart
 const removeToCart = async (req, res)=>{
     try{
@@ -127,5 +125,6 @@ const cartProducts = async (req, res)=>{
         console.error(error.message);
     }
 }
+
 
 module.exports = {registerUser, loginUser, addToCart, cartProducts, removeToCart}
