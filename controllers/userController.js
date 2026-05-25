@@ -81,13 +81,16 @@ const addToCart = async (req, res)=>{
             });
         }
 
-        if(user.cart.some((i)=> i.toString() === product._id.toString())){
+        if(user.cart.some((i)=> i.product.toString() === product._id.toString())){
             return res.json({
                 success: false,
                 message: "Already in Cart"
             })
         }
-        user.cart.push(product._id);
+        user.cart.push({
+            product: product._id,
+            quantity: 1
+        });
         await user.save()
         res.json({
             success: true,
@@ -95,7 +98,7 @@ const addToCart = async (req, res)=>{
         })
     }
     catch(error){
-        console.error(error.message);
+        console.error(error,error.message);
         res.status(500).json({
             success: false,
             message: "Some Wrong"
@@ -114,7 +117,10 @@ const removeToCart = async (req, res)=>{
                 message: 'User not found'
             })
         }
-        user.cart.pull(req.params.productId);
+        // user.cart.pull(req.params.productId);
+        user.cart = await user.cart.filter(item=>
+            item.product.toString() !== req.params.productId
+        )
         await user.save();
         res.json({
             success: true,
@@ -134,7 +140,7 @@ const removeToCart = async (req, res)=>{
 // Cart-Products-Page
 const cartProducts = async (req, res)=>{
     try{
-        let user = await userModel.findOne({email: req.user.email}).populate('cart');
+        let user = await userModel.findOne({email: req.user.email}).populate('cart.product');
         if(!user){
             return res.redirect('/users/login');
         }
@@ -148,4 +154,79 @@ const cartProducts = async (req, res)=>{
 }
 
 
-module.exports = {registerUser, loginUser, addToCart, cartProducts, removeToCart}
+//Update Quantity in cart page (descrease--)
+
+const descreaseQty = async (req, res)=>{
+    
+    try{
+        let user = await userModel.findOne({email: req.user.email}).populate('cart.product');
+        let productId = req.params.productId;
+        
+        let cartItem = user.cart.find(item=>{
+            return item.product._id.toString() === productId
+        })
+        if(cartItem){
+            cartItem.quantity -= 1;
+            await user.save();
+        
+            return res.json({
+                success: true,
+                quantity: cartItem.quantity
+            })
+        }   
+        return res.status(504).json({
+            success: true,
+            message: 'Product not found'
+        })
+    }
+    catch(error){
+        console.log(error, error.message)
+        res.json({
+            success: false,
+            message: 'Some wrong...'
+        })
+    }
+
+}
+
+
+//Update Quantity in cart page (increase++)
+
+const increaseQty = async (req, res)=>{
+
+    try{
+        let user = await userModel.findOne({email: req.user.email}).populate('cart.product');
+        let productId = req.params.productId;
+    
+        let cartItem = user.cart.find(item=>{
+            return item.product._id.toString() === productId
+        }
+        )
+        if(cartItem){
+            cartItem.quantity += 1;
+            await user.save();
+    
+            return res.json({
+                success: true,
+                quantity: cartItem.quantity
+            })
+        }   
+        return res.status(504).json({
+            success: true,
+            message: 'Product not found'
+        })
+    }
+
+    catch(error){
+        res.json({
+            success: false,
+            message: 'Some wrong...'
+        });
+        console.log(error, error.message)
+    }
+
+}
+
+module.exports = {
+    registerUser, loginUser, addToCart, cartProducts, removeToCart, increaseQty, descreaseQty
+}    

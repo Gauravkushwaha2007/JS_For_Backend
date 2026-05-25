@@ -20,38 +20,38 @@
     <!-- LEFT: Products -->
     <div class="lg:col-span-2 space-y-6">
 
-      <% let total = 0; %>
+      <% let total = 0 %>
 
-      <% products.forEach((product) => { %>
-        <% total = total+product.price; %>
+      <% products.forEach((item) => { %>
+        <% total += item.product.price * item.quantity; %>
 
-        <div id="product-<%= product._id %>" class="flex items-center bg-white p-4 rounded-xl shadow-sm">
+        <div id="product-<%= item.product._id %>" class="flex items-center bg-white p-4 rounded-xl shadow-sm">
 
           <!-- Image -->
-          <img src="/uploads/<%= product.image %>" class="w-24 h-24 object-cover rounded-lg">
+          <img src="/uploads/<%= item.product.image %>" class="w-24 h-24 object-cover rounded-lg">
 
           <!-- Info -->
           <div class="ml-4 flex-1">
-            <h2 class="font-semibold text-lg"><%= product.name %></h2>
-            <p class="text-gray-500 text-sm">₹<%= product.price %></p>
+            <h2 class="font-semibold text-lg"><%= item.product.name %></h2>
+            <p class="text-gray-500 text-sm">₹<%= total %></p>
 
             <!-- Quantity -->
             <div class="flex items-center mt-2 space-x-2">
-              <button class="px-2 py-1 bg-gray-200 rounded">-</button>
-              <span>1</span>
-              <button class="px-2 py-1 bg-gray-200 rounded">+</button>
+              <button onclick="descreaseQty('<%= item.product._id%>')" class="px-2 py-1 bg-gray-200 rounded"> - </button>
+              <span id="quantityNumber-<%= item.product._id %>">
+                <%= item.quantity %>
+              </span>
+              <button onclick="increaseQty('<%= item.product._id%>')" class="px-2 py-1 bg-gray-200 rounded"> + </button>
             </div>
           </div>
 
           <!-- Remove -->
-            <button onclick="removeToCart('<%= product._id %>')" class="text-red-500 hover:text-red-700 text-sm">
+            <button onclick="removeToCart('<%= item.product._id %>')" class="text-red-500 hover:text-red-700 text-sm">
               Remove
             </button>
-
         </div>
 
       <% }) %>
-
     </div>
 
     <!-- RIGHT: Summary -->
@@ -106,22 +106,46 @@
 
 
 <script>
-  async function removeToCart(productId) {
+  async function removeToCart (productId) {
     try{
       let res = await fetch(`/users/cart/remove-product/${productId}`,{
         method: 'POST'
-      });
+      })
       let data = await res.json()
       if(data.success){
         alert('Removed Successfully👊')
-        let productCard = document.getElementById(`product-${productId}`);
-        productCard.remove();
+        let productCard = document.getElementById(`product-${productId}`)
+        productCard.remove()
       }
     }
     catch(error){
-      console.log(error);
+      console.log(error)
     }
   }
+
+  async function increaseQty (productId) {
+    let res = await fetch(`/users/cart/update/increaseQty/${productId}`, {
+      method: 'POST'
+    })
+
+    let data = await res.json()
+    if(data.success){
+      let quantityNumber = document.getElementById(`quantityNumber-${productId}`).innerText = data.quantity
+    }
+  }
+
+
+  async function descreaseQty(productId) {
+
+    let res = await fetch(`/users/cart/update/descreaseQty/${productId}`,{
+      method: 'POST'
+    })
+    let data = await res.json()
+    if(data.success){
+      let quantityNumber = document.getElementById(`quantityNumber-${productId}`).innerText = data.quantity
+    }
+  }
+
 </script>
 
 
