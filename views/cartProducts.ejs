@@ -33,7 +33,7 @@
           <!-- Info -->
           <div class="ml-4 flex-1">
             <h2 class="font-semibold text-lg"><%= item.product.name %></h2>
-            <p class="text-gray-500 text-sm">₹<%= total %></p>
+            <p class="text-gray-500 text-sm">₹<%= item.product.price %></p>
 
             <!-- Quantity -->
             <div class="flex items-center mt-2 space-x-2">
@@ -113,7 +113,7 @@
       })
       let data = await res.json()
       if(data.success){
-        alert('Removed Successfully👊')
+        location.reload()
         let productCard = document.getElementById(`product-${productId}`)
         productCard.remove()
       }
@@ -127,9 +127,10 @@
     let res = await fetch(`/users/cart/update/increaseQty/${productId}`, {
       method: 'POST'
     })
-
+    
     let data = await res.json()
     if(data.success){
+      location.reload()
       let quantityNumber = document.getElementById(`quantityNumber-${productId}`).innerText = data.quantity
     }
   }
@@ -142,7 +143,8 @@
     })
     let data = await res.json()
     if(data.success){
-      let quantityNumber = document.getElementById(`quantityNumber-${productId}`).innerText = data.quantity
+      location.reload()
+      document.getElementById(`quantityNumber-${productId}`).innerText = data.quantity
     }
   }
 

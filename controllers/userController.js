@@ -155,7 +155,6 @@ const cartProducts = async (req, res)=>{
 
 
 //Update Quantity in cart page (descrease--)
-
 const descreaseQty = async (req, res)=>{
     
     try{
@@ -165,19 +164,26 @@ const descreaseQty = async (req, res)=>{
         let cartItem = user.cart.find(item=>{
             return item.product._id.toString() === productId
         })
-        if(cartItem){
+
+        if(!cartItem){
+                return res.status(403).json({
+                success: false,
+                message: "Product not found"
+            })
+        }
+
+        if(cartItem.quantity > 1){
+
             cartItem.quantity -= 1;
             await user.save();
-        
-            return res.json({
-                success: true,
-                quantity: cartItem.quantity
-            })
-        }   
-        return res.status(504).json({
+    
+        }
+
+        return res.json({
             success: true,
-            message: 'Product not found'
-        })
+            quantity: cartItem.quantity
+        })  
+
     }
     catch(error){
         console.log(error, error.message)
@@ -186,12 +192,10 @@ const descreaseQty = async (req, res)=>{
             message: 'Some wrong...'
         })
     }
-
 }
 
 
 //Update Quantity in cart page (increase++)
-
 const increaseQty = async (req, res)=>{
 
     try{
