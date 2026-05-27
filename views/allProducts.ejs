@@ -26,8 +26,10 @@
     <div class="w-64 bg-white border-r border-gray-100 p-6 hidden md:block flex-shrink-0">
       <!-- Premium Brand Logo -->
       <div class="mb-10">
-        <h1 class="text-2xl font-black tracking-tight text-black">KushNova</h1>
-        <p class="text-[10px] uppercase font-bold tracking-widest text-gray-400 mt-1">Store Dashboard</p>
+        <h1 class="text-2xl font-black tracking-tight text-black">Apna Mart</h1>
+        <p class="text-[10px] uppercase font-bold tracking-widest text-gray-400 mt-1">
+          <%= (user && user.role === 'admin') ? 'Admin Dashboard' : 'Supermart' %>
+        </p>
       </div>
 
       <div class="space-y-8">
@@ -94,10 +96,12 @@
           <div class="bg-gray-100 text-gray-700 px-4 py-2 rounded-xl text-xs font-bold border border-gray-200/40">
             <%= products.length %> Items Found
           </div>
-          <a href="/products/create" 
-             class="bg-black text-white rounded-xl px-4 py-2.5 text-xs font-bold hover:bg-gray-800 transition shadow-md shadow-black/5 flex items-center gap-1.5">
-            <i class="fa-solid fa-plus text-[10px]"></i> Create New
-          </a>
+          <% if(user && user.role === 'admin'){ %>
+            <a href="/products/create" 
+               class="bg-black text-white rounded-xl px-4 py-2.5 text-xs font-bold hover:bg-gray-800 transition shadow-md shadow-black/5 flex items-center gap-1.5">
+              <i class="fa-solid fa-plus text-[10px]"></i> Create New
+            </a>
+          <% } %>
         </div>
       </div>
 
@@ -108,32 +112,34 @@
             
             <!-- Premium Dynamic Card -->
             <div class="group bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-xl hover:shadow-gray-200/50 transition-all duration-300 relative flex flex-col">
-              
-              <!-- Three Dot Minimal Menu Buttons -->
-              <div class="absolute top-3 right-3 z-20">
-                <button onclick="toggleMenu(event, 'menu-<%= product._id %>')" 
-                        class="w-8 h-8 flex items-center justify-center bg-white/80 backdrop-blur shadow-sm rounded-full border border-gray-100 hover:bg-white text-gray-600 transition-all">
-                  <i class="fa-solid fa-ellipsis-vertical text-xs"></i>
-                </button>
-                
-                <!-- Improved Dropdown Context Menu -->
-                <div id="menu-<%= product._id %>" 
-                     class="dropdown-menu absolute right-0 mt-1.5 w-36 bg-white border border-gray-100 rounded-xl shadow-xl overflow-hidden ring-1 ring-black/5 z-30">
-                    
-                    <!-- Edit Action -->
-                    <a href="/products/edit/<%= product._id %>" 
-                       class="w-full text-left px-4 py-2.5 text-xs text-gray-700 hover:bg-gray-50 font-medium flex items-center gap-2 border-b border-gray-50">
-                        <i class="fa-regular fa-pen-to-square text-gray-400"></i> Edit Item
-                    </a>
+              <% if(user && user.role === 'admin' ){ %>
 
-                    <!-- Delete Action -->
-                    <form action="/products/delete/<%= product._id %>" method="post" onsubmit="return confirm('Pakka delete karna hai?')">
-                        <button type="submit" class="w-full text-left px-4 py-2.5 text-xs text-red-500 hover:bg-red-50 font-semibold flex items-center gap-2">
-                            <i class="fa-regular fa-trash-can opacity-80"></i> Delete Item
-                        </button>
-                    </form>
+                <!-- Three Dot Minimal Menu Buttons -->
+                <div class="absolute top-3 right-3 z-20">
+                  <button onclick="toggleMenu(event, 'menu-<%= product._id %>')" 
+                          class="w-8 h-8 flex items-center justify-center bg-white/80 backdrop-blur shadow-sm rounded-full border border-gray-100 hover:bg-white text-gray-600 transition-all">
+                    <i class="fa-solid fa-ellipsis-vertical text-xs"></i>
+                  </button>
+                  
+                  <!-- Improved Dropdown Context Menu -->
+                  <div id="menu-<%= product._id %>" 
+                       class="dropdown-menu absolute right-0 mt-1.5 w-36 bg-white border border-gray-100 rounded-xl shadow-xl overflow-hidden ring-1 ring-black/5 z-30">
+                      
+                      <!-- Edit Action -->
+                      <a href="/products/edit/<%= product._id %>" 
+                         class="w-full text-left px-4 py-2.5 text-xs text-gray-700 hover:bg-gray-50 font-medium flex items-center gap-2 border-b border-gray-50">
+                          <i class="fa-regular fa-pen-to-square text-gray-400"></i> Edit Item
+                      </a>
+  
+                      <!-- Delete Action -->
+                      <form action="/products/delete/<%= product._id %>" method="post" onsubmit="return confirm('Pakka delete karna hai?')">
+                          <button type="submit" class="w-full text-left px-4 py-2.5 text-xs text-red-500 hover:bg-red-50 font-semibold flex items-center gap-2">
+                              <i class="fa-regular fa-trash-can opacity-80"></i> Delete Item
+                          </button>
+                      </form>
+                  </div>
                 </div>
-              </div>
+              <% } %>
     
               <!-- Image Container Section -->
               <div class="h-60 bg-[#fafafa] flex items-center justify-center relative overflow-hidden p-4 border-b border-gray-50">

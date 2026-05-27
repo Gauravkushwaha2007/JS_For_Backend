@@ -9,7 +9,6 @@ const flash = require('connect-flash');
 const db = require('./config/dbConnection')
 const userRouter = require('./routes/userRouter')
 const productRouter = require('./routes/productRouter')
-const ownerRouter = require('./routes/ownerRouter')
 const router = require('./routes/index');
 const attachUser = require('./middlewares/attachUser')
 
@@ -33,7 +32,6 @@ app.set('view engine', 'ejs')
 app.use('/', router)
 app.use('/users', userRouter);
 app.use('/products', productRouter);
-app.use('/owner', ownerRouter);
 
 
 app.listen(3000,()=>{

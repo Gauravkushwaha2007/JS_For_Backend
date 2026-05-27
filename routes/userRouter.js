@@ -1,5 +1,6 @@
 const express = require('express');
-const isLoggedIn = require('../middlewares/authMiddleware')
+const isLoggedIn = require('../middlewares/authMiddleware');
+const isAdmin = require('../middlewares/isAdmin');
 const {
     registerUser, loginUser, addToCart, cartProducts, removeToCart, increaseQty, descreaseQty
 } = require('../controllers/userController');
@@ -7,7 +8,6 @@ const {
 const userRouter = express.Router();
 
 userRouter.get('/', (req, res)=>{
-    // res.flash("erorr", "Yo are gaurav")
     res.send('User page');
 });
 
@@ -29,5 +29,6 @@ userRouter.get('/cart/products', isLoggedIn, cartProducts)
 
 userRouter.post('/cart/update/increaseQty/:productId',isLoggedIn, increaseQty);
 userRouter.post('/cart/update/descreaseQty/:productId', isLoggedIn, descreaseQty);
+
 
 module.exports = userRouter;
