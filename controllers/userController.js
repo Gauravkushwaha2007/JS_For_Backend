@@ -216,6 +216,12 @@ const increaseQty = async (req, res)=>{
     }
 };
 
+const logoutUser = async (req, res) => {
+    res.clearCookie('token');
+    req.flash('Success', "Logged out Successfully ")
+    res.redirect('/users/login')
+}
+
 module.exports = {
-    registerUser, loginUser, addToCart, cartProducts, removeToCart, increaseQty, descreaseQty
+    registerUser, loginUser, addToCart, cartProducts, removeToCart, increaseQty, descreaseQty, logoutUser
 };

@@ -4,11 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>All Products | KushNova</title>
-  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Google Fonts for Luxury Look -->
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-  <!-- FontAwesome for Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
   <style>
@@ -20,67 +17,69 @@
 
 <body class="bg-[#f8f9fa] text-gray-900 antialiased">
 
-  <div class="flex min-h-screen">
+  <div class="flex min-h-screen flex-col md:flex-row">
 
-    <!-- SIDEBAR: Left Navigation -->
-    <div class="w-64 bg-white border-r border-gray-100 p-6 hidden md:block flex-shrink-0">
-      <!-- Premium Brand Logo -->
-      <div class="mb-10">
-        <h1 class="text-2xl font-black tracking-tight text-black">Apna Mart</h1>
-        <p class="text-[10px] uppercase font-bold tracking-widest text-gray-400 mt-1">
-          <%= (user && user.role === 'admin') ? 'Admin Dashboard' : 'Supermart' %>
-        </p>
+    <div class="w-full md:w-64 bg-white border-b md:border-b-0 md:border-r border-gray-100 p-6 flex-shrink-0">
+      <div class="mb-8 flex justify-between items-center md:block">
+        <div>
+          <h1 class="text-2xl font-black tracking-tight text-black">Apna Mart</h1>
+          <p class="text-[10px] uppercase font-bold tracking-widest text-emerald-600 mt-1">
+            <%= (user && user.role === 'admin') ? 'Admin Dashboard' : 'Customer Panel' %>
+          </p>
+        </div>
+        <div class="md:hidden flex items-center gap-2">
+          <i class="fa-solid fa-circle-user text-xl text-gray-700"></i>
+        </div>
       </div>
 
-      <div class="space-y-8">
-        <!-- Sort Section -->
+      <div class="space-y-6">
         <div>
-          <p class="font-bold text-[11px] uppercase text-gray-400 mb-3 tracking-wider">Sort by</p>
-          <div class="relative">
-            <select class="w-full pl-3 pr-8 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-medium focus:ring-2 focus:ring-black/5 outline-none appearance-none cursor-pointer transition-all">
-              <option>Popular</option>
-              <option>Newest</option>
-              <option>Price Low to High</option>
-              <option>Price High to Low</option>
-            </select>
-            <i class="fa-solid fa-chevron-down absolute right-3.5 top-3.5 text-[10px] text-gray-400 pointer-events-none"></i>
-          </div>
-        </div>
-
-        <!-- Categories Section -->
-        <div>
-          <p class="font-bold text-[11px] uppercase text-gray-400 mb-3 tracking-wider">Categories</p>
+          <p class="font-bold text-[11px] uppercase text-gray-400 mb-2.5 tracking-wider">Navigation</p>
           <div class="space-y-1 text-xs font-medium text-gray-500">
-            <p class="hover:text-black py-2 px-3 rounded-lg hover:bg-gray-50 cursor-pointer transition-all">New Collection</p>
-            <a href="/users/cart/products" class="flex items-center justify-between py-2 px-3 rounded-lg hover:bg-gray-50 hover:text-black transition-all">
-              <span>Your Cart Products</span>
-              <i class="fa-solid fa-basket-shopping text-[10px] opacity-60"></i>
+            <a href="/products/allProducts" class="bg-black text-white py-2.5 px-3 rounded-xl font-semibold flex items-center gap-2 shadow-sm shadow-black/10">
+              <i class="fa-solid fa-store text-[11px]"></i> Shop Catalogue
             </a>
-            <p class="bg-black text-white py-2 px-3 rounded-lg font-semibold cursor-pointer shadow-sm shadow-black/10">All Products</p>
-            <p class="hover:text-black py-2 px-3 rounded-lg hover:bg-gray-50 cursor-pointer transition-all">Discounted Products</p>
+            
+            <a href="/users/cart/products" class="flex items-center justify-between py-2.5 px-3 rounded-xl hover:bg-gray-50 hover:text-black transition-all">
+              <div class="flex items-center gap-2">
+                <i class="fa-solid fa-basket-shopping text-[11px] opacity-70"></i>
+                <span>Your Cart</span>
+              </div>
+            </a>
           </div>
         </div>
 
-        <!-- Filters Section -->
         <div>
-          <p class="font-bold text-[11px] uppercase text-gray-400 mb-3 tracking-wider">Filter by</p>
-          <div class="space-y-1 text-xs font-medium text-gray-500">
-            <p class="hover:text-black py-2 px-3 rounded-lg hover:bg-gray-50 cursor-pointer transition-all flex items-center gap-2">
-              <i class="fa-regular fa-circle text-[9px]"></i> Availability
-            </p>
-            <p class="hover:text-black py-2 px-3 rounded-lg hover:bg-gray-50 cursor-pointer transition-all flex items-center gap-2">
-              <i class="fa-regular fa-circle text-[9px]"></i> Discount
-            </p>
+          <p class="font-bold text-[11px] uppercase text-gray-400 mb-2.5 tracking-wider">My Account</p>
+          <div class="bg-gray-50/60 border border-gray-100 rounded-2xl p-3.5">
+            <% if (user) { %>
+              <div class="flex items-center gap-3 mb-3">
+                <div class="w-8 h-8 rounded-full bg-black text-white font-bold flex items-center justify-center text-xs uppercase">
+                  <%= user.name.charAt(0) %>
+                </div>
+                <div class="min-w-0">
+                  <p class="text-xs font-bold text-gray-800 truncate"><%= user.name %></p>
+                  <p class="text-[10px] text-gray-400 font-medium truncate"><%= user.email %></p>
+                </div>
+              </div>
+              <a href="/users/logout" class="w-full text-center block bg-red-50 hover:bg-red-100 text-red-600 transition py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5">
+                <i class="fa-solid fa-right-from-bracket text-[10px]"></i> Log Out
+              </a>
+            <% } else { %>
+              <p class="text-[11px] text-gray-400 mb-3 font-medium">You are browsing as Guest.</p>
+              <a href="/users/login" class="w-full text-center block bg-black text-white py-2 rounded-xl text-xs font-bold">
+                Log In / Register
+              </a>
+            <% } %>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- MAIN CONTENT: Product View Grid -->
+
     <div class="flex-1 p-6 md:p-10 lg:px-12">
       
-      <!-- Top Action Bar -->
-      <div class="mb-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-gray-100 pb-6">
+      <div class="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-gray-100 pb-6">
         <div>
           <div class="flex items-center gap-3 mb-2">
             <a href="/" class="text-xs font-medium text-gray-400 hover:text-black transition-colors">
@@ -92,47 +91,42 @@
           <h2 class="text-3xl font-extrabold tracking-tight text-gray-900">All Products</h2>
         </div>
         
-        <div class="flex items-center gap-3">
-          <div class="bg-gray-100 text-gray-700 px-4 py-2 rounded-xl text-xs font-bold border border-gray-200/40">
-            <%= products.length %> Items Found
+        <div class="flex items-center gap-3 self-start sm:self-auto">
+          <div class="bg-emerald-50 text-emerald-700 px-4 py-2 rounded-xl text-xs font-bold border border-emerald-100/60">
+            <%= products.length %> Items Available
           </div>
+          
           <% if(user && user.role === 'admin'){ %>
             <a href="/products/create" 
                class="bg-black text-white rounded-xl px-4 py-2.5 text-xs font-bold hover:bg-gray-800 transition shadow-md shadow-black/5 flex items-center gap-1.5">
-              <i class="fa-solid fa-plus text-[10px]"></i> Create New
+              <i class="fa-solid fa-plus text-[10px]"></i> Create New Product
             </a>
           <% } %>
         </div>
       </div>
 
-      <!-- Product Grid -->
       <% if(products.length > 0 ){ %>
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           <% products.forEach((product) => { %>
             
-            <!-- Premium Dynamic Card -->
-            <div class="group bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-xl hover:shadow-gray-200/50 transition-all duration-300 relative flex flex-col">
+            <div class="group bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-xl hover:shadow-gray-200/40 transition-all duration-300 relative flex flex-col">
+              
               <% if(user && user.role === 'admin' ){ %>
-
-                <!-- Three Dot Minimal Menu Buttons -->
                 <div class="absolute top-3 right-3 z-20">
                   <button onclick="toggleMenu(event, 'menu-<%= product._id %>')" 
-                          class="w-8 h-8 flex items-center justify-center bg-white/80 backdrop-blur shadow-sm rounded-full border border-gray-100 hover:bg-white text-gray-600 transition-all">
+                          class="w-8 h-8 flex items-center justify-center bg-white/90 backdrop-blur shadow-sm rounded-full border border-gray-100 hover:bg-white text-gray-600 transition-all">
                     <i class="fa-solid fa-ellipsis-vertical text-xs"></i>
                   </button>
                   
-                  <!-- Improved Dropdown Context Menu -->
                   <div id="menu-<%= product._id %>" 
                        class="dropdown-menu absolute right-0 mt-1.5 w-36 bg-white border border-gray-100 rounded-xl shadow-xl overflow-hidden ring-1 ring-black/5 z-30">
                       
-                      <!-- Edit Action -->
                       <a href="/products/edit/<%= product._id %>" 
                          class="w-full text-left px-4 py-2.5 text-xs text-gray-700 hover:bg-gray-50 font-medium flex items-center gap-2 border-b border-gray-50">
                           <i class="fa-regular fa-pen-to-square text-gray-400"></i> Edit Item
                       </a>
   
-                      <!-- Delete Action -->
-                      <form action="/products/delete/<%= product._id %>" method="post" onsubmit="return confirm('Pakka delete karna hai?')">
+                      <form action="/products/delete/<%= product._id %>" method="post" onsubmit="return confirm('Kya aap sach me is product ko delete karna chahte hain?')">
                           <button type="submit" class="w-full text-left px-4 py-2.5 text-xs text-red-500 hover:bg-red-50 font-semibold flex items-center gap-2">
                               <i class="fa-regular fa-trash-can opacity-80"></i> Delete Item
                           </button>
@@ -141,8 +135,7 @@
                 </div>
               <% } %>
     
-              <!-- Image Container Section -->
-              <div class="h-60 bg-[#fafafa] flex items-center justify-center relative overflow-hidden p-4 border-b border-gray-50">
+              <div class="h-52 bg-[#fafafa] flex items-center justify-center relative overflow-hidden p-4 border-b border-gray-50">
                 <img src="/uploads/<%= product.image %>" 
                      alt="<%= product.name %>" 
                      class="max-w-full max-h-full object-contain group-hover:scale-105 transition-transform duration-500">
@@ -154,24 +147,22 @@
                 <% } %>
               </div>
     
-              <!-- Dynamic Product Info Block -->
-              <div class="p-5 flex-1 flex flex-col justify-between" style="background-color: <%= product.panelColor || '#ffffff' %>;">
+              <div class="p-4 flex-1 flex flex-col justify-between" style="background-color: <%= product.panelColor || '#ffffff' %>;">
                 <div class="flex justify-between items-end w-full gap-2">
                     <div class="flex-1 min-w-0">
-                        <h3 class="font-bold text-base leading-snug mb-1 truncate" style="color: <%= product.textColor || '#111827' %>;">
+                        <h3 class="font-bold text-sm leading-snug mb-0.5 truncate" style="color: <%= product.textColor || '#111827' %>;">
                           <%= product.name %>
                         </h3>
-                        <p class="text-lg font-black tracking-tight opacity-95" style="color: <%= product.textColor || '#111827' %>;">
+                        <p class="text-base font-black tracking-tight opacity-95" style="color: <%= product.textColor || '#111827' %>;">
                           ₹<%= product.price %>
                         </p>
                     </div>
 
-                    <!-- Sleek Circle Add-to-Cart Button -->
                     <button onclick="addToCart('<%= product._id%>')" 
-                            class="w-10 h-10 rounded-full flex items-center justify-center transition-all shadow-md hover:scale-105 active:scale-95 flex-shrink-0" 
+                            class="w-9 h-9 rounded-full flex items-center justify-center transition-all shadow-md hover:scale-105 active:scale-95 flex-shrink-0" 
                             style="background-color: white; color: <%= product.panelColor || '#000000' %>;"
                             title="Add to cart">
-                      <i class="fa-solid fa-plus text-sm"></i>
+                      <i class="fa-solid fa-plus text-xs"></i>
                     </button>
                 </div>
               </div>
@@ -181,30 +172,32 @@
       </div>
 
       <% } else { %>
-        <!-- Empty Store State -->
         <div class="max-w-md mx-auto text-center py-16 bg-white rounded-3xl border border-gray-100 shadow-sm my-10 px-6">
             <div class="w-14 h-14 bg-gray-50 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-gray-100 text-gray-300">
               <i class="fa-solid fa-box-open text-xl"></i>
             </div>
             <h3 class="text-lg font-bold text-gray-800">No products found in store</h3>
-            <p class="text-xs text-gray-400 mt-1 max-w-xs mx-auto">Try spinning up new products directly from the creation console panel.</p>
-            <a href="/products/create" class="inline-flex items-center justify-center bg-black text-white font-semibold text-xs px-5 py-2.5 rounded-xl mt-5 hover:bg-gray-800 transition shadow-sm">
-              Create First Product
-            </a>
+            <p class="text-xs text-gray-400 mt-1 max-w-xs mx-auto">Store empty hai. Naye products add karna shuru karein.</p>
+            <% if(user && user.role === 'admin') { %>
+              <a href="/products/create" class="inline-flex items-center justify-center bg-black text-white font-semibold text-xs px-5 py-2.5 rounded-xl mt-5 hover:bg-gray-800 transition shadow-sm">
+                Create First Product
+              </a>
+            <% } %>
         </div>
       <% } %>
     </div>
 
   </div>
 
-  <!-- Script Logic Preserved Exactly As Original -->
   <script>
     async function addToCart (productId){
       let res = await fetch(`/users/cart/add-to-cart/${productId}`,{
           method: "POST"
       });
       let data = await res.json();
+      alert(data.message); // यूजर को फीडबैक देने के लिए अलर्ट लगाया
       if(data.success){
+        // अगर जरूरत हो तो रीलोड करें, वरना बिना रीलोड के भी चल सकता है
         location.reload()
       }
     }
@@ -213,12 +206,9 @@
   <script>
     function toggleMenu(event, menuId) {
         event.stopPropagation(); 
-        
         const menu = document.getElementById(menuId);
         const isOpen = menu.classList.contains('show');
-        
         closeAllMenus();
-        
         if (!isOpen) {
             menu.classList.add('show');
         }

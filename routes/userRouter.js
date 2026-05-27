@@ -2,7 +2,7 @@ const express = require('express');
 const isLoggedIn = require('../middlewares/authMiddleware');
 const isAdmin = require('../middlewares/isAdmin');
 const {
-    registerUser, loginUser, addToCart, cartProducts, removeToCart, increaseQty, descreaseQty
+    registerUser, loginUser, addToCart, cartProducts, removeToCart, increaseQty, descreaseQty, logoutUser
 } = require('../controllers/userController');
 
 const userRouter = express.Router();
@@ -21,6 +21,8 @@ userRouter.get('/login', (req, res)=>{
     res.render('login');
 });
 userRouter.post('/login', loginUser);
+
+userRouter.get('/logout', logoutUser);
 
 
 userRouter.post('/cart/add-to-cart/:productId', isLoggedIn, addToCart);
