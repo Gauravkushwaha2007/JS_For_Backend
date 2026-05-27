@@ -141,15 +141,21 @@ const removeToCart = async (req, res)=>{
 const cartProducts = async (req, res)=>{
     try{
         let user = await userModel.findOne({email: req.user.email}).populate('cart.product');
+
         if(!user){
             return res.redirect('/users/login');
         }
+
+        user.cart = user.cart.filter(item => item.product !== null);
+        await user.save();
+
         let products = user.cart;
         res.render('cartProducts', {products: products});
 
     }
-    catch(error){
-        console.error(error.message);
+    catch (error) {
+        console.error("Cart Controller Error:", error.message);
+        res.status(500).send("Server Error");
     }
 }
 
@@ -230,6 +236,7 @@ const increaseQty = async (req, res)=>{
     }
 
 }
+
 
 module.exports = {
     registerUser, loginUser, addToCart, cartProducts, removeToCart, increaseQty, descreaseQty

@@ -21,7 +21,7 @@ const userSchema = mongoose.Schema({
         default: []
     },
     picture: String,
-    contact: Number
+    contact: Number,
 
 })
 

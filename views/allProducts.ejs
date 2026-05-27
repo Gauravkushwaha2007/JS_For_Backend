@@ -3,70 +3,101 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>All Products | Scatch</title>
+  <title>All Products | KushNova</title>
+  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts for Luxury Look -->
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- FontAwesome for Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
   <style>
-    /* Custom utility for dropdown animation */
-    .dropdown-menu {
-      display: none;
-    }
-    .dropdown-menu.show {
-      display: block;
-    }
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .dropdown-menu { display: none; }
+    .dropdown-menu.show { display: block; }
   </style>
 </head>
 
-<body class="bg-gray-50 font-sans">
+<body class="bg-[#f8f9fa] text-gray-900 antialiased">
 
   <div class="flex min-h-screen">
 
-    <!-- Sidebar -->
-    <div class="w-64 bg-white border-r p-6 hidden md:block">
-      <h1 class="text-3xl font-bold mb-10 tracking-tight text-blue-600">Scatch</h1>
+    <!-- SIDEBAR: Left Navigation -->
+    <div class="w-64 bg-white border-r border-gray-100 p-6 hidden md:block flex-shrink-0">
+      <!-- Premium Brand Logo -->
+      <div class="mb-10">
+        <h1 class="text-2xl font-black tracking-tight text-black">KushNova</h1>
+        <p class="text-[10px] uppercase font-bold tracking-widest text-gray-400 mt-1">Store Dashboard</p>
+      </div>
 
-      <div class="space-y-6">
+      <div class="space-y-8">
+        <!-- Sort Section -->
         <div>
-          <p class="font-bold text-xs uppercase text-gray-400 mb-3 tracking-widest">Sort by</p>
-          <select class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none">
-            <option>Popular</option>
-            <option>Newest</option>
-            <option>Price Low to High</option>
-            <option>Price High to Low</option>
-          </select>
-        </div>
-
-        <div>
-          <p class="font-bold text-xs uppercase text-gray-400 mb-3 tracking-widest">Categories</p>
-          <div class="space-y-2 text-sm text-gray-600">
-            <p class="hover:text-blue-600 cursor-pointer transition-colors">New Collection</p>
-            <a href="/users/cart/products">Your Products</a>
-            <p class="text-blue-600 font-medium cursor-pointer">All Products</p>
-            <p class="hover:text-blue-600 cursor-pointer transition-colors">Discounted Products</p>
+          <p class="font-bold text-[11px] uppercase text-gray-400 mb-3 tracking-wider">Sort by</p>
+          <div class="relative">
+            <select class="w-full pl-3 pr-8 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-medium focus:ring-2 focus:ring-black/5 outline-none appearance-none cursor-pointer transition-all">
+              <option>Popular</option>
+              <option>Newest</option>
+              <option>Price Low to High</option>
+              <option>Price High to Low</option>
+            </select>
+            <i class="fa-solid fa-chevron-down absolute right-3.5 top-3.5 text-[10px] text-gray-400 pointer-events-none"></i>
           </div>
         </div>
 
+        <!-- Categories Section -->
         <div>
-          <p class="font-bold text-xs uppercase text-gray-400 mb-3 tracking-widest">Filter by</p>
-          <div class="space-y-2 text-sm text-gray-600">
-            <p class="hover:text-blue-600 cursor-pointer transition-colors">Availability</p>
-            <p class="hover:text-blue-600 cursor-pointer transition-colors">Discount</p>
+          <p class="font-bold text-[11px] uppercase text-gray-400 mb-3 tracking-wider">Categories</p>
+          <div class="space-y-1 text-xs font-medium text-gray-500">
+            <p class="hover:text-black py-2 px-3 rounded-lg hover:bg-gray-50 cursor-pointer transition-all">New Collection</p>
+            <a href="/users/cart/products" class="flex items-center justify-between py-2 px-3 rounded-lg hover:bg-gray-50 hover:text-black transition-all">
+              <span>Your Cart Products</span>
+              <i class="fa-solid fa-basket-shopping text-[10px] opacity-60"></i>
+            </a>
+            <p class="bg-black text-white py-2 px-3 rounded-lg font-semibold cursor-pointer shadow-sm shadow-black/10">All Products</p>
+            <p class="hover:text-black py-2 px-3 rounded-lg hover:bg-gray-50 cursor-pointer transition-all">Discounted Products</p>
+          </div>
+        </div>
+
+        <!-- Filters Section -->
+        <div>
+          <p class="font-bold text-[11px] uppercase text-gray-400 mb-3 tracking-wider">Filter by</p>
+          <div class="space-y-1 text-xs font-medium text-gray-500">
+            <p class="hover:text-black py-2 px-3 rounded-lg hover:bg-gray-50 cursor-pointer transition-all flex items-center gap-2">
+              <i class="fa-regular fa-circle text-[9px]"></i> Availability
+            </p>
+            <p class="hover:text-black py-2 px-3 rounded-lg hover:bg-gray-50 cursor-pointer transition-all flex items-center gap-2">
+              <i class="fa-regular fa-circle text-[9px]"></i> Discount
+            </p>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Main Content -->
-    <div class="flex-1 p-6 md:p-10">
+    <!-- MAIN CONTENT: Product View Grid -->
+    <div class="flex-1 p-6 md:p-10 lg:px-12">
       
-      <!-- Top bar -->
-      <div class="mb-10 flex justify-between items-center">
+      <!-- Top Action Bar -->
+      <div class="mb-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-gray-100 pb-6">
         <div>
-          <a href="/" class="text-sm text-blue-500 hover:underline mb-2 inline-block">← Back to Home</a>
-          <a href="/products/create" class=" bg-blue-500 rounded-md px-2 py-1 text-sm ml-10 text-white hover:bg-blue-600 inline-block">Create new ← </a>
-          <h2 class="text-3xl font-bold text-gray-800">All Products</h2>
+          <div class="flex items-center gap-3 mb-2">
+            <a href="/" class="text-xs font-medium text-gray-400 hover:text-black transition-colors">
+              <i class="fa-solid fa-house mr-1"></i> Home
+            </a>
+            <span class="text-gray-300 text-xs">/</span>
+            <span class="text-xs font-semibold text-gray-800">Catalogue</span>
+          </div>
+          <h2 class="text-3xl font-extrabold tracking-tight text-gray-900">All Products</h2>
         </div>
-        <div class="bg-blue-100 text-blue-600 px-4 py-2 rounded-full text-sm font-semibold">
+        
+        <div class="flex items-center gap-3">
+          <div class="bg-gray-100 text-gray-700 px-4 py-2 rounded-xl text-xs font-bold border border-gray-200/40">
             <%= products.length %> Items Found
+          </div>
+          <a href="/products/create" 
+             class="bg-black text-white rounded-xl px-4 py-2.5 text-xs font-bold hover:bg-gray-800 transition shadow-md shadow-black/5 flex items-center gap-1.5">
+            <i class="fa-solid fa-plus text-[10px]"></i> Create New
+          </a>
         </div>
       </div>
 
@@ -75,60 +106,67 @@
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
           <% products.forEach((product) => { %>
             
-            <!-- Modern Product Card -->
-            <div class="group bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-300 relative">
+            <!-- Premium Dynamic Card -->
+            <div class="group bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-xl hover:shadow-gray-200/50 transition-all duration-300 relative flex flex-col">
               
-              <!-- Three Dot Menu -->
+              <!-- Three Dot Minimal Menu Buttons -->
               <div class="absolute top-3 right-3 z-20">
-                <button onclick="toggleMenu(event, 'menu-<%= product._id %>')" class="p-2 bg-white/90 backdrop-blur shadow-sm rounded-full hover:bg-gray-100 transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
-                        <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/>
-                    </svg>
+                <button onclick="toggleMenu(event, 'menu-<%= product._id %>')" 
+                        class="w-8 h-8 flex items-center justify-center bg-white/80 backdrop-blur shadow-sm rounded-full border border-gray-100 hover:bg-white text-gray-600 transition-all">
+                  <i class="fa-solid fa-ellipsis-vertical text-xs"></i>
                 </button>
                 
-                <!-- Dropdown -->
-                <div id="menu-<%= product._id %>" class="dropdown-menu absolute right-0 mt-2 w-36 bg-white border border-gray-100 rounded-xl shadow-xl overflow-hidden ring-1 ring-black ring-opacity-5">
+                <!-- Improved Dropdown Context Menu -->
+                <div id="menu-<%= product._id %>" 
+                     class="dropdown-menu absolute right-0 mt-1.5 w-36 bg-white border border-gray-100 rounded-xl shadow-xl overflow-hidden ring-1 ring-black/5 z-30">
+                    
+                    <!-- Edit Action -->
+                    <a href="/products/edit/<%= product._id %>" 
+                       class="w-full text-left px-4 py-2.5 text-xs text-gray-700 hover:bg-gray-50 font-medium flex items-center gap-2 border-b border-gray-50">
+                        <i class="fa-regular fa-pen-to-square text-gray-400"></i> Edit Item
+                    </a>
+
+                    <!-- Delete Action -->
                     <form action="/products/delete/<%= product._id %>" method="post" onsubmit="return confirm('Pakka delete karna hai?')">
-                        <button type="submit" class="w-full text-left px-4 py-3 text-sm text-red-500 hover:bg-red-50 font-medium flex items-center gap-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
-                                <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
-                                <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
-                            </svg>
-                            Delete
+                        <button type="submit" class="w-full text-left px-4 py-2.5 text-xs text-red-500 hover:bg-red-50 font-semibold flex items-center gap-2">
+                            <i class="fa-regular fa-trash-can opacity-80"></i> Delete Item
                         </button>
                     </form>
-                    <a href="/products/edit/<%= product._id %>" 
-                      class="w-full text-left px-4 py-3 text-sm text-red-500 hover:bg-yellow-50 font-medium flex items-center gap-2">
-
-                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
-                            <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
-                            <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
-                        </svg>
-                        Edit
-                    </a>
                 </div>
               </div>
     
-              <!-- Image Section -->
-              <div class="h-56 bg-gray-50 flex items-center justify-center relative overflow-hidden">
-                <img src="/uploads/<%= product.image %>" alt="<%= product.name %>" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+              <!-- Image Container Section -->
+              <div class="h-60 bg-[#fafafa] flex items-center justify-center relative overflow-hidden p-4 border-b border-gray-50">
+                <img src="/uploads/<%= product.image %>" 
+                     alt="<%= product.name %>" 
+                     class="max-w-full max-h-full object-contain group-hover:scale-105 transition-transform duration-500">
+                
                 <% if(product.discount > 0) { %>
-                    <span class="absolute bottom-3 left-3 bg-green-500 text-white text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider">Sale</span>
+                  <span class="absolute bottom-3 left-3 bg-red-500 text-white text-[9px] font-black px-2 py-1 rounded-lg uppercase tracking-wider shadow-sm">
+                    Sale
+                  </span>
                 <% } %>
               </div>
     
-              <!-- Product Info -->
-              <div class="p-5" style="background-color: <%= product.panelColor %>;">
-                <div class="flex justify-between items-start">
-                    <div class="flex-1">
-                        <h3 class="font-bold text-lg leading-tight mb-1" style="color: <%= product.textColor %>;"><%= product.name %></h3>
-                        <p class="text-xl font-black opacity-90" style="color: <%= product.textColor %>;">₹<%= product.price %></p>
+              <!-- Dynamic Product Info Block -->
+              <div class="p-5 flex-1 flex flex-col justify-between" style="background-color: <%= product.panelColor || '#ffffff' %>;">
+                <div class="flex justify-between items-end w-full gap-2">
+                    <div class="flex-1 min-w-0">
+                        <h3 class="font-bold text-base leading-snug mb-1 truncate" style="color: <%= product.textColor || '#111827' %>;">
+                          <%= product.name %>
+                        </h3>
+                        <p class="text-lg font-black tracking-tight opacity-95" style="color: <%= product.textColor || '#111827' %>;">
+                          ₹<%= product.price %>
+                        </p>
                     </div>
-                      <button onclick="addToCart('<%= product._id%>')" class="ml-4 w-12 h-12 rounded-full flex items-center justify-center transition-all shadow-lg hover:scale-110 active:scale-95" style="background-color: white; color: <%= product.panelColor %>;">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
-                          <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
-                        </svg>
-                      </button>
+
+                    <!-- Sleek Circle Add-to-Cart Button -->
+                    <button onclick="addToCart('<%= product._id%>')" 
+                            class="w-10 h-10 rounded-full flex items-center justify-center transition-all shadow-md hover:scale-105 active:scale-95 flex-shrink-0" 
+                            style="background-color: white; color: <%= product.panelColor || '#000000' %>;"
+                            title="Add to cart">
+                      <i class="fa-solid fa-plus text-sm"></i>
+                    </button>
                 </div>
               </div>
             </div>
@@ -137,18 +175,24 @@
       </div>
 
       <% } else { %>
-        <div class="text-center py-20 bg-white rounded-3xl border-2 border-dashed border-gray-200">
-            <h3 class="text-xl text-gray-400 font-medium">No products found in the store.</h3>
-            <p class="text-gray-400 mt-2">Try adding some from the admin panel.</p>
+        <!-- Empty Store State -->
+        <div class="max-w-md mx-auto text-center py-16 bg-white rounded-3xl border border-gray-100 shadow-sm my-10 px-6">
+            <div class="w-14 h-14 bg-gray-50 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-gray-100 text-gray-300">
+              <i class="fa-solid fa-box-open text-xl"></i>
+            </div>
+            <h3 class="text-lg font-bold text-gray-800">No products found in store</h3>
+            <p class="text-xs text-gray-400 mt-1 max-w-xs mx-auto">Try spinning up new products directly from the creation console panel.</p>
+            <a href="/products/create" class="inline-flex items-center justify-center bg-black text-white font-semibold text-xs px-5 py-2.5 rounded-xl mt-5 hover:bg-gray-800 transition shadow-sm">
+              Create First Product
+            </a>
         </div>
       <% } %>
     </div>
 
   </div>
 
-
+  <!-- Script Logic Preserved Exactly As Original -->
   <script>
-    //addToCart
     async function addToCart (productId){
       let res = await fetch(`/users/cart/add-to-cart/${productId}`,{
           method: "POST"
@@ -160,19 +204,15 @@
     }
   </script>
 
-
   <script>
-    // Menu toggle logic
     function toggleMenu(event, menuId) {
-        event.stopPropagation(); // Card click event ko rokne ke liye
+        event.stopPropagation(); 
         
         const menu = document.getElementById(menuId);
         const isOpen = menu.classList.contains('show');
         
-        // Sabhi open menus band karein
         closeAllMenus();
         
-        // Agar pehle band tha, toh khol dein
         if (!isOpen) {
             menu.classList.add('show');
         }
@@ -182,7 +222,6 @@
         document.querySelectorAll('.dropdown-menu').forEach(m => m.classList.remove('show'));
     }
 
-    // Window par click karne se menu band ho jaye
     window.onclick = function() {
         closeAllMenus();
     }

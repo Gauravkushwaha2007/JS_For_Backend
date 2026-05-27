@@ -1,13 +1,11 @@
-const express = require('express')
 const productModel = require('../models/productModel');
 const upload = require('../config/multer');
 const path = require('path')
 const fs = require('fs')
-const { name } = require('ejs');
 
 const createProduct = async (req, res) => {
     try {
-        let { name, price, bgColor, textColor, panelColor, discount } = req.body;
+        let { name, price, bgColor, textColor, panelColor, discount, description} = req.body;
         let imagePath = req.file? req.file.filename: null;
 
         await productModel.create({
@@ -17,7 +15,8 @@ const createProduct = async (req, res) => {
             textColor,
             panelColor,
             discount,
-            image: imagePath
+            description,
+            image: imagePath,
         });
 
         res.redirect('/products/allProducts');
@@ -54,7 +53,7 @@ const getEditProduct = async (req, res)=>{
 
 const postEditProduct = async (req, res)=>{
     try{
-        let {name, price, discount, bgColor, panelColor, textColor} = req.body;
+        let {name, price, discount, bgColor, panelColor, textColor, description} = req.body;
         let product = await productModel.findById(req.params.id);
 
         let updatedData = {
@@ -63,7 +62,8 @@ const postEditProduct = async (req, res)=>{
             discount,
             bgColor,
             panelColor,
-            textColor
+            textColor,
+            description
         };
 
         if(req.file){

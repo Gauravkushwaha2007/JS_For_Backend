@@ -31,6 +31,9 @@ const productSchema = mongoose.Schema({
         type: Number,
         default: 0,
         min: [0, "Discount can't be less 0"]
+    },
+    description: {
+        type: String
     }
 
 }, {
