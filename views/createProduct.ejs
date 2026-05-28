@@ -3,85 +3,213 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Create Product</title>
+  <title><%= product ? "Edit Product" : "Create Product" %> | KushNova</title>
+  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- FontAwesome for Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+  </style>
 </head>
 
-<body class="bg-gray-100">
+<body class="bg-[#f8f9fa] text-gray-900 antialiased">
 
-  <div class="flex min-h-screen">
+  <div class="flex min-h-screen flex-col md:flex-row">
 
-    <!-- Sidebar -->
-    <div class="w-64 bg-white shadow-md p-6">
-      <h1 class="text-2xl font-bold mb-6">Scatch</h1>
+    <!-- ─── SIDEBAR / NAVIGATION (Matched with Catalog) ─── -->
+    <div class="w-full md:w-64 bg-white border-b md:border-b-0 md:border-r border-gray-100 p-6 flex-shrink-0">
+      <div class="mb-8">
+        <h1 class="text-2xl font-black tracking-tight text-black">Apna Mart</h1>
+        <p class="text-[10px] uppercase font-bold tracking-widest text-emerald-600 mt-1">Admin Dashboard</p>
+      </div>
 
-      <nav class="space-y-4 text-gray-700">
-        <a href="/products" class="block hover:text-blue-500">All Products</a>
-        <a href="/products/create" class="block text-blue-500 font-semibold">Create new product</a>
-      </nav>
+      <div class="space-y-6">
+        <div>
+          <p class="font-bold text-[11px] uppercase text-gray-400 mb-2.5 tracking-wider">Navigation</p>
+          <div class="space-y-1 text-xs font-medium text-gray-500">
+            <!-- Shop Catalogue Link -->
+            <a href="/products/allProducts" class="flex items-center gap-2 py-2.5 px-3 rounded-xl hover:bg-gray-50 hover:text-black transition-all">
+              <i class="fa-solid fa-store text-[11px] opacity-70"></i> Shop Catalogue
+            </a>
+            
+            <!-- Create Product (Active State) -->
+            <a href="/products/create" class="bg-black text-white py-2.5 px-3 rounded-xl font-semibold flex items-center gap-2 shadow-sm shadow-black/10">
+              <i class="fa-solid fa-plus text-[11px]"></i> 
+              <span><%= product ? "Modify Product" : "Create New Product" %></span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Back to Dashboard quick info -->
+        <div class="bg-gray-50 border border-gray-100 rounded-2xl p-4 text-center">
+          <i class="fa-solid fa-shield-halved text-gray-400 text-lg mb-2"></i>
+          <p class="text-xs font-bold text-gray-700">Admin Control Mode</p>
+          <p class="text-[10px] text-gray-400 mt-0.5">बदलाव सीधे लाइव स्टोर पर रिफ्लेक्ट होंगे।</p>
+        </div>
+      </div>
     </div>
 
-    <!-- Main Content -->
-    <div class="flex-1 p-10">
 
-      <div class="max-w-3xl bg-white p-8 rounded-xl shadow">
+    <!-- ─── MAIN CONTENT: FORM CONTAINER ─── -->
+    <div class="flex-1 p-6 md:p-10 lg:px-12">
+      
+      <!-- Top Breadcrumb Bar -->
+      <div class="mb-8 border-b border-gray-100 pb-6">
+        <div class="flex items-center gap-3 mb-2">
+          <a href="/products/allProducts" class="text-xs font-medium text-gray-400 hover:text-black transition-colors">Catalogue</a>
+          <span class="text-gray-300 text-xs">/</span>
+          <span class="text-xs font-semibold text-gray-800"><%= product ? "Edit Mode" : "Add Mode" %></span>
+        </div>
+        <h2 class="text-3xl font-extrabold tracking-tight text-gray-900">
+          <%= product ? "Edit Product Details" : "Create New Product" %>
+        </h2>
+      </div>
 
-        <h2 class="text-2xl font-semibold mb-6">Create New Product</h2>
-        <form action="<%= product? '/products/edit/'+ product._id : '/products/create'%>" method="post" class="space-y-6" enctype="multipart/form-data">
-          <!-- Product Details -->
+      <!-- Main Form Card -->
+      <div class="max-w-3xl bg-white border border-gray-100 rounded-3xl p-6 md:p-8 shadow-xl shadow-gray-100/40">
+        
+        <form action="<%= product ? '/products/edit/' + product._id : '/products/create' %>" 
+              method="post" 
+              enctype="multipart/form-data" 
+              class="space-y-8">
+          
+          <!-- SECTION 1: MEDIA UPLOAD -->
           <div>
-            <h3 class="font-semibold mb-3 text-gray-700">Product Details</h3>
-
-            <!-- Image -->
-            <% if(product && product.image){ %>
-              <img 
-                src="/uploads/<%= product.image %>" 
-                class="w-32 mb-4 rounded"
-              />
-            <% } %>         
-            <input type="file" name="image"
-              class="mb-4 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 
-              file:rounded file:border-0 file:text-sm file:font-semibold 
-              file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" />
-
-            <div class="grid grid-cols-2 gap-4">
-              <input type="text" name="name" placeholder="Product Name"
-                value="<%= product? product.name: '' %>"
-                class="p-3 border rounded w-full" required>
-
-              <input type="number" name="price" placeholder="Product Price"
-                value="<%= product? product.price: ''%>"
-                class="p-3 border rounded w-full" required>
+            <h3 class="text-xs font-bold uppercase tracking-wider text-gray-400 mb-4 flex items-center gap-2">
+              <i class="fa-regular fa-image text-sm"></i> Product Image
+            </h3>
+            
+            <div class="flex flex-col sm:flex-row items-start sm:items-center gap-5">
+              <% if(product && product.image){ %>
+                <div class="w-28 h-28 bg-gray-50 rounded-2xl border border-gray-100 p-2 flex items-center justify-center relative overflow-hidden shadow-inner flex-shrink-0">
+                  <img src="/uploads/<%= product.image %>" class="max-w-full max-h-full object-contain">
+                </div>
+              <% } %>
+              
+              <div class="w-full">
+                <label class="block">
+                  <span class="sr-only">Choose Product Image</span>
+                  <input type="file" name="image" <%= product ? '' : 'required' %>
+                         class="block w-full text-xs text-gray-500
+                                file:mr-4 file:py-2.5 file:px-4
+                                file:rounded-xl file:border-0
+                                file:text-xs file:font-bold
+                                file:bg-gray-100 file:text-gray-700
+                                hover:file:bg-black hover:file:text-white
+                                file:transition-all file:cursor-pointer" />
+                </label>
+                <p class="text-[10px] text-gray-400 mt-2">पारदर्शी (PNG) या साफ़ बैकग्राउंड वाली इमेज सबसे बेहतरीन दिखती है।</p>
+              </div>
             </div>
-
-            <input type="number" name="discount" placeholder="Discount Price"
-              value="<%= product? product.discount: '' %>"
-              class="p-3 border rounded w-full mt-4">
           </div>
 
-          <!-- Panel Details -->
-          <div>
-            <h3 class="font-semibold mb-3 text-gray-700">Panel Details</h3>
-
-            <div class="grid grid-cols-2 gap-4">
-              <input type="text" name="bgColor" placeholder="Background Color (e.g. #ffffff)"
-                class="p-3 border rounded w-full" value="<%= product? product.bgColor: '' %>">
-
-              <input type="text" name="panelColor" placeholder="Panel Color"
-                class="p-3 border rounded w-full" value="<%= product? product.panelColor: '' %>">
+          <!-- SECTION 2: BASIC INFO -->
+          <div class="space-y-4">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-gray-400 mb-2 flex items-center gap-2">
+              <i class="fa-solid fa-tags text-sm"></i> Product Identification & Pricing
+            </h3>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <!-- Product name -->
+              <div>
+                <label class="block text-xs font-semibold text-gray-600 mb-1.5">Product Title / Name</label>
+                <input type="text" name="name" placeholder="e.g. Fresh Amul Butter"
+                       value="<%= product ? product.name : '' %>"
+                       class="w-full text-xs font-medium p-3.5 border border-gray-200 rounded-xl focus:outline-none focus:border-black focus:ring-1 focus:ring-black bg-gray-50/30 transition-all" required>
+              </div>
+              <!-- Product Price -->
+              <div>
+                <label class="block text-xs font-semibold text-gray-600 mb-1.5">Base Price (₹)</label>
+                <input type="number" name="price" placeholder="0.00"
+                       value="<%= product ? product.price : '' %>"
+                       class="w-full text-xs font-medium p-3.5 border border-gray-200 rounded-xl focus:outline-none focus:border-black focus:ring-1 focus:ring-black bg-gray-50/30 transition-all" required>
+              </div>
             </div>
-
-            <input type="text" name="textColor" placeholder="Text Color"
-              class="p-3 border rounded w-full mt-4" value="<%= product? product.textColor: '' %>">
+            <!-- Product Discount -->
+            <div>
+              <label class="block text-xs font-semibold text-gray-600 mb-1.5">Discount On Item (₹) <span class="text-gray-400 font-normal">(Optional)</span></label>
+              <input type="number" name="discount" placeholder="0"
+                     value="<%= product ? product.discount : '' %>"
+                     class="w-full text-xs font-medium p-3.5 border border-gray-200 rounded-xl focus:outline-none focus:border-black focus:ring-1 focus:ring-black bg-gray-50/30 transition-all">
+            </div>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+            <!-- Product Stock -->
+            <div>
+              <label class="block text-xs font-semibold text-gray-600 mb-1.5">Available Stock</label>
+              <input type="number" name="stock" placeholder="e.g. 50"
+                    value="<%= product ? product.stock : '10' %>"
+                    class="w-full text-xs font-medium p-3.5 border border-gray-200 rounded-xl focus:outline-none focus:border-black bg-gray-50/30 transition-all" required>
+            </div>
+            <!-- Product Quantity -->
+            <div>
+              <label class="block text-xs font-semibold text-gray-600 mb-1.5">Product Quantity / Unit</label>
+              <input type="text" name="quantity" placeholder="e.g. 1 kg, 500 g, 1 L"
+                    value="<%= product ? product.quantity : '' %>"
+                    class="w-full text-xs font-medium p-3.5 border border-gray-200 rounded-xl focus:outline-none focus:border-black bg-gray-50/30 transition-all" required>
+            </div>
           </div>
-          <!-- Description -->
-          <textarea name="description">Enter Description </textarea>
-          <!-- Submit -->
-          <button
-            type="submit"
-            class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded font-semibold">
-            <%= product? "Update Product": "Create New Product"%>
-          </button>
+          </div>
+
+          <!-- SECTION 3: VISUAL DESIGN CONSOLE -->
+          <div class="space-y-4">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-gray-400 mb-2 flex items-center gap-2">
+              <i class="fa-solid fa-palette text-sm"></i> Card Theming (Visuals)
+            </h3>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 bg-gray-50/60 border border-gray-100 p-5 rounded-2xl">
+              
+              <!-- Background Color Picker -->
+              <div>
+                <label class="block text-xs font-semibold text-gray-600 mb-1.5">Outer Bg Color</label>
+                <div class="flex items-center gap-2 bg-white border border-gray-200 rounded-xl p-2.5">
+                  <input type="color" name="bgColor" value="<%= product && product.bgColor ? product.bgColor : '#ffffff' %>" class="w-7 h-7 border-0 rounded-lg cursor-pointer">
+                  <span class="text-[11px] text-gray-400 font-medium">Pick Palette</span>
+                </div>
+              </div>
+
+              <!-- Panel Color Picker -->
+              <div>
+                <label class="block text-xs font-semibold text-gray-600 mb-1.5">Bottom Panel Color</label>
+                <div class="flex items-center gap-2 bg-white border border-gray-200 rounded-xl p-2.5">
+                  <input type="color" name="panelColor" value="<%= product && product.panelColor ? product.panelColor : '#f3f4f6' %>" class="w-7 h-7 border-0 rounded-lg cursor-pointer">
+                  <span class="text-[11px] text-gray-400 font-medium">Pick Palette</span>
+                </div>
+              </div>
+
+              <!-- Text Color Picker -->
+              <div>
+                <label class="block text-xs font-semibold text-gray-600 mb-1.5">Text Labels Color</label>
+                <div class="flex items-center gap-2 bg-white border border-gray-200 rounded-xl p-2.5">
+                  <input type="color" name="textColor" value="<%= product && product.textColor ? product.textColor : '#111827' %>" class="w-7 h-7 border-0 rounded-lg cursor-pointer">
+                  <span class="text-[11px] text-gray-400 font-medium">Pick Palette</span>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- SECTION 4: DESCRIPTION -->
+          <div>
+            <h3 class="text-xs font-bold uppercase tracking-wider text-gray-400 mb-2 flex items-center gap-2">
+              <i class="fa-solid fa-align-left text-sm"></i> Product Description
+            </h3>
+            <textarea name="description" rows="3" placeholder="Enter deep info about stock, weight, or package configuration..."
+                      class="w-full text-xs font-medium p-3.5 border border-gray-200 rounded-xl focus:outline-none focus:border-black focus:ring-1 focus:ring-black bg-gray-50/30 transition-all"><%= product && product.description ? product.description : '' %></textarea>
+          </div>
+
+          <!-- FORM SUBMIT BUTTON -->
+          <div class="pt-2 border-t border-gray-50 flex items-center justify-end">
+            <button type="submit"
+                    class="w-full sm:w-auto bg-black text-white hover:bg-gray-800 text-xs font-bold py-3.5 px-8 rounded-xl transition-all shadow-md shadow-black/5 active:scale-95 flex items-center justify-center gap-2">
+              <i class="fa-regular fa-square-check text-sm"></i>
+              <%= product ? "Commit & Update Product" : "Publish Product Live" %>
+            </button>
+          </div>
 
         </form>
 

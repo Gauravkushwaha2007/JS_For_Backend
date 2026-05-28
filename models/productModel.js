@@ -15,6 +15,14 @@ const productSchema = mongoose.Schema({
         type: Number,
         required: true
     },
+    stock: {
+        type: Number,
+        default: 10
+    },
+    quantity: {
+        type: String,
+        required: true
+    },
     bgColor: {
         type: String,
         default: "#ffff"
@@ -39,5 +47,6 @@ const productSchema = mongoose.Schema({
 }, {
     timestamps: true
 });
+
 
 module.exports = mongoose.model('product', productSchema);

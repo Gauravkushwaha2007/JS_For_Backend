@@ -5,12 +5,14 @@ const fs = require('fs')
 
 const createProduct = async (req, res) => {
     try {
-        let { name, price, bgColor, textColor, panelColor, discount, description} = req.body;
+        let { name, price, stock, quantity, bgColor, textColor, panelColor, discount, description} = req.body;
         let imagePath = req.file? req.file.filename: null;
 
         await productModel.create({
             name,
             price,
+            stock, 
+            quantity,
             bgColor,
             textColor,
             panelColor,
@@ -21,7 +23,7 @@ const createProduct = async (req, res) => {
 
         res.redirect('/products/allProducts');
     } catch (error) {
-        console.error(error);
+        console.error('error from productController (createProduct)' , error);
         res.status(500).send("Couldn't create product");
     }
 }
@@ -53,12 +55,14 @@ const getEditProduct = async (req, res)=>{
 
 const postEditProduct = async (req, res)=>{
     try{
-        let {name, price, discount, bgColor, panelColor, textColor, description} = req.body;
+        let { name, price, stock, quantity, bgColor, textColor, panelColor, discount, description} = req.body;
         let product = await productModel.findById(req.params.id);
 
         let updatedData = {
             name,
             price,
+            stock, 
+            quantity,
             discount,
             bgColor,
             panelColor,
@@ -84,4 +88,22 @@ const postEditProduct = async (req, res)=>{
     }
 }
 
-module.exports = { createProduct, deleteProduct, postEditProduct, getEditProduct};
+
+const viewProduct = async (req, res)=>{
+
+    try{
+        let product = await productModel.findById(req.params.id);
+    
+        if(!product){
+            return res.status(404).send("Product not found")
+        }
+        res.render('productDetail', { product: product, user: req.user || null })
+    }
+
+    catch(error){
+        console.log("error from productController", error);
+        res.status(500).send("Server Error");
+    }
+}
+
+module.exports = { createProduct, deleteProduct, postEditProduct, getEditProduct, viewProduct};

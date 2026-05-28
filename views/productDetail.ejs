@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= product.name %> | Apna Mart</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .nav-sticky { position: sticky; top: 0; z-index: 50; }
+  </style>
+</head>
+<body class="bg-white text-gray-900 antialiased">
+
+  <header class="nav-sticky bg-white border-b border-gray-100 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 md:px-6 h-20 flex items-center justify-between gap-4">
+      
+      <div class="flex items-center gap-6 shrink-0">
+        <a href="/" class="text-2xl font-black tracking-tighter text-[#24963f]">APNA<span class="text-black">MART</span></a>
+        
+        <div class="hidden lg:block border-l border-gray-200 pl-6">
+          <p class="text-[10px] font-black uppercase tracking-widest text-gray-400 leading-none mb-1">Delivery in 10-12 mins</p>
+          <p class="text-xs font-bold text-gray-900 flex items-center gap-1">
+            Bhopal, India <i class="fa-solid fa-caret-down text-[10px] text-[#24963f]"></i>
+          </p>
+        </div>
+      </div>
+
+      <div class="flex-1 max-w-xl relative group mx-2">
+        <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#24963f] transition-colors"></i>
+        <input type="text" 
+               placeholder='Search for "milk", "bread" or "veggies"...' 
+               class="w-full bg-gray-50 border border-gray-100 rounded-xl py-3 pl-12 pr-4 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#24963f]/20 focus:bg-white focus:border-[#24963f] transition-all">
+      </div>
+
+      <div class="flex items-center gap-4 shrink-0">
+        
+        <% if(user){ %>
+          <div class="relative inline-block text-left group">
+            <button type="button" class="flex items-center gap-2 py-2.5 px-3.5 bg-gray-50 hover:bg-gray-100 border border-gray-100 rounded-xl transition-all duration-200">
+              <div class="w-6 h-6 rounded-lg bg-[#24963f] text-white flex items-center justify-center text-[10px] font-black uppercase shadow-sm">
+                <%= user.name ? user.name.substring(0, 2) : 'A' %>
+              </div>
+              <span class="text-xs font-bold text-gray-700 hidden sm:block">My Account</span>
+              <i class="fa-solid fa-chevron-down text-[9px] text-gray-400 group-hover:rotate-180 transition-transform duration-200"></i>
+            </button>
+
+            <div class="absolute right-0 w-56 mt-2 origin-top-right bg-white border border-gray-100 rounded-2xl shadow-[0_10px_30px_rgba(0,0,0,0.08)] opacity-0 scale-95 pointer-events-none group-hover:opacity-100 group-hover:scale-100 group-hover:pointer-events-auto transition-all duration-150 z-50">
+              <div class="p-4 border-b border-gray-50">
+                <p class="text-[9px] text-[#24963f] font-black uppercase tracking-wider">Welcome back</p>
+                <p class="text-sm font-extrabold text-gray-900 truncate mt-0.5"><%= user.name %></p>
+                <p class="text-xs text-gray-400 truncate"><%= user.email %></p>
+              </div>
+              
+              <div class="p-2 space-y-0.5">
+                <a href="/products/allProducts" class="flex items-center gap-3 px-3 py-2.5 text-xs font-bold text-gray-600 hover:bg-gray-50 hover:text-[#24963f] rounded-xl transition-all">
+                  <i class="fa-solid fa-boxes-stacked text-sm opacity-70"></i> Dashboard / Catalog
+                </a>
+                <a href="/products/create" class="flex items-center gap-3 px-3 py-2.5 text-xs font-bold text-gray-600 hover:bg-gray-50 hover:text-[#24963f] rounded-xl transition-all">
+                  <i class="fa-solid fa-plus text-sm opacity-70"></i> Add New Item
+                </a>
+              </div>
+
+              <div class="p-2 border-t border-gray-50 bg-gray-50/50 rounded-b-2xl">
+                <a href="/users/logout" class="flex items-center gap-3 px-3 py-2.5 text-xs font-extrabold text-red-500 hover:bg-red-50 rounded-xl transition-all">
+                  <i class="fa-solid fa-arrow-right-from-bracket text-sm"></i> Secure Logout
+                </a>
+              </div>
+            </div>
+          </div>
+        <% } else { %>
+          <a href="/users/login" class="text-xs font-bold text-gray-600 hover:text-[#24963f] transition-colors">Login</a>
+        <% } %>
+
+        <% if(user && user.cart && user.cart.length > 0) { %>
+          <% 
+            // यहाँ कार्ट का टोटल प्राइस निकालने का छोटा सा लूप
+            let totalCartPrice = 0;
+            if(product && product.price) {
+              totalCartPrice = user.cart.length * product.price; // सिम्पल डमी कैलकुलेशन आपके थीम के लिए
+            }
+          %>
+          <a href="/users/cart/products" class="flex items-center gap-3 bg-[#24963f] hover:bg-[#1e7e34] text-white px-4 py-2.5 rounded-xl transition-all shadow-md shadow-emerald-700/20 animated pulse">
+            <div class="flex flex-col text-left">
+              <span class="text-[10px] font-black uppercase tracking-wider text-emerald-200 leading-none"><%= user.cart.length %> Items</span>
+              <span class="text-xs font-black mt-0.5">₹<%= totalCartPrice %></span>
+            </div>
+            <div class="h-6 w-[1px] bg-white/20"></div>
+            <div class="flex items-center gap-1.5 font-extrabold text-xs tracking-tight">
+              <i class="fa-solid fa-basket-shopping"></i>
+              <span class="hidden sm:inline">View Basket</span>
+            </div>
+          </a>
+        <% } else { %>
+          <a href="/users/cart/products" class="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 px-5 py-3 rounded-xl transition-all font-extrabold text-xs uppercase tracking-wider border border-gray-200/20">
+            <i class="fa-solid fa-basket-shopping text-sm text-gray-400"></i>
+            <span>Cart</span>
+          </a>
+        <% } %>
+
+      </div>
+    </div>
+  </header>
+
+  <nav class="max-w-7xl mx-auto px-6 pt-8 text-[10px] text-gray-400 font-bold uppercase tracking-widest">
+    <a href="/" class="hover:text-emerald-600">Home</a>
+    <span class="mx-2 text-gray-200">/</span>
+    <a href="/products/allProducts" class="hover:text-emerald-600 text-gray-500">Products</a>
+    <span class="mx-2 text-gray-200">/</span>
+    <span class="truncate"><%= product.name %></span>
+  </nav>
+
+  <main class="max-w-7xl mx-auto px-6 py-8 grid grid-cols-1 md:grid-cols-12 gap-12 items-start">
+    
+    <div class="md:col-span-5 flex flex-col items-center justify-center border border-gray-100 rounded-[40px] p-10 relative min-h-[400px] md:min-h-[500px]" style="background-color: <%= product.bgColor || '#f9fafb' %>;">
+      <img src="/uploads/<%= product.image %>" alt="<%= product.name %>" class="max-w-full max-h-[400px] object-contain drop-shadow-2xl">
+      
+      <% if(product.discount > 0) { %>
+        <span class="absolute top-6 left-6 bg-red-500 text-white text-[11px] font-black px-4 py-1.5 rounded-lg uppercase tracking-widest shadow-lg">
+          <%= Math.round((product.discount / (product.price + product.discount)) * 100) %>% OFF
+        </span>
+      <% } %>
+    </div>
+
+    <div class="md:col-span-7 flex flex-col space-y-8">
+      
+      <div>
+        <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight text-gray-900 leading-tight">
+          <%= product.name %>
+        </h1>
+        <p class="text-gray-400 font-bold text-sm mt-2 flex items-center gap-2 uppercase tracking-widest">
+          <i class="fa-solid fa-clock text-[#24963f]"></i> Delivery in 10-15 Mins
+        </p>
+      </div>
+
+      <div>
+        <h3 class="text-[11px] font-black text-gray-400 uppercase tracking-[0.2em] mb-4">Select Unit</h3>
+        <div class="flex flex-wrap gap-4">
+          <div class="border-2 border-[#24963f] bg-emerald-50/50 rounded-2xl px-6 py-4 min-w-[120px] text-center shadow-sm">
+            <p class="text-xs font-bold text-gray-600 mb-1"><%= product.quantity %></p>
+            <p class="text-lg font-black text-black">₹<%= product.price %></p>
+          </div>
+          <div class="border border-gray-100 bg-gray-50/50 rounded-2xl px-6 py-4 min-w-[120px] text-center opacity-40">
+            <p class="text-xs font-medium text-gray-400 mb-1">2 x <%= product.quantity %></p>
+            <p class="text-xs font-bold text-red-400 uppercase tracking-widest">Sold Out</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-between bg-emerald-50/30 p-6 rounded-[32px] border border-emerald-100/50 max-w-xl">
+        <div>
+          <div class="flex items-baseline gap-2.5">
+            <span class="text-3xl font-black text-black">₹<%= product.price %></span>
+            <% if(product.discount > 0) { %>
+              <span class="text-sm text-gray-400 line-through font-bold">₹<%= product.price + product.discount %></span>
+            <% } %>
+          </div>
+          <p class="text-[10px] text-emerald-600/60 font-bold uppercase tracking-wider mt-1">(Inclusive of all taxes)</p>
+        </div>
+
+        <div class="flex flex-col items-end">
+          <% if(product.stock > 0) { %>
+            <button onclick="addToCart('<%= product._id %>')" 
+                    class="bg-[#24963f] hover:bg-[#1e7e34] text-white font-black text-sm px-10 py-4 rounded-2xl transition-all active:scale-95 shadow-xl shadow-emerald-900/10 flex items-center gap-3">
+              ADD TO BASKET
+            </button>
+          <% } else { %>
+            <button disabled class="bg-gray-200 text-gray-400 font-black text-sm px-10 py-4 rounded-2xl cursor-not-allowed">OUT OF STOCK</button>
+          <% } %>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-6 pt-4 max-w-xl">
+        <div class="flex items-start gap-4">
+          <div class="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center text-[#24963f] border border-gray-100">
+            <i class="fa-solid fa-bolt text-sm"></i>
+          </div>
+          <div>
+            <h5 class="text-xs font-black text-gray-900 uppercase tracking-wide">Superfast</h5>
+            <p class="text-[11px] text-gray-500 mt-1 leading-relaxed">Delivery in minutes, right from your local Apna Mart.</p>
+          </div>
+        </div>
+        <div class="flex items-start gap-4">
+          <div class="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center text-[#24963f] border border-gray-100">
+            <i class="fa-solid fa-shield-heart text-sm"></i>
+          </div>
+          <div>
+            <h5 class="text-xs font-black text-gray-900 uppercase tracking-wide">Best Prices</h5>
+            <p class="text-[11px] text-gray-500 mt-1 leading-relaxed">Sourced directly to ensure you get the best deals.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <script>
+    async function addToCart (productId){
+      let res = await fetch(`/users/cart/add-to-cart/${productId}`, {
+          method: "POST"
+      });
+      let data = await res.json();
+      alert(data.message); 
+      if(data.success){
+        location.reload() 
+      }
+    }
+  </script>
+
+</body>
+</html>
