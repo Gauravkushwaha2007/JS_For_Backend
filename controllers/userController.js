@@ -36,7 +36,6 @@ const registerUser = async (req, res)=>{
             <h3> kaise ho dost Ye mega fist trial hai </h3>`
         );
         
-        // 🌟 रजिस्ट्रेशन के बाद सीधे ऑल प्रोडक्ट्स पर भेजें
         return res.redirect('/products/allProducts');
         
     }

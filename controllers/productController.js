@@ -1,7 +1,9 @@
 const productModel = require('../models/productModel');
+const userModel = require('../models/userModel'); 
+const jwt = require('jsonwebtoken'); 
 const upload = require('../config/multer');
-const path = require('path')
-const fs = require('fs')
+const path = require('path');
+const fs = require('fs');
 
 const createProduct = async (req, res) => {
     try {
@@ -88,16 +90,45 @@ const postEditProduct = async (req, res)=>{
     }
 }
 
-
 const viewProduct = async (req, res)=>{
-
     try{
         let product = await productModel.findById(req.params.id);
     
         if(!product){
             return res.status(404).send("Product not found")
         }
-        res.render('productDetail', { product: product, user: req.user || null })
+
+        let user = req.user || null;
+        let totalCartPrice = 0;
+
+        if (!user && req.cookies && req.cookies.token) {
+            try {
+                const decoded = jwt.verify(req.cookies.token, process.env.JWT_SECRET);
+                user = await userModel.findOne({ email: decoded.email });
+            } catch(jwtErr) {
+                console.log("JWT Verification failed in product detail:", jwtErr.message);
+            }
+        }
+
+        if (user) {
+            const populatedUser = await userModel.findById(user._id).populate('cart.product');
+            
+            if (populatedUser && populatedUser.cart) {
+                user.cart = populatedUser.cart.filter(item => item.product !== null);
+                
+                user.cart.forEach(item => {
+                    if (item.product && item.product.price) {
+                        totalCartPrice += (Number(item.product.price) * Number(item.quantity || 1));
+                    }
+                });
+            }
+        }
+        
+        res.render('productDetail', { 
+            product: product, 
+            user: user,
+            totalCartPrice: totalCartPrice 
+        });
     }
 
     catch(error){
@@ -105,5 +136,6 @@ const viewProduct = async (req, res)=>{
         res.status(500).send("Server Error");
     }
 }
+
 
 module.exports = { createProduct, deleteProduct, postEditProduct, getEditProduct, viewProduct};

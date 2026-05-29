@@ -17,53 +17,103 @@
 
 <body class="bg-[#f8f9fa] text-gray-900 antialiased">
 
-
-  <header class="nav-sticky bg-white border-b border-gray-100 shadow-sm">
-    <div class="max-w-7xl mx-auto px-4 md:px-6 h-20 flex items-center justify-between gap-4 md:gap-8">
+<header class="nav-sticky bg-white border-b border-gray-100 shadow-sm">
+  <div class="max-w-7xl mx-auto px-4 md:px-6 h-20 flex items-center justify-between gap-4">
+    
+    <div class="flex items-center gap-6 shrink-0">
+      <a href="/" class="text-2xl font-black tracking-tighter text-[#24963f]">APNA<span class="text-black">MART</span></a>
       
-      <div class="flex items-center gap-6 shrink-0">
-        <a href="/" class="text-2xl font-black tracking-tighter text-emerald-600">APNA<span class="text-black">MART</span></a>
-        
-        <div class="hidden lg:block border-l border-gray-200 pl-6">
-          <p class="text-[10px] font-black uppercase tracking-widest text-gray-400 leading-none mb-1">Delivery in 10-12 mins</p>
-          <p class="text-xs font-bold text-gray-900 flex items-center gap-1">
-            Bhopal, India <i class="fa-solid fa-caret-down text-[10px] text-emerald-600"></i>
-          </p>
-        </div>
-      </div>
-
-      <div class="flex-1 max-w-2xl relative group">
-        <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-emerald-600 transition-colors"></i>
-        <input type="text" 
-               placeholder="Search for groceries, veggies and more..." 
-               class="w-full bg-gray-50 border border-gray-100 rounded-xl py-3 pl-12 pr-4 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:bg-white focus:border-emerald-500 transition-all">
-      </div>
-
-      <div class="flex items-center gap-4 md:gap-8 shrink-0">
-        
-        <a href="/users/profile" class="hidden md:flex items-center gap-2 text-sm font-bold text-gray-700 hover:text-emerald-600 transition-colors">
-          <i class="fa-regular fa-circle-user text-xl"></i>
-          <span>Account</span>
-        </a>
-
-        <a href="/users/cart/products" class="relative group flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-xl transition-all shadow-md shadow-emerald-600/20">
-          <i class="fa-solid fa-cart-shopping text-sm"></i>
-          <span class="text-sm font-extrabold tracking-tight">My Cart</span>
-          
-          <% if(user && user.cart && user.cart.length > 0) { %>
-            <span class="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] font-black w-5 h-5 rounded-full flex items-center justify-center border-2 border-white shadow-sm">
-              <%= user.cart.length %>
-            </span>
-          <% } else { %>
-            <span class="absolute -top-2 -right-2 bg-gray-400 text-white text-[10px] font-black w-5 h-5 rounded-full flex items-center justify-center border-2 border-white shadow-sm">
-              0
-            </span>
-          <% } %>
-        </a>
-
+      <div class="hidden lg:block border-l border-gray-200 pl-6">
+        <p class="text-[10px] font-black uppercase tracking-widest text-gray-400 leading-none mb-1">Delivery in 10-12 mins</p>
+        <p class="text-xs font-bold text-gray-900 flex items-center gap-1">
+          Bhopal, India <i class="fa-solid fa-caret-down text-[10px] text-[#24963f]"></i>
+        </p>
       </div>
     </div>
-  </header>
+
+    <div class="flex-1 max-w-xl relative group mx-2">
+      <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#24963f] transition-colors"></i>
+      <input type="text" 
+             placeholder='Search for "milk", "bread" or "veggies"...' 
+             class="w-full bg-gray-50 border border-gray-100 rounded-xl py-3 pl-12 pr-4 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#24963f]/20 focus:bg-white focus:border-[#24963f] transition-all">
+    </div>
+
+    <div class="flex items-center gap-4 shrink-0">
+      
+      <% if(user){ %>
+        <div class="relative inline-block text-left group">
+          <button type="button" class="flex items-center gap-2 py-2.5 px-3.5 bg-gray-50 hover:bg-gray-100 border border-gray-100 rounded-xl transition-all duration-200">
+            <div class="w-6 h-6 rounded-lg bg-[#24963f] text-white flex items-center justify-center text-[10px] font-black uppercase shadow-sm">
+              <%= user.name ? user.name.substring(0, 2) : 'A' %>
+            </div>
+            <span class="text-xs font-bold text-gray-700 hidden sm:block">My Account</span>
+            <i class="fa-solid fa-chevron-down text-[9px] text-gray-400 group-hover:rotate-180 transition-transform duration-200"></i>
+          </button>
+
+          <div class="absolute right-0 w-56 mt-2 origin-top-right bg-white border border-gray-100 rounded-2xl shadow-[0_10px_30px_rgba(0,0,0,0.08)] opacity-0 scale-95 pointer-events-none group-hover:opacity-100 group-hover:scale-100 group-hover:pointer-events-auto transition-all duration-150 z-50">
+            <div class="p-4 border-b border-gray-50">
+              <span class="inline-block text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded <%= user.role === 'admin' ? 'bg-red-50 text-red-600 border border-red-100' : 'bg-emerald-50 text-emerald-600 border border-emerald-100' %>">
+                <%= user.role ? user.role : 'Customer' %>
+              </span>
+              <p class="text-sm font-extrabold text-gray-900 truncate mt-1.5"><%= user.name %></p>
+              <p class="text-xs text-gray-400 truncate"><%= user.email %></p>
+            </div>
+            
+            <div class="p-2 space-y-0.5">
+              <% if(user.role === 'admin') { %>
+                <a href="/products/allProducts" class="flex items-center gap-3 px-3 py-2.5 text-xs font-bold text-gray-600 hover:bg-gray-50 hover:text-[#24963f] rounded-xl transition-all">
+                  <i class="fa-solid fa-boxes-stacked text-sm opacity-70"></i> Dashboard / Catalog
+                </a>
+                <a href="/products/create" class="flex items-center gap-3 px-3 py-2.5 text-xs font-bold text-gray-600 hover:bg-gray-50 hover:text-[#24963f] rounded-xl transition-all">
+                  <i class="fa-solid fa-plus text-sm opacity-70"></i> Add New Item
+                </a>
+              <% } %>
+              
+              <a href="/users/cart/products" class="flex items-center gap-3 px-3 py-2.5 text-xs font-bold text-gray-600 hover:bg-gray-50 hover:text-[#24963f] rounded-xl transition-all">
+                <i class="fa-solid fa-basket-shopping text-sm opacity-70"></i> View My Cart
+              </a>
+            </div>
+
+            <div class="p-2 border-t border-gray-50 bg-gray-50/50 rounded-b-2xl">
+              <a href="/users/logout" class="flex items-center gap-3 px-3 py-2.5 text-xs font-extrabold text-red-500 hover:bg-red-50 rounded-xl transition-all">
+                <i class="fa-solid fa-arrow-right-from-bracket text-sm"></i> Secure Logout
+              </a>
+            </div>
+          </div>
+        </div>
+      <% } else { %>
+        <a href="/users/login" class="text-xs font-bold text-gray-600 hover:text-[#24963f] transition-colors">Login</a>
+      <% } %>
+
+
+      <% if(user && user.cart && user.cart.length > 0) { %>
+        <a href="/users/cart/products" class="flex items-center gap-3 bg-[#24963f] hover:bg-[#1e7e34] text-white px-4 py-2.5 rounded-xl transition-all shadow-md shadow-emerald-700/20">
+          
+          <div class="flex flex-col text-left">
+            <span class="text-[10px] font-black uppercase tracking-wider text-emerald-200 leading-none">
+              <%= user.cart.length %> Items
+            </span>
+            <span class="text-xs font-black mt-0.5">
+              ₹<%= typeof totalCartPrice !== 'undefined' ? totalCartPrice : 0 %>
+            </span>
+          </div>
+
+          <div class="h-6 w-[1px] bg-white/20"></div>
+          <div class="flex items-center gap-1.5 font-extrabold text-xs tracking-tight">
+            <i class="fa-solid fa-basket-shopping"></i>
+            <span class="hidden sm:inline">View Basket</span>
+          </div>
+        </a>
+      <% } else { %>
+        <a href="/users/cart/products" class="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 px-5 py-3 rounded-xl transition-all font-extrabold text-xs uppercase tracking-wider border border-gray-200/20">
+          <i class="fa-solid fa-basket-shopping text-sm text-gray-400"></i>
+          <span>Cart</span>
+        </a>
+      <% } %>
+
+    </div>
+  </div>
+</header>
 
 
   <div class="flex min-h-screen flex-col md:flex-row">

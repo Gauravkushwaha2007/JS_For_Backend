@@ -3,29 +3,52 @@ const isLoggedIn = require('../middlewares/authMiddleware');
 const isAdmin = require('../middlewares/isAdmin');
 const attachUser = require('../middlewares/attachUser');
 
-const productModel = require('../models/productModel')
+const productModel = require('../models/productModel');
+const userModel = require('../models/userModel'); // 🌟 कार्ट कैलकुलेशन के लिए यूजर मॉडल इम्पोर्ट किया
+
 const {createProduct, deleteProduct, getEditProduct, postEditProduct, viewProduct} = require('../controllers/productController')
 const upload = require('../config/multer');
 
 const productRouter = express.Router();
 
 
-//This is for everyOne, without logged in user can also see products
+// 🌟 UPDATED: This is for everyOne, with live cart price calculation
 productRouter.get('/allProducts', attachUser, async(req, res)=>{
-    let products = await productModel.find();
-    res.render('allProducts', {
-        products: products,
-        user: res.locals.user
-    });
+    try {
+        let products = await productModel.find();
+        
+        let user = res.locals.user || req.user || null;
+        let totalCartPrice = 0;
+
+        if (user) {
+            const populatedUser = await userModel.findById(user._id).populate('cart.product');
+            
+            if (populatedUser && populatedUser.cart) {
+                user.cart = populatedUser.cart.filter(item => item.product !== null);
+                
+                user.cart.forEach(item => {
+                    if (item.product && item.product.price) {
+                        totalCartPrice += (Number(item.product.price) * Number(item.quantity || 1));
+                    }
+                });
+            }
+        }
+
+        res.render('allProducts', {
+            products: products,
+            user: user,
+            totalCartPrice: totalCartPrice 
+        });
+
+    } catch (error) {
+        console.error("Error in /allProducts route:", error.message);
+        res.status(500).send("Server Error");
+    }
 });
 
 
 productRouter.get('/view/:id', attachUser, viewProduct);
 
-
-// productRouter.get('/product', attachUser, (req, res)=>{
-//     res.send('A single product');
-// });
 
 productRouter.get('/create', attachUser, isAdmin, (req, res)=>{
     res.render('createProduct',{ product: null });
