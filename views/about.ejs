@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Our Story - Ramesh Kushwaha | Apna Mart</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;600;700;800&family=Noto+Serif+Devanagari:wght=500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Scroll Animation Library (AOS) -->
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .hindi-font { font-family: 'Noto Serif Devanagari', serif; }
+    html { scroll-behavior: smooth; }
+
+    /* इमेज का बैकग्राउंड ब्लेंड करना ताकि कोई डिब्बा न दिखे */
+    .blend-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      mix-blend-mode: multiply;
+      cursor: zoom-in;
+    }
+
+    /* --- फुल स्क्रीन ज़ूम पैनल (Overlay) --- */
+    .full-page-zoom-panel {
+      position: fixed;
+      right: 5%;
+      top: 20%;
+      width: 320px;
+      height: 320px;
+      border-radius: 24px;
+      border: 1px solid rgba(16, 185, 129, 0.2);
+      background-color: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(8px); /* ग्लासमोर्फिज़्म इफ़ेक्ट */
+      box-shadow: 0 25px 50px -12px rgba(4, 120, 87, 0.15);
+      z-index: 100;
+      background-repeat: no-repeat;
+      pointer-events: none; /* माउस इसके आर-पार जा सके, कोई रुकावट न हो */
+      opacity: 0;
+      transform: scale(0.9) translateX(20px);
+      transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1), transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* जब यूजर इमेज पर होवर करे तब ये पैनल स्मूथली सामने आए */
+    .img-hover-active .full-page-zoom-panel {
+      opacity: 1;
+      transform: scale(1) translateX(0);
+    }
+
+    /* मोबाइल स्क्रीन्स पर यह पैनल स्क्रीन के बीच में नीचे दिखेगा ताकि लेआउट बिगड़े नहीं */
+    @media (max-width: 768px) {
+      .full-page-zoom-panel {
+        right: 50%;
+        transform: scale(0.9) translateX(50%);
+        bottom: 5%;
+        top: auto;
+        width: 260px;
+        height: 260px;
+      }
+      .img-hover-active .full-page-zoom-panel {
+        transform: scale(1) translateX(50%);
+      }
+    }
+  </style>
+</head>
+<!-- पुदीना ग्रेडिएंट बैकग्राउंड थीम (Mint Green Theme) -->
+<body class="bg-gradient-to-tr from-[#f3faf7] via-[#e8f5f0] to-[#f3faf7] text-zinc-900 antialiased overflow-x-hidden min-h-screen">
+
+  <!-- फुल पेज ज़ूम करने वाला ग्लास पैनल -->
+  <div id="big-zoom-panel" class="full-page-zoom-panel"></div>
+
+  <!-- Top Navbar / Back Button -->
+  <div class="w-full max-w-4xl mx-auto px-6 pt-10">
+    <a href="/" class="inline-flex items-center gap-2 text-xs font-bold text-emerald-700 hover:text-emerald-600 transition-all duration-300 hover:-translate-x-1 bg-emerald-100/50 backdrop-blur-sm px-3.5 py-2 rounded-md">
+      <i class="fa-solid fa-arrow-left"></i> Continue Shopping
+    </a>
+  </div>
+
+  <main class="max-w-4xl mx-auto px-6 pt-12 pb-24 space-y-20">
+    
+    <!-- Header Section -->
+    <div class="text-center max-w-2xl mx-auto" data-aos="fade-down" data-aos-duration="1000">
+      <span class="text-[10px] uppercase tracking-widest font-bold text-emerald-600 bg-emerald-100/60 px-3 py-1 rounded-md">Our Legacy & Trust</span>
+      <h1 class="text-3xl md:text-5xl font-extrabold tracking-tight mt-3 text-zinc-900">
+        The Story Behind <br><span class="text-emerald-600">Apna Mart</span>
+      </h1>
+    </div>
+
+    <!-- Main Profile Section -->
+<div class="flex flex-col md:flex-row items-center md:items-start gap-10 md:gap-14">
+  
+  <div class="w-56 h-56 md:w-64 md:h-64 shrink-0 relative rounded-full overflow-hidden" data-aos="fade-right" data-aos-duration="1000">
+    <img id="track-image" src="/images/ramesh.png" alt="Ramesh Kushwaha" class="blend-img w-full h-full object-cover" onerror="this.src='https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=500'">
+  </div>
+
+  <div class="space-y-5 text-center md:text-left" data-aos="fade-left" data-aos-duration="1000">
+    <div class="space-y-0.5">
+      <h2 class="text-2xl font-extrabold text-zinc-900 tracking-tight">रमेश कुशवाहा</h2>
+      <p class="text-[11px] uppercase tracking-widest font-bold text-emerald-600">संस्थापक एवं संचालक, कुशवाहा किराना स्टोर</p>
+    </div>
+    
+    <h3 class="text-2xl md:text-3xl font-black text-emerald-800 leading-tight tracking-wide hindi-font">
+      "दुकान भले ही मोबाइल में भी आ गई है , लेकिन रिश्ता और शुद्धता वही पुरानी है।"
+    </h3>
+
+    <p class="text-zinc-600/90 text-sm font-medium leading-relaxed hindi-font">
+      पिछले 25 से अधिक वर्षों से, श्री रमेश कुशवाहा जी हमारे क्षेत्र और गाँव के परिवारों की सेवा पूरी ईमानदारी और शुद्धता के संकल्प के साथ कर रहे हैं। हमारे यहाँ बिकने वाले राशन का हर एक दाना और सब्ज़ी का हर एक हिस्सा उनके भरोसे की मुहर के साथ आपके घर पहुँचता है। इसी अपनेपन को और मज़बूत करने के लिए, अब हमारी दुकान डिजिटल रूप में आपके मोबाइल पर आ चुकी है।
+    </p>
+  </div>
+</div>
+
+    <!-- Features Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16 pt-6 border-t border-emerald-900/10" data-aos="fade-up" data-aos-duration="1000">
+      
+      <div class="space-y-3 group bg-white/30 backdrop-blur-sm p-5 rounded-2xl border border-white/40 transition-all duration-300 hover:bg-white/60 hover:shadow-sm">
+        <div class="w-8 h-8 text-emerald-600 flex items-center justify-start text-lg transition-transform duration-300 group-hover:scale-120 group-hover:rotate-6">
+          <i class="fa-solid fa-store"></i>
+        </div>
+        <h4 class="text-base font-bold text-zinc-900 tracking-tight">सालों का पुराना भरोसा</h4>
+        <p class="text-zinc-500 text-xs leading-relaxed font-medium hindi-font">
+          मुख्य बाज़ार के एक छोटे से काउंटर से शुरू हुआ कुशवाहा किराना स्टोर आज हर घर का एक हिस्सा बन चुका है। पीढ़ियों से परिवारों ने रमेश भाई की सही कीमत और शुद्ध सामान पर आँख बंद करके भरोसा किया है।
+        </p>
+      </div>
+
+      <div class="space-y-3 group bg-white/30 backdrop-blur-sm p-5 rounded-2xl border border-white/40 transition-all duration-300 hover:bg-white/60 hover:shadow-sm">
+        <div class="w-8 h-8 text-emerald-600 flex items-center justify-start text-lg transition-transform duration-300 group-hover:scale-120 group-hover:animate-pulse">
+          <i class="fa-solid fa-bolt"></i>
+        </div>
+        <h4 class="text-base font-bold text-zinc-900 tracking-tight">आज की आधुनिक तकनीक</h4>
+        <p class="text-zinc-500 text-xs leading-relaxed font-medium hindi-font">
+          रमेश जी के सुपुत्र द्वारा पूरी लगन से बनाई गई यह वेबसाइट 'अपना मार्ट' हमारी इसी विरासत का नया डिजिटल चेहरा है। अब आपको बाज़ार की भीड़, ख़राब मौसम या लंबी लाइनों में लगने की ज़रूरत नहीं है; घर बैठे सिर्फ 10 मिनट में सब कुछ आपके दरवाज़े पर होगा।
+        </p>
+      </div>
+
+    </div>
+
+    <!-- Rules Section -->
+    <div class="pt-10 border-t border-emerald-900/10 text-center space-y-8" data-aos="zoom-in" data-aos-duration="1000">
+      <h4 class="text-[10px] uppercase tracking-widest font-bold text-zinc-400">हमारे ३ सुनहरे नियम</h4>
+      
+      <div class="grid grid-cols-3 gap-6 text-center">
+        <div class="space-y-1 transition-transform duration-300 hover:-translate-y-2 bg-white/20 p-3 rounded-xl border border-white/30">
+          <p class="text-2xl md:text-3xl font-black text-zinc-900">100%</p>
+          <p class="text-[11px] font-bold text-zinc-500 hindi-font">शुद्ध और चुनिंदा सामान</p>
+        </div>
+        <div class="space-y-1 transition-transform duration-300 hover:-translate-y-2 bg-white/20 p-3 rounded-xl border border-white/30">
+          <p class="text-2xl md:text-3xl font-black text-zinc-900">सीधे</p>
+          <p class="text-[11px] font-bold text-zinc-500 hindi-font">खेतों से आपके किचन तक</p>
+        </div>
+        <div class="space-y-1 transition-transform duration-300 hover:-translate-y-2 bg-white/20 p-3 rounded-xl border border-white/30">
+          <p class="text-2xl md:text-3xl font-black text-zinc-900">बिना</p>
+          <p class="text-[11px] font-bold text-zinc-500 hindi-font">किसी बिचौलिये के</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer Note -->
+    <div class="text-center pt-4" data-aos="fade-up" data-aos-anchor-placement="top-bottom">
+      <p class="text-[11px] text-zinc-400 font-bold tracking-wide hindi-font italic">
+        ❤️ डिजिटल भारत, हमारा डिजिटल गाँव — रमेश कुशवाहा जी के सुपुत्र द्वारा गर्व से निर्मित।
+      </p>
+    </div>
+
+  </main>
+
+  <footer class="w-full border-t border-emerald-900/10 bg-white/60 backdrop-blur-sm py-6 text-center text-[10px] text-zinc-400 font-bold uppercase tracking-widest">
+    © 2026 Apna Mart Supermart • Driven by Legacy, Powered by Technology.
+  </footer>
+
+  <!-- --- SCRIPTS --- -->
+  
+  <!-- AOS Animation Library JS -->
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script>
+    AOS.init({ once: true });
+  </script>
+
+  <script>
+    const img = document.getElementById('track-image');
+    const zoomPanel = document.getElementById('big-zoom-panel');
+
+    img.addEventListener('mouseenter', () => {
+      document.body.classList.add('img-hover-active');
+      zoomPanel.style.backgroundImage = `url('${img.src}')`;
+    });
+
+    img.addEventListener('mouseleave', () => {
+      document.body.classList.remove('img-hover-active');
+    });
+
+    img.addEventListener('mousemove', (e) => {
+      const rect = img.getBoundingClientRect();
+      const xPercent = ((e.clientX - rect.left) / rect.width) * 100;
+      const yPercent = ((e.clientY - rect.top) / rect.height) * 100;
+
+      const zoomLevel = 4;
+      zoomPanel.style.backgroundSize = `${rect.width * zoomLevel}px ${rect.height * zoomLevel}px`;
+
+      zoomPanel.style.backgroundPosition = `${xPercent}% ${yPercent}%`;
+    });
+  </script>
+</body>
+</html>
