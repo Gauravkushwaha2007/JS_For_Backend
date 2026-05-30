@@ -76,295 +76,299 @@
 
 <nav class="w-full px-6 md:px-12 py-4 flex items-center justify-between border-b border-emerald-100 bg-white/70 backdrop-blur-xl fixed top-0 left-0 z-50 transition-all duration-300 shadow-[0_4px_20px_rgba(0,0,0,0.03)] dark:bg-[#050906]/70 dark:border-emerald-950/40 dark:shadow-[0_4px_30px_rgba(0,0,0,0.3)]">
 
-  <div class="flex items-center gap-2.5 group cursor-pointer shrink-0">
-    <div class="w-8 h-8 bg-emerald-500 rounded-xl flex items-center justify-center group-hover:rotate-6 transition-transform duration-300 shadow-[0_0_15px_rgba(16,185,129,0.3)]">
-      <i class="fa-solid fa-basket-shopping text-black text-sm"></i>
-    </div>
-    <div>
-      <h1 class="text-lg font-black tracking-tight text-zinc-900 dark:text-white leading-none">Apna Mart</h1>
-      <span class="text-[9px] uppercase font-bold tracking-widest text-emerald-600 dark:text-emerald-400">Supermart</span>
-    </div>
-  </div>
-
-  <div class="hidden md:flex gap-6 lg:gap-8 text-[11px] font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 shrink-0">
-    <a href="#" class="text-zinc-900 dark:text-white border-b-2 border-emerald-500 pb-1">Home</a>
-    <a href="#categories" class="hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors duration-200">Categories</a>
-    <a href="/products/allProducts" class="hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors duration-200">All Products</a>
-  </div>
-
-  <div class="flex-1 max-w-md relative group mx-4 hidden sm:block">
-    <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400 group-focus-within:text-emerald-600 dark:text-zinc-500 dark:group-focus-within:text-emerald-400 transition-colors"></i>
-    <input type="text" 
-           placeholder="Search groceries..." 
-           class="w-full bg-zinc-100 border border-zinc-200 rounded-xl py-2 pl-11 pr-4 text-xs font-medium text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:bg-white focus:border-emerald-500 transition-all dark:bg-zinc-900/50 dark:border-zinc-800/80 dark:text-white dark:placeholder-zinc-500">
-  </div>
-
-  <div class="flex items-center gap-3 shrink-0">
-    
-    <% if(user){ %>
-      <div class="relative inline-block text-left group">
-        <button type="button" class="flex items-center gap-2 py-2 px-3.5 bg-white border border-zinc-200 rounded-xl hover:border-emerald-300 transition-all duration-200 dark:bg-zinc-900/80 dark:border-zinc-800">
-          <div class="w-5 h-5 rounded-lg bg-emerald-500 text-black flex items-center justify-center text-[9px] font-black uppercase shadow-[0_0_10px_rgba(16,185,129,0.2)]">
-            <%= user.name ? user.name.substring(0, 2) : 'A' %>
-          </div>
-          <span class="text-xs font-bold text-zinc-700 dark:text-zinc-200 hidden sm:block">My Account</span>
-          <i class="fa-solid fa-chevron-down text-[9px] text-zinc-400 group-hover:rotate-180 transition-transform duration-200"></i>
-        </button>
-
-        <div class="absolute right-0 w-52 mt-2 origin-top-right bg-white border border-zinc-200 rounded-2xl shadow-xl shadow-zinc-200/50 opacity-0 scale-95 pointer-events-none group-hover:opacity-100 group-hover:scale-100 group-hover:pointer-events-auto transition-all duration-150 z-50 dark:bg-[#090f0b] dark:border-zinc-800 dark:shadow-2xl dark:shadow-black/90">
-          <div class="p-3.5 border-b border-zinc-100 dark:border-zinc-900/60">
-            <span class="inline-block text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded <%= user.role === 'admin' ? 'bg-red-50 text-red-600 border border-red-100 dark:bg-red-500/10 dark:text-red-400 dark:border-red-500/20' : 'bg-emerald-50 text-emerald-600 border border-emerald-100 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/20' %>">
-              <%= user.role ? user.role : 'Customer' %>
-            </span>
-            <p class="text-xs font-bold text-zinc-800 dark:text-zinc-100 truncate mt-2"><%= user.name %></p>
-            <p class="text-[10px] text-zinc-400 dark:text-zinc-500 truncate"><%= user.email %></p>
-          </div>
-          
-          <div class="p-1.5 space-y-0.5">
-            <% if(user.role === 'admin') { %>
-              <a href="/products/allProducts" class="flex items-center gap-2.5 px-3 py-2 text-xs font-semibold text-zinc-600 hover:bg-emerald-50 hover:text-emerald-600 rounded-xl transition-all dark:text-zinc-400 dark:hover:bg-emerald-500/10 dark:hover:text-emerald-400">
-                <i class="fa-solid fa-boxes-stacked text-[11px] opacity-70"></i> Dashboard / Catalog
-              </a>
-              <a href="/products/create" class="flex items-center gap-2.5 px-3 py-2 text-xs font-semibold text-zinc-600 hover:bg-emerald-50 hover:text-emerald-600 rounded-xl transition-all dark:text-zinc-400 dark:hover:bg-emerald-500/10 dark:hover:text-emerald-400">
-                <i class="fa-solid fa-plus text-[11px] opacity-70"></i> Add New Item
-              </a>
-            <% } %>
-            <a href="/users/cart/products" class="flex items-center gap-2.5 px-3 py-2 text-xs font-semibold text-zinc-600 hover:bg-emerald-50 hover:text-emerald-600 rounded-xl transition-all dark:text-zinc-400 dark:hover:bg-emerald-500/10 dark:hover:text-emerald-400">
-              <i class="fa-solid fa-basket-shopping text-[11px] opacity-70"></i> My Cart Page
-            </a>
-          </div>
-
-          <div class="p-1.5 border-t border-zinc-100 bg-zinc-50 rounded-b-2xl dark:border-zinc-900/60 dark:bg-black/40">
-            <a href="/users/logout" class="flex items-center gap-2.5 px-3 py-2 text-xs font-bold text-rose-600 hover:bg-rose-50 rounded-xl transition-all dark:text-rose-400 dark:hover:bg-rose-500/10">
-              <i class="fa-solid fa-arrow-right-from-bracket text-[11px]"></i> Secure Logout
-            </a>
-          </div>
-        </div>
+    <div class="flex items-center gap-2.5 group cursor-pointer shrink-0">
+      <div class="w-8 h-8 bg-emerald-500 rounded-xl flex items-center justify-center group-hover:rotate-6 transition-transform duration-300 shadow-[0_0_15px_rgba(16,185,129,0.3)]">
+        <i class="fa-solid fa-basket-shopping text-black text-sm"></i>
       </div>
-    <% } else { %>
-      <a href="/users/login" class="px-3 py-2 text-xs font-bold text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white transition-colors duration-200">Login</a>
-      <a href="/users/register" class="px-4 py-2 text-xs font-bold bg-emerald-500 text-black rounded-xl hover:bg-emerald-400 shadow-md shadow-emerald-500/10 active:scale-95 transition-all duration-200">Sign Up</a>
-    <% } %>
-
-    <button onclick="toggleTheme()" type="button" aria-label="Toggle theme" class="w-9 h-9 flex items-center justify-center bg-zinc-100 hover:bg-zinc-200 border border-zinc-200 rounded-xl text-zinc-700 transition-all dark:bg-zinc-900/80 dark:border-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-800">
-      <i id="theme-icon-sun" class="fa-solid fa-sun text-sm hidden dark:block"></i>
-      <i id="theme-icon-moon" class="fa-solid fa-moon text-sm dark:hidden"></i>
-    </button>
-
-    <% if(user && user.cart && user.cart.length > 0) { %>
-      <a href="/users/cart/products" class="flex items-center gap-2.5 bg-emerald-500 hover:bg-emerald-400 text-black px-3.5 py-2 rounded-xl transition-all shadow-[0_0_15px_rgba(16,185,129,0.2)]">
-        <div class="flex flex-col text-left leading-none">
-          <span class="text-[9px] font-black uppercase tracking-wider text-emerald-900"><%= user.cart.length %> Items</span>
-          <span class="text-xs font-black mt-0.5">₹<%= typeof totalCartPrice !== 'undefined' ? totalCartPrice : 0 %></span>
-        </div>
-        <div class="h-5 w-[1px] bg-black/20"></div>
-        <i class="fa-solid fa-basket-shopping text-xs"></i>
-      </a>
-    <% } else { %>
-      <a href="/users/cart/products" class="flex items-center gap-2 border border-zinc-200 bg-zinc-100 text-zinc-600 px-4 py-2 rounded-xl transition-all font-bold text-xs uppercase tracking-wider hover:bg-zinc-200 dark:text-zinc-300 dark:bg-zinc-900/30 dark:border-zinc-800 dark:hover:border-zinc-700">
-        <i class="fa-solid fa-basket-shopping text-xs text-zinc-400 dark:text-zinc-500"></i>
-        <span>Cart</span>
-      </a>
-    <% } %>
-
-  </div>
-</nav>
-
-<section class="pt-40 pb-16 px-6 text-center max-w-4xl mx-auto flex flex-col items-center">
-  <div class="inline-flex items-center gap-2 px-3.5 py-1.5 bg-emerald-50 border border-emerald-200/50 text-emerald-700 rounded-full text-[10px] uppercase tracking-widest font-bold mb-6 shadow-inner dark:bg-emerald-950/40 dark:border-emerald-800/40 dark:text-emerald-400">
-    <span class="w-1.5 h-1.5 rounded-full bg-emerald-600 dark:bg-emerald-400 animate-ping"></span>
-    ⚡ Superfast 10-Min Delivery Active
-  </div>
-
-  <h2 class="text-4xl md:text-7xl font-extrabold tracking-tight leading-[1.1] text-zinc-900 dark:text-white">
-    Daily Essentials <br><span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 via-zinc-700 to-zinc-500 dark:from-emerald-300 dark:via-zinc-200 dark:to-zinc-400">Delivered Fresh</span>
-  </h2>
-
-  <p class="text-zinc-500 dark:text-zinc-400 mt-6 text-sm md:text-base max-w-xl font-medium leading-relaxed opacity-80">
-    Skip the queue. Get farm-fresh vegetables, dairy, household staples, and premium groceries delivered to your doorstep instantly.
-  </p>
-
-  <div class="mt-8 flex flex-col sm:flex-row gap-4 items-center">
-    <a href="/products/allProducts" class="px-7 py-3.5 bg-emerald-500 text-black text-sm font-bold rounded-xl hover:bg-emerald-400 shadow-xl shadow-emerald-500/10 transition-all duration-200 flex items-center gap-2 group">
-      Order Groceries Now
-      <i class="fa-solid fa-arrow-right text-xs group-hover:translate-x-0.5 transition-transform"></i>
-    </a>
-    <a href="#categories" class="px-7 py-3.5 bg-white border border-zinc-200 text-zinc-700 text-sm font-semibold rounded-xl hover:bg-zinc-50 dark:bg-zinc-900/80 dark:border-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-white transition-all duration-200">
-      Browse Categories
-    </a>
-  </div>
-</section>
-
-<section id="categories" class="max-w-6xl mx-auto px-6 mb-12 scroll-mt-24">
-  <div class="flex items-center gap-3 overflow-x-auto pb-4 no-scrollbar text-xs font-bold tracking-wide uppercase text-zinc-500">
-
-    <a href="/?category=atta" class="bg-zinc-900 border border-zinc-800 px-4 py-2.5 rounded-xl whitespace-nowrap text-zinc-300 hover:text-white cursor-pointer transition-colors">Atta, Rice & Dal</a>
-
-    <a href="/?category=fruits" class="bg-zinc-900 border border-zinc-800 px-4 py-2.5 rounded-xl whitespace-nowrap text-zinc-300 hover:text-white cursor-pointer transition-colors">Fruits & Veggies</a>
-    
-    <a href="/?category=dairy" class="bg-zinc-900 border border-zinc-800 px-4 py-2.5 rounded-xl whitespace-nowrap text-zinc-300 hover:text-white cursor-pointer transition-colors">Dairy, Bread & Eggs</a>
-    
-    <a href="/?category=snacks" class="bg-zinc-900 border border-zinc-800 px-4 py-2.5 rounded-xl whitespace-nowrap text-zinc-300 hover:text-white cursor-pointer transition-colors">Snacks & Munchies</a>
-    
-    <a href="/" class="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 px-4 py-2.5 rounded-xl whitespace-nowrap cursor-pointer">Show All</a>
-
-  </div>
-</section>
-
-<section id="products" class="max-w-6xl mx-auto px-6 pb-24">
-  <div class="flex items-baseline justify-between mb-8 border-b border-zinc-100 dark:border-zinc-900/60 pb-4">
-    <h3 class="text-xl font-bold tracking-tight text-zinc-800 dark:text-zinc-100 flex items-center gap-2">
-      <i class="fa-solid fa-fire text-amber-500 text-sm"></i> Best Sellers Today
-    </h3>
-    <a href="/products/allProducts" class="text-xs font-bold text-zinc-500 dark:text-zinc-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">View All Catalogue <i class="fa-solid fa-chevron-right text-[9px] ml-0.5"></i></a>
-  </div>
-
-  <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-    <% if(products && products.length > 0) { %>
-      <% products.forEach(function(item) { %>
-        <div class="group bg-white border border-zinc-200 rounded-2xl p-4 hover:border-emerald-200 hover:shadow-xl hover:shadow-zinc-200/30 transition-all duration-300 flex flex-col justify-between dark:bg-[#0d110e]/60 dark:border-zinc-900 dark:hover:border-emerald-950 dark:hover:shadow-emerald-500/[0.01]">
-          <div>
-            <div class="h-40 bg-zinc-50 border border-zinc-100 rounded-xl mb-4 overflow-hidden relative flex items-center justify-center dark:bg-zinc-900/40 dark:border-zinc-900">
-              <a href="/products/view/<%= item._id %>" class="w-full h-full block">
-                <% if(item.image) { %>
-                  <img src="/uploads/<%= item.image %>" alt="<%= item.name %>" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-                <% } else { %>
-                  <div class="w-full h-full flex items-center justify-center">
-                    <i class="fa-solid fa-basket-shopping text-3xl text-emerald-600/40 group-hover:scale-105 transition-transform duration-500"></i>
-                  </div>
-                <% } %>
-              </a>
-            </div>
-            
-            <span class="text-[10px] bg-zinc-100 text-zinc-500 px-2 py-0.5 rounded font-bold uppercase tracking-wider dark:bg-zinc-900 dark:text-zinc-400">
-              <%= item.category || 'Fresh Produce' %>
-            </span>
-            
-            <h4 class="font-bold text-sm text-zinc-800 dark:text-zinc-200 group-hover:text-emerald-600 dark:group-hover:text-white mt-1.5 transition-colors line-clamp-1">
-              <a href="/products/view/<%= item._id %>" class="hover:underline">
-                <%= item.name %>
-              </a>
-            </h4>
-            <p class="text-[11px] text-zinc-500 mt-0.5">Quantity: <%= item.quantity || 'Pack' %></p>
-          </div>
-          
-          <div class="flex justify-between items-center mt-4 pt-2.5 border-t border-zinc-100 dark:border-zinc-900/80">
-            <div class="flex flex-col">
-              <span class="font-black text-base text-zinc-900 dark:text-white">₹<%= item.price %></span>
-              <% if(item.discountPrice) { %>
-                <span class="text-[10px] text-zinc-400 dark:text-zinc-500 line-through">₹<%= item.discountPrice %></span>
-              <% } %>
-            </div>
-
-            <div class="product-action-container">
-              <% 
-                let foundInCart = user && user.cart ? user.cart.find(c => c.product && c.product._id.toString() === item._id.toString()) : null; 
-              %>
-
-              <% if (foundInCart) { %>
-                <div class="flex items-center bg-emerald-500/[0.09] text-black rounded-lg overflow-hidden shadow-sm font-black text-xs">
-                  <button onclick="descreaseQty('<%= item._id %>', 'decrease')" class="px-3 py-2 hover:bg-emerald-400 transition-colors text-xs font-black">-</button>
-                  <span class="px-1.5 min-w-[18px] text-center font-black text-xs"><%= foundInCart.quantity %></span>
-                  <button onclick="increaseQty('<%= item._id %>', 'increase')" class="px-3 py-2 hover:bg-emerald-400 transition-colors text-xs font-black">+</button>
-                </div>
-              <% } else { %>
-                <button onclick="addToCart('<%= item._id %>')" class="text-center text-xs font-extrabold px-4 py-2 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-xl hover:bg-emerald-500 hover:text-black transition-all duration-200 shadow-sm dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/20 dark:hover:bg-emerald-500 dark:hover:text-black">
-                  + ADD
-                </button>
-              <% } %>
-            </div>
-
-          </div>
-        </div>
-      <% }) %>
-    <% } else { %>
-      <div class="col-span-full text-center py-12 text-zinc-500 text-sm font-medium">
-        <i class="fa-solid fa-box-open text-3xl mb-3 block opacity-40"></i>
-        No products found in the database. Please add some products from the dashboard!
+      <div>
+        <h1 class="text-lg font-black tracking-tight text-zinc-900 dark:text-white leading-none">Apna Mart</h1>
+        <span class="text-[9px] uppercase font-bold tracking-widest text-emerald-600 dark:text-emerald-400">Supermart</span>
       </div>
-    <% } %>
-  </div>
-</section>
+    </div>
 
-<section class="mt-12 px-6 md:px-12 overflow-hidden border-t border-zinc-200 dark:border-zinc-900 pt-16 bg-[#fafdfb] dark:bg-[#040805] transition-colors duration-300">
-  <div class="max-w-6xl mx-auto">
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-10 mb-16 items-start">
+    <div class="hidden md:flex gap-6 lg:gap-8 text-[11px] font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 shrink-0">
+      <a href="#" class="text-zinc-900 dark:text-white border-b-2 border-emerald-500 pb-1">Home</a>
+      <a href="#categories" class="hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors duration-200">Categories</a>
+      <a href="/products/allProducts" class="hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors duration-200">All Products</a>
+    </div>
+
+    <div class="flex-1 max-w-md relative group mx-4 hidden sm:block">
+      <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400 group-focus-within:text-emerald-600 dark:text-zinc-500 dark:group-focus-within:text-emerald-400 transition-colors"></i>
+      <input type="text" 
+            placeholder="Search groceries..." 
+            class="w-full bg-zinc-100 border border-zinc-200 rounded-xl py-2 pl-11 pr-4 text-xs font-medium text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:bg-white focus:border-emerald-500 transition-all dark:bg-zinc-900/50 dark:border-zinc-800/80 dark:text-white dark:placeholder-zinc-500">
+    </div>
+
+    <div class="flex items-center gap-3 shrink-0">
       
-      <div class="md:col-span-2 flex flex-col sm:flex-row items-center sm:items-start gap-6 bg-emerald-500/[0.03] border border-emerald-500/10 p-6 rounded-2xl dark:bg-emerald-500/[0.02]">
-        <a href="/about">
-          <div class="w-24 h-24 rounded-full overflow-hidden border-4 border-white dark:border-zinc-900 shrink-0 shadow-lg shadow-emerald-500/5">
-            <img src="/images/ramesh.png" alt="Ramesh Kushwaha" class="w-full h-full object-cover scale-105" onerror="this.src='https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150'">
-          </div>
-        </a>
-        <a href="/about">
-          <div class="text-center sm:text-left space-y-2">
-            <h4 class="text-emerald-700 dark:text-emerald-400 font-black text-lg tracking-wide hindi-trust-font">
-              "विश्वास सालों का, तकनीक आज की!"
-            </h4>
-            <p class="text-zinc-600 dark:text-zinc-400 text-xs leading-relaxed font-medium">
-              For decades, Kushwaha Kirana Store has been your trusted partner for clean, pure, and premium daily essentials. To bring unparalleled convenience to your family, our store is now completely digital. Pure quality, genuine pricing, and instant doorstep delivery remain our solemn promise.
-            </p>
-            <div class="pt-1">
-              <span class="text-xs font-black text-zinc-800 dark:text-zinc-200 block">Ramesh Kushwaha</span>
-              <span class="text-[9px] uppercase tracking-widest font-black text-emerald-600 dark:text-emerald-500">Founder & Proprietor</span>
+      <% if(user){ %>
+        <div class="relative inline-block text-left group">
+          <button type="button" class="flex items-center gap-2 py-2 px-3.5 bg-white border border-zinc-200 rounded-xl hover:border-emerald-300 transition-all duration-200 dark:bg-zinc-900/80 dark:border-zinc-800">
+            <div class="w-5 h-5 rounded-lg bg-emerald-500 text-black flex items-center justify-center text-[9px] font-black uppercase shadow-[0_0_10px_rgba(16,185,129,0.2)]">
+              <%= user.name ? user.name.substring(0, 2) : 'A' %>
+            </div>
+            <span class="text-xs font-bold text-zinc-700 dark:text-zinc-200 hidden sm:block">My Account</span>
+            <i class="fa-solid fa-chevron-down text-[9px] text-zinc-400 group-hover:rotate-180 transition-transform duration-200"></i>
+          </button>
+
+          <div class="absolute right-0 w-52 mt-2 origin-top-right bg-white border border-zinc-200 rounded-2xl shadow-xl shadow-zinc-200/50 opacity-0 scale-95 pointer-events-none group-hover:opacity-100 group-hover:scale-100 group-hover:pointer-events-auto transition-all duration-150 z-50 dark:bg-[#090f0b] dark:border-zinc-800 dark:shadow-2xl dark:shadow-black/90">
+            <div class="p-3.5 border-b border-zinc-100 dark:border-zinc-900/60">
+              <span class="inline-block text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded <%= user.role === 'admin' ? 'bg-red-50 text-red-600 border border-red-100 dark:bg-red-500/10 dark:text-red-400 dark:border-red-500/20' : 'bg-emerald-50 text-emerald-600 border border-emerald-100 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-red-500/20' %>">
+                <%= user.role ? user.role : 'Customer' %>
+              </span>
+              <p class="text-xs font-bold text-zinc-800 dark:text-zinc-100 truncate mt-2"><%= user.name %></p>
+              <p class="text-[10px] text-zinc-400 dark:text-zinc-500 truncate"><%= user.email %></p>
+            </div>
+            
+            <div class="p-1.5 space-y-0.5">
+              <% if(user.role === 'admin') { %>
+                <a href="/products/allProducts" class="flex items-center gap-2.5 px-3 py-2 text-xs font-semibold text-zinc-600 hover:bg-emerald-50 hover:text-emerald-600 rounded-xl transition-all dark:text-zinc-400 dark:hover:bg-emerald-500/10 dark:hover:text-emerald-400">
+                  <i class="fa-solid fa-boxes-stacked text-[11px] opacity-70"></i> Dashboard / Catalog
+                </a>
+                <a href="/products/create" class="flex items-center gap-2.5 px-3 py-2 text-xs font-semibold text-zinc-600 hover:bg-emerald-50 hover:text-emerald-600 rounded-xl transition-all dark:text-zinc-400 dark:hover:bg-emerald-500/10 dark:hover:text-emerald-400">
+                  <i class="fa-solid fa-plus text-[11px] opacity-70"></i> Add New Item
+                </a>
+              <% } %>
+              <a href="/users/cart/products" class="flex items-center gap-2.5 px-3 py-2 text-xs font-semibold text-zinc-600 hover:bg-emerald-50 hover:text-emerald-600 rounded-xl transition-all dark:text-zinc-400 dark:hover:bg-emerald-500/10 dark:hover:text-emerald-400">
+                <i class="fa-solid fa-basket-shopping text-[11px] opacity-70"></i> My Cart Page
+              </a>
+            </div>
+
+            <div class="p-1.5 border-t border-zinc-100 bg-zinc-50 rounded-b-2xl dark:border-zinc-900/60 dark:bg-black/40">
+              <a href="/users/logout" class="flex items-center gap-2.5 px-3 py-2 text-xs font-bold text-rose-600 hover:bg-rose-50 rounded-xl transition-all dark:text-rose-400 dark:hover:bg-rose-500/10">
+                <i class="fa-solid fa-arrow-right-from-bracket text-[11px]"></i> Secure Logout
+              </a>
             </div>
           </div>
+        </div>
+      <% } else { %>
+        <a href="/users/login" class="px-3 py-2 text-xs font-bold text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white transition-colors duration-200">Login</a>
+        <a href="/users/register" class="px-4 py-2 text-xs font-bold bg-emerald-500 text-black rounded-xl hover:bg-emerald-400 shadow-md shadow-emerald-500/10 active:scale-95 transition-all duration-200">Sign Up</a>
+      <% } %>
+
+      <button onclick="toggleTheme()" type="button" aria-label="Toggle theme" class="w-9 h-9 flex items-center justify-center bg-zinc-100 hover:bg-zinc-200 border border-zinc-200 rounded-xl text-zinc-700 transition-all dark:bg-zinc-900/80 dark:border-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-800">
+        <i id="theme-icon-sun" class="fa-solid fa-sun text-sm hidden dark:block"></i>
+        <i id="theme-icon-moon" class="fa-solid fa-moon text-sm dark:hidden"></i>
+      </button>
+
+      <% if(user && user.cart && user.cart.length > 0) { %>
+        <a href="/users/cart/products" class="flex items-center gap-3 bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-900/60 px-3.5 py-1.5 rounded-xl transition-all duration-300 shadow-[0_4px_15px_rgba(16,185,129,0.08)] select-none hover:border-emerald-400 group">
+          
+          <div class="relative flex items-center justify-center w-8 h-8 bg-emerald-500/15 rounded-lg text-[#24963f] dark:text-emerald-400">
+            <i class="fa-solid fa-basket-shopping text-base group-hover:scale-110 transition-transform duration-200"></i>
+            
+            <span class="absolute -top-2 -right-2 bg-gradient-to-r from-red-500 to-rose-600 text-white font-extrabold text-[8px] w-3 h-3 rounded-full flex items-center justify-center shadow-[0_3px_10px_rgba(239,68,68,0.4)] border-white dark:border-zinc-950 transform hover:scale-115 transition-transform duration-200">
+              <%= user.cart.length %>
+            </span>
+          </div>
+
+          <span class="text-xs font-black text-zinc-900 dark:text-white tracking-tight">
+            ₹<%= typeof totalCartPrice !== 'undefined' ? totalCartPrice : 0 %>
+          </span>
         </a>
-      </div>
+      <% } else { %>
+        <a href="/users/cart/products" class="flex items-center gap-2 border border-zinc-200 bg-zinc-100 text-zinc-600 px-4 py-2 rounded-xl transition-all font-bold text-xs uppercase tracking-wider hover:bg-zinc-200 dark:text-zinc-300 dark:bg-zinc-900/30 dark:border-zinc-800 dark:hover:border-zinc-700">
+          <i class="fa-solid fa-basket-shopping text-xs text-zinc-400 dark:text-zinc-500"></i>
+          <span>Cart</span>
+        </a>
+      <% } %>
 
-      <div class="space-y-4 md:text-right flex flex-col md:items-end w-full">
-        <h4 class="text-zinc-800 dark:text-zinc-200 font-bold uppercase tracking-wider text-[11px] text-emerald-600 dark:text-emerald-400">Store Directory</h4>
-        <div class="text-zinc-500 dark:text-zinc-400 text-xs space-y-2 font-medium">
-          <p class="flex items-center md:justify-end gap-2"><i class="fa-solid fa-store text-emerald-500 text-[10px]"></i> Shree Ram Kirana Store (Apna Mart)</p>
-          <p class="flex items-center md:justify-end gap-2"><i class="fa-solid fa-location-dot text-emerald-500 text-[10px]"></i> Baikunthpur ward no.01, Rewa, MP</p>
-          <p class="flex items-center md:justify-end gap-2 font-bold text-zinc-700 dark:text-zinc-300"><i class="fa-solid fa-phone text-emerald-500 text-[10px]"></i> +91 9039301184</p>
+    </div>
+  </nav>
+
+  <section class="pt-40 pb-16 px-6 text-center max-w-4xl mx-auto flex flex-col items-center">
+    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 bg-emerald-50 border border-emerald-200/50 text-emerald-700 rounded-full text-[10px] uppercase tracking-widest font-bold mb-6 shadow-inner dark:bg-emerald-950/40 dark:border-emerald-800/40 dark:text-emerald-400">
+      <span class="w-1.5 h-1.5 rounded-full bg-emerald-600 dark:bg-emerald-400 animate-ping"></span>
+      ⚡ Superfast 10-Min Delivery Active
+    </div>
+
+    <h2 class="text-4xl md:text-7xl font-extrabold tracking-tight leading-[1.1] text-zinc-900 dark:text-white">
+      Daily Essentials <br><span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 via-zinc-700 to-zinc-500 dark:from-emerald-300 dark:via-zinc-200 dark:to-zinc-400">Delivered Fresh</span>
+    </h2>
+
+    <p class="text-zinc-500 dark:text-zinc-400 mt-6 text-sm md:text-base max-w-xl font-medium leading-relaxed opacity-80">
+      Skip the queue. Get farm-fresh vegetables, dairy, household staples, and premium groceries delivered to your doorstep instantly.
+    </p>
+
+    <div class="mt-8 flex flex-col sm:flex-row gap-4 items-center">
+      <a href="/products/allProducts" class="px-7 py-3.5 bg-emerald-500 text-black text-sm font-bold rounded-xl hover:bg-emerald-400 shadow-xl shadow-emerald-500/10 transition-all duration-200 flex items-center gap-2 group">
+        Order Groceries Now
+        <i class="fa-solid fa-arrow-right text-xs group-hover:translate-x-0.5 transition-transform"></i>
+      </a>
+      <a href="#categories" class="px-7 py-3.5 bg-white border border-zinc-200 text-zinc-700 text-sm font-semibold rounded-xl hover:bg-zinc-50 dark:bg-zinc-900/80 dark:border-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-white transition-all duration-200">
+        Browse Categories
+      </a>
+    </div>
+  </section>
+
+  <section id="categories" class="max-w-6xl mx-auto px-6 mb-12 scroll-mt-24">
+    <div class="flex items-center gap-3 overflow-x-auto pb-4 no-scrollbar text-xs font-bold tracking-wide uppercase text-zinc-500">
+
+      <a href="/?category=atta" class="bg-zinc-900 border border-zinc-800 px-4 py-2.5 rounded-xl whitespace-nowrap text-zinc-300 hover:text-white cursor-pointer transition-colors">Atta, Rice & Dal</a>
+
+      <a href="/?category=fruits" class="bg-zinc-900 border border-zinc-800 px-4 py-2.5 rounded-xl whitespace-nowrap text-zinc-300 hover:text-white cursor-pointer transition-colors">Fruits & Veggies</a>
+      
+      <a href="/?category=dairy" class="bg-zinc-900 border border-zinc-800 px-4 py-2.5 rounded-xl whitespace-nowrap text-zinc-300 hover:text-white cursor-pointer transition-colors">Dairy, Bread & Eggs</a>
+      
+      <a href="/?category=snacks" class="bg-zinc-900 border border-zinc-800 px-4 py-2.5 rounded-xl whitespace-nowrap text-zinc-300 hover:text-white cursor-pointer transition-colors">Snacks & Munchies</a>
+      
+      <a href="/" class="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 px-4 py-2.5 rounded-xl whitespace-nowrap cursor-pointer">Show All</a>
+
+    </div>
+  </section>
+
+  <section id="products" class="max-w-6xl mx-auto px-6 pb-24">
+    <div class="flex items-baseline justify-between mb-8 border-b border-zinc-100 dark:border-zinc-900/60 pb-4">
+      <h3 class="text-xl font-bold tracking-tight text-zinc-800 dark:text-zinc-100 flex items-center gap-2">
+        <i class="fa-solid fa-fire text-amber-500 text-sm"></i> Best Sellers Today
+      </h3>
+      <a href="/products/allProducts" class="text-xs font-bold text-zinc-500 dark:text-zinc-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">View All Catalogue <i class="fa-solid fa-chevron-right text-[9px] ml-0.5"></i></a>
+    </div>
+
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+      <% if(products && products.length > 0) { %>
+        <% products.forEach(function(item) { %>
+          <div class="group bg-white border border-zinc-200 rounded-2xl p-4 hover:border-emerald-200 hover:shadow-xl hover:shadow-zinc-200/30 transition-all duration-300 flex flex-col justify-between dark:bg-[#0d110e]/60 dark:border-zinc-900 dark:hover:border-emerald-950 dark:hover:shadow-emerald-500/[0.01]">
+            <div>
+              <div class="h-40 bg-zinc-50 border border-zinc-100 rounded-xl mb-4 overflow-hidden relative flex items-center justify-center dark:bg-zinc-900/40 dark:border-zinc-900">
+                <a href="/products/view/<%= item._id %>" class="w-full h-full block">
+                  <% if(item.image) { %>
+                    <img src="/uploads/<%= item.image %>" alt="<%= item.name %>" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                  <% } else { %>
+                    <div class="w-full h-full flex items-center justify-center">
+                      <i class="fa-solid fa-basket-shopping text-3xl text-emerald-600/40 group-hover:scale-105 transition-transform duration-500"></i>
+                    </div>
+                  <% } %>
+                </a>
+              </div>
+              
+              <span class="text-[10px] bg-zinc-100 text-zinc-500 px-2 py-0.5 rounded font-bold uppercase tracking-wider dark:bg-zinc-900 dark:text-zinc-400">
+                <%= item.category || 'Fresh Produce' %>
+              </span>
+              
+              <h4 class="font-bold text-sm text-zinc-800 dark:text-zinc-200 group-hover:text-emerald-600 dark:group-hover:text-white mt-1.5 transition-colors line-clamp-1">
+                <a href="/products/view/<%= item._id %>" class="hover:underline">
+                  <%= item.name %>
+                </a>
+              </h4>
+              <p class="text-[11px] text-zinc-500 mt-0.5">Quantity: <%= item.quantity || 'Pack' %></p>
+            </div>
+            
+            <div class="flex justify-between items-center mt-4 pt-2.5 border-t border-zinc-100 dark:border-zinc-900/80">
+              <div class="flex flex-col">
+                <span class="font-black text-base text-zinc-900 dark:text-white">₹<%= item.price %></span>
+                <% if(item.discountPrice) { %>
+                  <span class="text-[10px] text-zinc-400 dark:text-zinc-500 line-through">₹<%= item.discountPrice %></span>
+                <% } %>
+              </div>
+
+              <div class="product-action-container">
+                <% 
+                  let foundInCart = user && user.cart ? user.cart.find(c => c.product && c.product._id.toString() === item._id.toString()) : null; 
+                %>
+
+                <% if (foundInCart) { %>
+                  <div class="flex items-center bg-emerald-500/[0.09] text-black rounded-lg overflow-hidden shadow-sm font-black text-xs">
+                    <button onclick="descreaseQty('<%= item._id %>', 'decrease')" class="px-3 py-2 hover:bg-emerald-400 transition-colors text-xs font-black">-</button>
+                    <span class="px-1.5 min-w-[18px] text-center font-black text-xs"><%= foundInCart.quantity %></span>
+                    <button onclick="increaseQty('<%= item._id %>', 'increase')" class="px-3 py-2 hover:bg-emerald-400 transition-colors text-xs font-black">+</button>
+                  </div>
+                <% } else { %>
+                  <button onclick="addToCart('<%= item._id %>')" class="text-center text-xs font-extrabold px-4 py-2 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-xl hover:bg-emerald-500 hover:text-black transition-all duration-200 shadow-sm dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/20 dark:hover:bg-emerald-500 dark:hover:text-black">
+                    + ADD
+                  </button>
+                <% } %>
+              </div>
+
+            </div>
+          </div>
+        <% }) %>
+      <% } else { %>
+        <div class="col-span-full text-center py-12 text-zinc-500 text-sm font-medium">
+          <i class="fa-solid fa-box-open text-3xl mb-3 block opacity-40"></i>
+          No products found in the database. Please add some products from the dashboard!
         </div>
+      <% } %>
+    </div>
+  </section>
+
+  <section id="about" class="mt-12 px-6 md:px-12 overflow-hidden border-t border-zinc-200 dark:border-zinc-900 pt-16 bg-[#fafdfb] dark:bg-[#040805] transition-colors duration-300">
+    <div class="max-w-6xl mx-auto">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-10 mb-16 items-start">
         
-        <div class="pt-3 border-t border-zinc-200 dark:border-zinc-800 w-full md:text-right">
-          <p class="text-[10px] text-zinc-400 italic font-bold tracking-wide dark:text-zinc-500">
-            ❤️ डिजिटल भारत, हमारा डिजिटल गाँव — रमेश कुशवाहा जी के सुपुत्र द्वारा निर्मित।
-          </p>
+        <div class="md:col-span-2 flex flex-col sm:flex-row items-center sm:items-start gap-6 bg-emerald-500/[0.03] border border-emerald-500/10 p-6 rounded-2xl dark:bg-emerald-500/[0.02]">
+          <a href="/about">
+            <div class="w-24 h-24 rounded-full overflow-hidden border-4 border-white dark:border-zinc-900 shrink-0 shadow-lg shadow-emerald-500/5">
+              <img src="/images/ramesh.png" alt="Ramesh Kushwaha" class="w-full h-full object-cover scale-105" onerror="this.src='https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150'">
+            </div>
+          </a>
+          <a href="/about">
+            <div class="text-center sm:text-left space-y-2">
+              <h4 class="text-emerald-700 dark:text-emerald-400 font-black text-lg tracking-wide hindi-trust-font">
+                "विश्वास सालों का, तकनीक आज की!"
+              </h4>
+              <p class="text-zinc-600 dark:text-zinc-400 text-xs leading-relaxed font-medium">
+                For decades, Kushwaha Kirana Store has been your trusted partner for clean, pure, and premium daily essentials. To bring unparalleled convenience to your family, our store is now completely digital. Pure quality, genuine pricing, and instant doorstep delivery remain our solemn promise.
+              </p>
+              <div class="pt-1">
+                <span class="text-xs font-black text-zinc-800 dark:text-zinc-200 block">Ramesh Kushwaha</span>
+                <span class="text-[9px] uppercase tracking-widest font-black text-emerald-600 dark:text-emerald-500">Founder & Proprietor</span>
+              </div>
+            </div>
+          </a>
         </div>
+
+        <div class="space-y-4 md:text-right flex flex-col md:items-end w-full">
+          <h4 class="text-zinc-800 dark:text-zinc-200 font-bold uppercase tracking-wider text-[11px] text-emerald-600 dark:text-emerald-400">Store Directory</h4>
+          <div class="text-zinc-500 dark:text-zinc-400 text-xs space-y-2 font-medium">
+            <p class="flex items-center md:justify-end gap-2"><i class="fa-solid fa-store text-emerald-500 text-[10px]"></i> Shree Ram Kirana Store (Apna Mart)</p>
+            <p class="flex items-center md:justify-end gap-2"><i class="fa-solid fa-location-dot text-emerald-500 text-[10px]"></i> Baikunthpur ward no.01, Rewa, MP</p>
+            <p class="flex items-center md:justify-end gap-2 font-bold text-zinc-700 dark:text-zinc-300"><i class="fa-solid fa-phone text-emerald-500 text-[10px]"></i> +91 9039301184</p>
+          </div>
+          
+          <div class="pt-3 border-t border-zinc-200 dark:border-zinc-800 w-full md:text-right">
+            <p class="text-[10px] text-zinc-400 italic font-bold tracking-wide dark:text-zinc-500">
+              ❤️ डिजिटल भारत, हमारा डिजिटल गाँव — रमेश कुशवाहा जी के सुपुत्र द्वारा निर्मित।
+            </p>
+          </div>
+        </div>
+
       </div>
 
+      <div class="select-none pointer-events-none mt-6 overflow-hidden">
+        <h1 style="font-family: 'Archivo Black', sans-serif;" 
+            class="text-[12vw] font-black leading-none tracking-[-0.05em] text-center text-emerald-500/[0.04] dark:text-emerald-500/[0.02] opacity-[0.95]">
+          Apna mart
+        </h1>
+      </div>
     </div>
+  </section>
 
-    <div class="select-none pointer-events-none mt-6 overflow-hidden">
-      <h1 style="font-family: 'Archivo Black', sans-serif;" 
-          class="text-[12vw] font-black leading-none tracking-[-0.05em] text-center text-emerald-500/[0.04] dark:text-emerald-500/[0.02] opacity-[0.95]">
-        Apna mart
-      </h1>
+  <footer class="bg-[#fafdfb] dark:bg-[#040805] py-8 px-6 md:px-12 border-t border-zinc-200 dark:border-zinc-950 flex flex-col sm:flex-row justify-between items-center text-zinc-500 text-[11px] font-medium gap-4 transition-colors duration-300">
+    <div class="max-w-6xl mx-auto w-full flex flex-col sm:flex-row justify-between items-center gap-4">
+      <p>© 2026 Apna Mart Kirana Store. Freshness Guaranteed.</p>
+      <div class="flex gap-6 uppercase tracking-widest text-[10px] text-zinc-400 dark:text-zinc-500">
+        <a href="https://www.instagram.com/gaurav.kushwaha7" target="_blank" class="hover:text-zinc-800 dark:hover:text-white transition-colors"><i class="fa-brands fa-instagram text-sm mr-1"></i> Instagram</a>
+        <a href="#" class="hover:text-zinc-800 dark:hover:text-white transition-colors"><i class="fa-brands fa-x-twitter text-sm mr-1"></i> Twitter</a>
+      </div>
     </div>
-  </div>
-</section>
-
-<footer class="bg-[#fafdfb] dark:bg-[#040805] py-8 px-6 md:px-12 border-t border-zinc-200 dark:border-zinc-950 flex flex-col sm:flex-row justify-between items-center text-zinc-500 text-[11px] font-medium gap-4 transition-colors duration-300">
-  <div class="max-w-6xl mx-auto w-full flex flex-col sm:flex-row justify-between items-center gap-4">
-    <p>© 2026 Apna Mart Kirana Store. Freshness Guaranteed.</p>
-    <div class="flex gap-6 uppercase tracking-widest text-[10px] text-zinc-400 dark:text-zinc-500">
-      <a href="https://www.instagram.com/gaurav.kushwaha7" target="_blank" class="hover:text-zinc-800 dark:hover:text-white transition-colors"><i class="fa-brands fa-instagram text-sm mr-1"></i> Instagram</a>
-      <a href="#" class="hover:text-zinc-800 dark:hover:text-white transition-colors"><i class="fa-brands fa-x-twitter text-sm mr-1"></i> Twitter</a>
-    </div>
-  </div>
-</footer>
+  </footer>
 
 
-<script>
+  <script>
 
-  async function increaseQty(productId) {
-    let res = await fetch(`/users/cart/update/increaseQty/${productId}`, { method: 'POST' });
-    let data = await res.json();
-    if(data.success) { location.reload(); }
-  }
+    async function increaseQty(productId) {
+      let res = await fetch(`/users/cart/update/increaseQty/${productId}`, { method: 'POST' });
+      let data = await res.json();
+      if(data.success) { location.reload(); }
+    }
 
-  async function descreaseQty(productId) {
-    let res = await fetch(`/users/cart/update/descreaseQty/${productId}`, { method: 'POST' });
-    let data = await res.json();
-    if(data.success) { location.reload(); }
-  }
-</script>
-
-
+    async function descreaseQty(productId) {
+      let res = await fetch(`/users/cart/update/descreaseQty/${productId}`, { method: 'POST' });
+      let data = await res.json();
+      if(data.success) { location.reload(); }
+    }
+  </script>
 
   <script>
     async function addToCart (productId){
