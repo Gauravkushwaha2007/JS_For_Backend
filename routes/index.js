@@ -10,7 +10,13 @@ const productModel = require('../models/productModel');
 router.get('/', attachUser, async(req, res)=>{
     
     try{
-        let products = await productModel.find().limit(8);
+
+        let query = {};
+        if(req.query.category){
+            query.category = req.query.category;
+        }
+
+        let products = await productModel.find(query)
         let user = res.locals.user || req.user || null;
         
         let totalCartPrice = 0;

@@ -23,6 +23,11 @@ const productSchema = mongoose.Schema({
         type: String,
         required: true
     },
+    category: {
+        type: String, 
+        required: true
+    },
+
     bgColor: {
         type: String,
         default: "#ffff"
@@ -43,6 +48,7 @@ const productSchema = mongoose.Schema({
     description: {
         type: String
     }
+
 
 }, {
     timestamps: true

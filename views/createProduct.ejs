@@ -152,6 +152,17 @@
                     value="<%= product ? product.quantity : '' %>"
                     class="w-full text-xs font-medium p-3.5 border border-gray-200 rounded-xl focus:outline-none focus:border-black bg-gray-50/30 transition-all" required>
             </div>
+            <div class="flex flex-col gap-1.5 mt-4">
+              <label class="text-xs font-bold text-zinc-400 uppercase tracking-wider">Select Category</label>
+              <select name="category" required 
+                      class="bg-zinc-900 border border-zinc-800 rounded-xl py-2.5 px-4 text-xs font-medium text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all">
+                <option value="" disabled selected>-- Choose a Category --</option>
+                <option value="fruits">Fruits & Veggies</option>
+                <option value="fruits">Atta Rice & Dal</option>
+                <option value="dairy">Dairy, Bread & Eggs</option>
+                <option value="snacks">Snacks & Munchies</option>
+              </select>
+            </div>
           </div>
           </div>
 

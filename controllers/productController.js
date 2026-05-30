@@ -7,7 +7,7 @@ const fs = require('fs');
 
 const createProduct = async (req, res) => {
     try {
-        let { name, price, stock, quantity, bgColor, textColor, panelColor, discount, description} = req.body;
+        let { name, price, stock, quantity, category, bgColor, textColor, panelColor, discount, description} = req.body;
         let imagePath = req.file? req.file.filename: null;
 
         await productModel.create({
@@ -15,6 +15,7 @@ const createProduct = async (req, res) => {
             price,
             stock, 
             quantity,
+            category,
             bgColor,
             textColor,
             panelColor,
@@ -57,7 +58,7 @@ const getEditProduct = async (req, res)=>{
 
 const postEditProduct = async (req, res)=>{
     try{
-        let { name, price, stock, quantity, bgColor, textColor, panelColor, discount, description} = req.body;
+        let { name, price, stock, quantity, category, bgColor, textColor, panelColor, discount, description} = req.body;
         let product = await productModel.findById(req.params.id);
 
         let updatedData = {
@@ -65,6 +66,7 @@ const postEditProduct = async (req, res)=>{
             price,
             stock, 
             quantity,
+            category,
             discount,
             bgColor,
             panelColor,

@@ -15,297 +15,297 @@
 
 <body class="bg-[#f8f9fa] text-gray-900 antialiased">
 
-<header class="nav-sticky bg-white border-b border-gray-100 shadow-sm">
-    <div class="max-w-7xl mx-auto px-4 md:px-6 h-20 flex items-center justify-between gap-4">
-      
-      <div class="flex items-center gap-6 shrink-0">
-        <a href="/" class="text-2xl font-black tracking-tighter text-[#24963f]">APNA<span class="text-black">MART</span></a>
+  <header class="nav-sticky bg-white border-b border-gray-100 shadow-sm">
+      <div class="max-w-7xl mx-auto px-4 md:px-6 h-20 flex items-center justify-between gap-4">
         
-        <div class="hidden lg:block border-l border-gray-200 pl-6">
-          <p class="text-[10px] font-black uppercase tracking-widest text-gray-400 leading-none mb-1">Delivery in 10-12 mins</p>
-          <p class="text-xs font-bold text-gray-900 flex items-center gap-1">
-            Bhopal, India <i class="fa-solid fa-caret-down text-[10px] text-[#24963f]"></i>
-          </p>
-        </div>
-      </div>
-
-      <div class="flex-1 max-w-xl relative group mx-2">
-        <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#24963f] transition-colors"></i>
-        <input type="text" 
-               placeholder='Search for "milk", "bread" or "veggies"...' 
-               class="w-full bg-gray-50 border border-gray-100 rounded-xl py-3 pl-12 pr-4 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#24963f]/20 focus:bg-white focus:border-[#24963f] transition-all">
-      </div>
-
-      <div class="flex items-center gap-4 shrink-0">
-        
-        <% if(user){ %>
-          <div class="relative inline-block text-left group">
-            <button type="button" class="flex items-center gap-2 py-2.5 px-3.5 bg-gray-50 hover:bg-gray-100 border border-gray-100 rounded-xl transition-all duration-200">
-              <div class="w-6 h-6 rounded-lg bg-[#24963f] text-white flex items-center justify-center text-[10px] font-black uppercase shadow-sm">
-                <%= user.name ? user.name.substring(0, 2) : 'A' %>
-              </div>
-              <span class="text-xs font-bold text-gray-700 hidden sm:block">My Account</span>
-              <i class="fa-solid fa-chevron-down text-[9px] text-gray-400 group-hover:rotate-180 transition-transform duration-200"></i>
-            </button>
-
-            <div class="absolute right-0 w-56 mt-2 origin-top-right bg-white border border-gray-100 rounded-2xl shadow-[0_10px_30px_rgba(0,0,0,0.08)] opacity-0 scale-95 pointer-events-none group-hover:opacity-100 group-hover:scale-100 group-hover:pointer-events-auto transition-all duration-150 z-50">
-              <div class="p-4 border-b border-gray-50">
-                <span class="inline-block text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded <%= user.role === 'admin' ? 'bg-red-50 text-red-600 border border-red-100' : 'bg-emerald-50 text-emerald-600 border border-emerald-100' %>">
-                  <%= user.role ? user.role : 'Customer' %>
-                </span>
-                <p class="text-sm font-extrabold text-gray-900 truncate mt-1.5"><%= user.name %></p>
-                <p class="text-xs text-gray-400 truncate"><%= user.email %></p>
-              </div>
-              
-              <div class="p-2 space-y-0.5">
-                <% if(user.role === 'admin') { %>
-                  <a href="/products/allProducts" class="flex items-center gap-3 px-3 py-2.5 text-xs font-bold text-gray-600 hover:bg-gray-50 hover:text-[#24963f] rounded-xl transition-all">
-                    <i class="fa-solid fa-boxes-stacked text-sm opacity-70"></i> Dashboard / Catalog
-                  </a>
-                  <a href="/products/create" class="flex items-center gap-3 px-3 py-2.5 text-xs font-bold text-gray-600 hover:bg-gray-50 hover:text-[#24963f] rounded-xl transition-all">
-                    <i class="fa-solid fa-plus text-sm opacity-70"></i> Add New Item
-                  </a>
-                <% } %>
-                <a href="/users/cart/products" class="flex items-center gap-3 px-3 py-2.5 text-xs font-bold text-gray-600 hover:bg-gray-50 hover:text-[#24963f] rounded-xl transition-all">
-                  <i class="fa-solid fa-basket-shopping text-sm opacity-70"></i> View My Cart
-                </a>
-              </div>
-
-              <div class="p-2 border-t border-gray-50 bg-gray-50/50 rounded-b-2xl">
-                <a href="/users/logout" class="flex items-center gap-3 px-3 py-2.5 text-xs font-extrabold text-red-500 hover:bg-red-50 rounded-xl transition-all">
-                  <i class="fa-solid fa-arrow-right-from-bracket text-sm"></i> Secure Logout
-                </a>
-              </div>
-            </div>
-          </div>
-        <% } else { %>
-          <a href="/users/login" class="text-xs font-bold text-gray-600 hover:text-[#24963f] transition-colors">Login</a>
-        <% } %>
-
-        <% if(user && user.cart && user.cart.length > 0) { %>
-          <% 
-            let totalCartPrice = 0;
-            if (user.cart && user.cart.length > 0) {
-              user.cart.forEach(item => {
-                totalCartPrice += Number(item.price || 0);
-              });
-            }
-          %>
-          <a href="/users/cart/products" class="flex items-center gap-3 bg-[#24963f] hover:bg-[#1e7e34] text-white px-4 py-2.5 rounded-xl transition-all shadow-md shadow-emerald-700/20">
-            <div class="flex flex-col text-left">
-              <span class="text-[10px] font-black uppercase tracking-wider text-emerald-200 leading-none"><%= user.cart.length %> Items</span>
-              <span class="text-xs font-black mt-0.5"><%= totalCartPrice > 0 ? '₹' + totalCartPrice : 'View Bill' %></span>
-            </div>
-            <div class="h-6 w-[1px] bg-white/20"></div>
-            <div class="flex items-center gap-1.5 font-extrabold text-xs tracking-tight">
-              <i class="fa-solid fa-basket-shopping"></i>
-              <span class="hidden sm:inline">View Basket</span>
-            </div>
-          </a>
-        <% } else { %>
-          <a href="/users/cart/products" class="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 px-5 py-3 rounded-xl transition-all font-extrabold text-xs uppercase tracking-wider border border-gray-200/20">
-            <i class="fa-solid fa-basket-shopping text-sm text-gray-400"></i>
-            <span>Cart</span>
-          </a>
-        <% } %>
-
-      </div>
-    </div>
-  </header>
-<div class="max-w-6xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-
-  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between border-b border-gray-200 pb-5 mb-10 gap-4">
-    <div>
-      <h1 class="text-3xl font-extrabold tracking-tight text-gray-900">Shopping Cart</h1>
-      <p class="text-sm text-gray-500 mt-1">Review your selected items before checking out.</p>
-    </div>
-    <a href="/products/allProducts"
-       class="inline-flex items-center justify-center bg-white text-gray-700 border border-gray-300 px-5 py-2.5 rounded-xl font-medium text-sm hover:bg-gray-50 shadow-sm transition-all duration-200 gap-2 group">
-      <i class="fa-solid fa-arrow-left text-xs text-gray-400 group-hover:-translate-x-1 transition-transform"></i>
-      Continue Shopping
-    </a>
-  </div>
-
-  <% if(products.length > 0 ){ %>
-
-  <div class="grid grid-cols-1 lg:grid-cols-3 gap-10 items-start">
-
-    <div class="lg:col-span-2 space-y-5">
-
-      <% let total = 0; %>
-
-      <% products.forEach((item) => { %>
-        <% if (!item.product) { return; } %>
-        <% 
-          const subTotal = item.product.price * item.quantity;
-          total += subTotal;
-        %>
-
-        <div id="product-<%= item.product._id %>"
-             class="bg-white rounded-2xl border border-gray-100 p-5 flex flex-col sm:flex-row gap-5 items-start sm:items-center relative hover:shadow-lg hover:shadow-gray-100/80 transition-all duration-300">
+        <div class="flex items-center gap-6 shrink-0">
+          <a href="/" class="text-2xl font-black tracking-tighter text-[#24963f]">APNA<span class="text-black">MART</span></a>
           
-          <div class="w-28 h-28 sm:w-24 sm:h-24 overflow-hidden rounded-xl bg-gray-50 flex-shrink-0 border border-gray-100 shadow-inner">
-            <img 
-              src="/uploads/<%= item.product.image %>" 
-              class="w-full h-full object-cover object-center transition-transform duration-500 hover:scale-105"
-              alt="<%= item.product.name %>"
-            >
+          <div class="hidden lg:block border-l border-gray-200 pl-6">
+            <p class="text-[10px] font-black uppercase tracking-widest text-gray-400 leading-none mb-1">Delivery in 10-12 mins</p>
+            <p class="text-xs font-bold text-gray-900 flex items-center gap-1">
+              Bhopal, India <i class="fa-solid fa-caret-down text-[10px] text-[#24963f]"></i>
+            </p>
           </div>
+        </div>
 
-          <div class="flex-1 w-full">
-            <div class="flex justify-between items-start">
-              <div>
-                <h2 class="text-lg font-bold text-gray-900 line-clamp-1 leading-tight">
-                  <%= item.product.name %>
-                </h2>
-                <p class="text-xs text-gray-400 mt-1 max-w-md line-clamp-1">
-                  Premium quality edition • <%= item.product.description || 'Modern usability and comfortable build.' %>
-                </p>
-              </div>
+        <div class="flex-1 max-w-xl relative group mx-2">
+          <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#24963f] transition-colors"></i>
+          <input type="text" 
+                placeholder='Search for "milk", "bread" or "veggies"...' 
+                class="w-full bg-gray-50 border border-gray-100 rounded-xl py-3 pl-12 pr-4 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#24963f]/20 focus:bg-white focus:border-[#24963f] transition-all">
+        </div>
 
-              <button 
-                onclick="removeToCart('<%= item.product._id %>')"
-                class="p-2 text-gray-400 hover:text-red-500 rounded-lg hover:bg-red-50 transition-colors duration-200"
-                title="Remove item"
-              >
-                <i class="fa-regular fa-trash-can text-lg"></i>
+        <div class="flex items-center gap-4 shrink-0">
+          
+          <% if(user){ %>
+            <div class="relative inline-block text-left group">
+              <button type="button" class="flex items-center gap-2 py-2.5 px-3.5 bg-gray-50 hover:bg-gray-100 border border-gray-100 rounded-xl transition-all duration-200">
+                <div class="w-6 h-6 rounded-lg bg-[#24963f] text-white flex items-center justify-center text-[10px] font-black uppercase shadow-sm">
+                  <%= user.name ? user.name.substring(0, 2) : 'A' %>
+                </div>
+                <span class="text-xs font-bold text-gray-700 hidden sm:block">My Account</span>
+                <i class="fa-solid fa-chevron-down text-[9px] text-gray-400 group-hover:rotate-180 transition-transform duration-200"></i>
               </button>
-            </div>
 
-            <div class="mt-4 pt-4 border-t border-gray-50 flex items-center justify-between flex-wrap gap-4">
-              
-              <div class="flex items-center border border-gray-200 rounded-xl bg-gray-50/50 p-1 shadow-sm">
-                <button
-                  onclick="descreaseQty('<%= item.product._id %>')"
-                  class="w-8 h-8 rounded-lg bg-white border border-gray-200 text-gray-600 hover:bg-gray-100 active:scale-95 transition flex items-center justify-center font-medium shadow-sm"
-                >
-                  <i class="fa-solid fa-minus text-xs"></i>
-                </button>
-
-                <span id="quantityNumber-<%= item.product._id %>" class="font-bold text-sm text-gray-800 w-10 text-center">
-                  <%= item.quantity %>
-                </span>
-
-                <button
-                  onclick="increaseQty('<%= item.product._id %>')"
-                  class="w-8 h-8 rounded-lg bg-black text-white hover:bg-gray-800 active:scale-95 transition flex items-center justify-center font-medium shadow-sm"
-                >
-                  <i class="fa-solid fa-plus text-xs"></i>
-                </button>
-              </div>
-
-              <div class="flex items-center gap-6 text-right">
-                <div>
-                  <span class="block text-[10px] uppercase font-bold tracking-wider text-gray-400">Price</span>
-                  <span class="font-medium text-sm text-gray-500">₹<%= item.product.price %></span>
-                </div>
-                <div>
-                  <span class="block text-[10px] uppercase font-bold tracking-wider text-gray-400">Subtotal</span>
-                  <span id="subtotal-<%= item.product._id %>" class="font-bold text-base text-gray-900">
-                    ₹<%= subTotal %>
+              <div class="absolute right-0 w-56 mt-2 origin-top-right bg-white border border-gray-100 rounded-2xl shadow-[0_10px_30px_rgba(0,0,0,0.08)] opacity-0 scale-95 pointer-events-none group-hover:opacity-100 group-hover:scale-100 group-hover:pointer-events-auto transition-all duration-150 z-50">
+                <div class="p-4 border-b border-gray-50">
+                  <span class="inline-block text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded <%= user.role === 'admin' ? 'bg-red-50 text-red-600 border border-red-100' : 'bg-emerald-50 text-emerald-600 border border-emerald-100' %>">
+                    <%= user.role ? user.role : 'Customer' %>
                   </span>
+                  <p class="text-sm font-extrabold text-gray-900 truncate mt-1.5"><%= user.name %></p>
+                  <p class="text-xs text-gray-400 truncate"><%= user.email %></p>
+                </div>
+                
+                <div class="p-2 space-y-0.5">
+                  <% if(user.role === 'admin') { %>
+                    <a href="/products/allProducts" class="flex items-center gap-3 px-3 py-2.5 text-xs font-bold text-gray-600 hover:bg-gray-50 hover:text-[#24963f] rounded-xl transition-all">
+                      <i class="fa-solid fa-boxes-stacked text-sm opacity-70"></i> Dashboard / Catalog
+                    </a>
+                    <a href="/products/create" class="flex items-center gap-3 px-3 py-2.5 text-xs font-bold text-gray-600 hover:bg-gray-50 hover:text-[#24963f] rounded-xl transition-all">
+                      <i class="fa-solid fa-plus text-sm opacity-70"></i> Add New Item
+                    </a>
+                  <% } %>
+                  <a href="/users/cart/products" class="flex items-center gap-3 px-3 py-2.5 text-xs font-bold text-gray-600 hover:bg-gray-50 hover:text-[#24963f] rounded-xl transition-all">
+                    <i class="fa-solid fa-basket-shopping text-sm opacity-70"></i> View My Cart
+                  </a>
+                </div>
+
+                <div class="p-2 border-t border-gray-50 bg-gray-50/50 rounded-b-2xl">
+                  <a href="/users/logout" class="flex items-center gap-3 px-3 py-2.5 text-xs font-extrabold text-red-500 hover:bg-red-50 rounded-xl transition-all">
+                    <i class="fa-solid fa-arrow-right-from-bracket text-sm"></i> Secure Logout
+                  </a>
                 </div>
               </div>
-
             </div>
-          </div>
-        </div>
+          <% } else { %>
+            <a href="/users/login" class="text-xs font-bold text-gray-600 hover:text-[#24963f] transition-colors">Login</a>
+          <% } %>
 
-      <% }) %>
+          <% if(user && user.cart && user.cart.length > 0) { %>
+            <% 
+              let totalCartPrice = 0;
+              if (user.cart && user.cart.length > 0) {
+                user.cart.forEach(item => {
+                  totalCartPrice += Number(item.price || 0);
+                });
+              }
+            %>
+            <a href="/users/cart/products" class="flex items-center gap-3 bg-[#24963f] hover:bg-[#1e7e34] text-white px-4 py-2.5 rounded-xl transition-all shadow-md shadow-emerald-700/20">
+              <div class="flex flex-col text-left">
+                <span class="text-[10px] font-black uppercase tracking-wider text-emerald-200 leading-none"><%= user.cart.length %> Items</span>
+                <span class="text-xs font-black mt-0.5"><%= totalCartPrice > 0 ? '₹' + totalCartPrice : 'View Bill' %></span>
+              </div>
+              <div class="h-6 w-[1px] bg-white/20"></div>
+              <div class="flex items-center gap-1.5 font-extrabold text-xs tracking-tight">
+                <i class="fa-solid fa-basket-shopping"></i>
+                <span class="hidden sm:inline">View Basket</span>
+              </div>
+            </a>
+          <% } else { %>
+            <a href="/users/cart/products" class="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 px-5 py-3 rounded-xl transition-all font-extrabold text-xs uppercase tracking-wider border border-gray-200/20">
+              <i class="fa-solid fa-basket-shopping text-sm text-gray-400"></i>
+              <span>Cart</span>
+            </a>
+          <% } %>
 
-    </div>
-
-    <div class="bg-white rounded-2xl border border-gray-100 p-6 lg:sticky lg:top-8 shadow-sm">
-      <h2 class="text-lg font-bold text-gray-900 pb-4 border-b border-gray-100 mb-5">
-        Order Summary
-      </h2>
-
-      <div class="space-y-3.5 text-sm">
-        <div class="flex justify-between text-gray-500">
-          <span>Total Items</span>
-          <span class="font-medium text-gray-900"><%= products.length %></span>
-        </div>
-
-        <div class="flex justify-between text-gray-500">
-          <span>Shipping Fee</span>
-          <span class="text-emerald-600 font-semibold bg-emerald-50 px-2 py-0.5 rounded text-xs">
-            FREE
-          </span>
-        </div>
-
-        <div class="flex justify-between text-gray-500">
-          <span>Platform Convenience Fee</span>
-          <span class="font-medium text-gray-900">₹20</span>
         </div>
       </div>
+  </header>
+  <div class="max-w-6xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
 
-      <div class="my-5 border-t border-dashed border-gray-200"></div>
-
-      <div class="flex justify-between items-baseline mb-6">
-        <h3 class="text-base font-medium text-gray-800">Total Payable</h3>
-        <h3 id="finalTotal" class="text-2xl font-black text-gray-900 tracking-tight">
-          ₹<%= total + 20 %>
-        </h3>
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between border-b border-gray-200 pb-5 mb-10 gap-4">
+      <div>
+        <h1 class="text-3xl font-extrabold tracking-tight text-gray-900">Shopping Cart</h1>
+        <p class="text-sm text-gray-500 mt-1">Review your selected items before checking out.</p>
       </div>
-
-      <button class="w-full bg-black text-white py-3.5 px-4 rounded-xl font-semibold text-sm tracking-wide hover:bg-gray-900 shadow-md shadow-gray-900/10 active:scale-[0.99] transition-all duration-150 flex items-center justify-center gap-2">
-        <span>Proceed to Checkout</span>
-        <i class="fa-solid fa-arrow-right text-xs opacity-70"></i>
-      </button>
-
-      <div class="mt-5 flex items-center justify-center gap-4 text-[11px] text-gray-400 font-medium">
-        <span class="flex items-center gap-1"><i class="fa-solid fa-shield-halved text-emerald-500"></i> 100% Secure</span>
-        <span>•</span>
-        <span class="flex items-center gap-1"><i class="fa-solid fa-arrow-rotate-left"></i> Easy Returns</span>
-      </div>
-    </div>
-
-  </div>
-
-  <% } else { %>
-
-    <div class="max-w-md mx-auto bg-white rounded-3xl border border-gray-100 p-10 text-center shadow-sm my-10">
-      <div class="w-16 h-16 bg-gray-50 rounded-2xl flex items-center justify-center mx-auto mb-5 border border-gray-100">
-        <i class="fa-solid fa-basket-shopping text-2xl text-gray-300"></i>
-      </div>
-
-      <h2 class="text-xl font-bold text-gray-900">Your cart is empty</h2>
-      <p class="text-sm text-gray-400 mt-2 max-w-xs mx-auto">
-        Looks like you haven't added anything yet. Let's find something incredible for you.
-      </p>
-
       <a href="/products/allProducts"
-         class="inline-flex items-center justify-center bg-black text-white font-semibold text-sm px-6 py-3 rounded-xl mt-6 hover:bg-gray-800 transition shadow-md shadow-gray-900/10 gap-2">
-        Start Shopping
-        <i class="fa-solid fa-arrow-right text-xs"></i>
+        class="inline-flex items-center justify-center bg-white text-gray-700 border border-gray-300 px-5 py-2.5 rounded-xl font-medium text-sm hover:bg-gray-50 shadow-sm transition-all duration-200 gap-2 group">
+        <i class="fa-solid fa-arrow-left text-xs text-gray-400 group-hover:-translate-x-1 transition-transform"></i>
+        Continue Shopping
       </a>
     </div>
 
-  <% } %>
+    <% if(products.length > 0 ){ %>
 
-</div>
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-10 items-start">
 
-<script>
-  async function removeToCart(productId) {
-    try {
-      let res = await fetch(`/users/cart/remove-product/${productId}`, { method: 'POST' });
+      <div class="lg:col-span-2 space-y-5">
+
+        <% let total = 0; %>
+
+        <% products.forEach((item) => { %>
+          <% if (!item.product) { return; } %>
+          <% 
+            const subTotal = item.product.price * item.quantity;
+            total += subTotal;
+          %>
+
+          <div id="product-<%= item.product._id %>"
+              class="bg-white rounded-2xl border border-gray-100 p-5 flex flex-col sm:flex-row gap-5 items-start sm:items-center relative hover:shadow-lg hover:shadow-gray-100/80 transition-all duration-300">
+            
+            <div class="w-28 h-28 sm:w-24 sm:h-24 overflow-hidden rounded-xl bg-gray-50 flex-shrink-0 border border-gray-100 shadow-inner">
+              <img 
+                src="/uploads/<%= item.product.image %>" 
+                class="w-full h-full object-cover object-center transition-transform duration-500 hover:scale-105"
+                alt="<%= item.product.name %>"
+              >
+            </div>
+
+            <div class="flex-1 w-full">
+              <div class="flex justify-between items-start">
+                <div>
+                  <h2 class="text-lg font-bold text-gray-900 line-clamp-1 leading-tight">
+                    <%= item.product.name %>
+                  </h2>
+                  <p class="text-xs text-gray-400 mt-1 max-w-md line-clamp-1">
+                    Premium quality edition • <%= item.product.description || 'Modern usability and comfortable build.' %>
+                  </p>
+                </div>
+
+                <button 
+                  onclick="removeToCart('<%= item.product._id %>')"
+                  class="p-2 text-gray-400 hover:text-red-500 rounded-lg hover:bg-red-50 transition-colors duration-200"
+                  title="Remove item"
+                >
+                  <i class="fa-regular fa-trash-can text-lg"></i>
+                </button>
+              </div>
+
+              <div class="mt-4 pt-4 border-t border-gray-50 flex items-center justify-between flex-wrap gap-4">
+                
+                <div class="flex items-center border border-gray-200 rounded-xl bg-gray-50/50 p-1 shadow-sm">
+                  <button
+                    onclick="descreaseQty('<%= item.product._id %>')"
+                    class="w-8 h-8 rounded-lg bg-white border border-gray-200 text-gray-600 hover:bg-gray-100 active:scale-95 transition flex items-center justify-center font-medium shadow-sm"
+                  >
+                    <i class="fa-solid fa-minus text-xs"></i>
+                  </button>
+
+                  <span id="quantityNumber-<%= item.product._id %>" class="font-bold text-sm text-gray-800 w-10 text-center">
+                    <%= item.quantity %>
+                  </span>
+
+                  <button
+                    onclick="increaseQty('<%= item.product._id %>')"
+                    class="w-8 h-8 rounded-lg bg-black text-white hover:bg-gray-800 active:scale-95 transition flex items-center justify-center font-medium shadow-sm"
+                  >
+                    <i class="fa-solid fa-plus text-xs"></i>
+                  </button>
+                </div>
+
+                <div class="flex items-center gap-6 text-right">
+                  <div>
+                    <span class="block text-[10px] uppercase font-bold tracking-wider text-gray-400">Price</span>
+                    <span class="font-medium text-sm text-gray-500">₹<%= item.product.price %></span>
+                  </div>
+                  <div>
+                    <span class="block text-[10px] uppercase font-bold tracking-wider text-gray-400">Subtotal</span>
+                    <span id="subtotal-<%= item.product._id %>" class="font-bold text-base text-gray-900">
+                      ₹<%= subTotal %>
+                    </span>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+        <% }) %>
+
+      </div>
+
+      <div class="bg-white rounded-2xl border border-gray-100 p-6 lg:sticky lg:top-8 shadow-sm">
+        <h2 class="text-lg font-bold text-gray-900 pb-4 border-b border-gray-100 mb-5">
+          Order Summary
+        </h2>
+
+        <div class="space-y-3.5 text-sm">
+          <div class="flex justify-between text-gray-500">
+            <span>Total Items</span>
+            <span class="font-medium text-gray-900"><%= products.length %></span>
+          </div>
+
+          <div class="flex justify-between text-gray-500">
+            <span>Shipping Fee</span>
+            <span class="text-emerald-600 font-semibold bg-emerald-50 px-2 py-0.5 rounded text-xs">
+              FREE
+            </span>
+          </div>
+
+          <div class="flex justify-between text-gray-500">
+            <span>Platform Convenience Fee</span>
+            <span class="font-medium text-gray-900">₹20</span>
+          </div>
+        </div>
+
+        <div class="my-5 border-t border-dashed border-gray-200"></div>
+
+        <div class="flex justify-between items-baseline mb-6">
+          <h3 class="text-base font-medium text-gray-800">Total Payable</h3>
+          <h3 id="finalTotal" class="text-2xl font-black text-gray-900 tracking-tight">
+            ₹<%= total + 20 %>
+          </h3>
+        </div>
+
+        <button class="w-full bg-black text-white py-3.5 px-4 rounded-xl font-semibold text-sm tracking-wide hover:bg-gray-900 shadow-md shadow-gray-900/10 active:scale-[0.99] transition-all duration-150 flex items-center justify-center gap-2">
+          <span>Proceed to Checkout</span>
+          <i class="fa-solid fa-arrow-right text-xs opacity-70"></i>
+        </button>
+
+        <div class="mt-5 flex items-center justify-center gap-4 text-[11px] text-gray-400 font-medium">
+          <span class="flex items-center gap-1"><i class="fa-solid fa-shield-halved text-emerald-500"></i> 100% Secure</span>
+          <span>•</span>
+          <span class="flex items-center gap-1"><i class="fa-solid fa-arrow-rotate-left"></i> Easy Returns</span>
+        </div>
+      </div>
+
+    </div>
+
+    <% } else { %>
+
+      <div class="max-w-md mx-auto bg-white rounded-3xl border border-gray-100 p-10 text-center shadow-sm my-10">
+        <div class="w-16 h-16 bg-gray-50 rounded-2xl flex items-center justify-center mx-auto mb-5 border border-gray-100">
+          <i class="fa-solid fa-basket-shopping text-2xl text-gray-300"></i>
+        </div>
+
+        <h2 class="text-xl font-bold text-gray-900">Your cart is empty</h2>
+        <p class="text-sm text-gray-400 mt-2 max-w-xs mx-auto">
+          Looks like you haven't added anything yet. Let's find something incredible for you.
+        </p>
+
+        <a href="/products/allProducts"
+          class="inline-flex items-center justify-center bg-black text-white font-semibold text-sm px-6 py-3 rounded-xl mt-6 hover:bg-gray-800 transition shadow-md shadow-gray-900/10 gap-2">
+          Start Shopping
+          <i class="fa-solid fa-arrow-right text-xs"></i>
+        </a>
+      </div>
+
+    <% } %>
+
+  </div>
+
+  <script>
+    async function removeToCart(productId) {
+      try {
+        let res = await fetch(`/users/cart/remove-product/${productId}`, { method: 'POST' });
+        let data = await res.json();
+        if(data.success) { location.reload(); }
+      } catch(error) { console.log(error); }
+    }
+
+    async function increaseQty(productId) {
+      let res = await fetch(`/users/cart/update/increaseQty/${productId}`, { method: 'POST' });
       let data = await res.json();
       if(data.success) { location.reload(); }
-    } catch(error) { console.log(error); }
-  }
+    }
 
-  async function increaseQty(productId) {
-    let res = await fetch(`/users/cart/update/increaseQty/${productId}`, { method: 'POST' });
-    let data = await res.json();
-    if(data.success) { location.reload(); }
-  }
-
-  async function descreaseQty(productId) {
-    let res = await fetch(`/users/cart/update/descreaseQty/${productId}`, { method: 'POST' });
-    let data = await res.json();
-    if(data.success) { location.reload(); }
-  }
-</script>
+    async function descreaseQty(productId) {
+      let res = await fetch(`/users/cart/update/descreaseQty/${productId}`, { method: 'POST' });
+      let data = await res.json();
+      if(data.success) { location.reload(); }
+    }
+  </script>
 
 </body>
 </html>
