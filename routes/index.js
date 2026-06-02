@@ -16,6 +16,10 @@ router.get('/', attachUser, async(req, res)=>{
             query.category = req.query.category;
         }
 
+        if(req.query.search){
+            query.name = { $regex: req.query.search, $options: 'i' };
+        }
+
         let products = await productModel.find(query)
         let user = res.locals.user || req.user || null;
         

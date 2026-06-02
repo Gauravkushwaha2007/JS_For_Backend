@@ -40,41 +40,12 @@
       }
     }
   </script>
-
-  <style>
-    body { 
-      font-family: 'Plus Jakarta Sans', sans-serif; 
-    }
-    .hindi-trust-font {
-      font-family: 'Noto Serif Devanagari', serif;
-    }
-    html { scroll-behavior: smooth; }
-    
-    /* Default Light Theme Glow - Premium Clean look for Grocery Mart */
-    .bg-glow {
-      background: radial-gradient(circle at 50% -20%, #e2f5e7 0%, #f7fbf8 60%, #ffffff 100%);
-    }
-    
-    /* Dark Theme Glow if user toggles */
-    .dark .bg-glow {
-      background: radial-gradient(circle at 50% -20%, #0d2111 0%, #060c08 60%, #020403 100%);
-    }
-
-    /* Hide scrollbar for Chrome, Safari and Opera */
-    .no-scrollbar::-webkit-scrollbar {
-      display: none;
-    }
-    /* Hide scrollbar for IE, Edge and Firefox */
-    .no-scrollbar {
-      -ms-overflow-style: none;  /* IE and Edge */
-      scrollbar-width: none;  /* Firefox */
-    }
-  </style>
 </head>
 
-<body class="bg-[#fafdfb] text-zinc-900 bg-glow antialiased dark:bg-[#050906] dark:text-white transition-colors duration-300">
+<body class="bg-[#fafdfb] text-zinc-900 antialiased dark:bg-[#050906] dark:text-white transition-colors duration-300 [background:radial-gradient(circle_at_50%_-20%,#e2f5e7_0%,#f7fbf8_60%,#ffffff_100%)] dark:[background:radial-gradient(circle_at_50%_-20%,#0d2111_0%,#060c08_60%,#020403_100%)]">
 
-<nav class="w-full px-6 md:px-12 py-4 flex items-center justify-between border-b border-emerald-100 bg-white/70 backdrop-blur-xl fixed top-0 left-0 z-50 transition-all duration-300 shadow-[0_4px_20px_rgba(0,0,0,0.03)] dark:bg-[#050906]/70 dark:border-emerald-950/40 dark:shadow-[0_4px_30px_rgba(0,0,0,0.3)]">
+  <!-- NAVBAR -->
+  <nav class="w-full px-6 md:px-12 py-4 flex items-center justify-between border-b border-emerald-100 bg-white/70 backdrop-blur-xl fixed top-0 left-0 z-50 transition-all duration-300 shadow-[0_4px_20px_rgba(0,0,0,0.03)] dark:bg-[#050906]/70 dark:border-emerald-950/40 dark:shadow-[0_4px_30px_rgba(0,0,0,0.3)]">
 
     <div class="flex items-center gap-2.5 group cursor-pointer shrink-0">
       <div class="w-8 h-8 bg-emerald-500 rounded-xl flex items-center justify-center group-hover:rotate-6 transition-transform duration-300 shadow-[0_0_15px_rgba(16,185,129,0.3)]">
@@ -92,11 +63,43 @@
       <a href="/products/allProducts" class="hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors duration-200">All Products</a>
     </div>
 
-    <div class="flex-1 max-w-md relative group mx-4 hidden sm:block">
-      <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400 group-focus-within:text-emerald-600 dark:text-zinc-500 dark:group-focus-within:text-emerald-400 transition-colors"></i>
-      <input type="text" 
-            placeholder="Search groceries..." 
-            class="w-full bg-zinc-100 border border-zinc-200 rounded-xl py-2 pl-11 pr-4 text-xs font-medium text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:bg-white focus:border-emerald-500 transition-all dark:bg-zinc-900/50 dark:border-zinc-800/80 dark:text-white dark:placeholder-zinc-500">
+    <!-- BLINKIT STYLE SEARCH BAR -->
+    <div class="w-full max-w-[420px] hidden sm:block mx-4 flex-1">
+      <form id="searchForm" action="/" method="GET">
+        <div class="relative flex items-center bg-white dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800/80 rounded-xl p-2 px-3.5 overflow-hidden transition-all duration-200 focus-within:border-emerald-500 focus-within:ring-2 focus-within:ring-emerald-500/20">
+          
+          <!-- SEARCH ICON -->
+          <span class="mr-2.5 z-10 shrink-0">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-zinc-400 dark:text-zinc-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+              <circle cx="11" cy="11" r="8"/>
+              <path d="M21 21l-4.3-4.3"/>
+            </svg>
+          </span>
+
+          <!-- ANIMATED PLACEHOLDER CONTAINER -->
+          <div class="placeholder-container h-[22px] overflow-hidden pointer-events-none absolute left-11">
+            <div class="flex flex-col transition-transform duration-500 ease-in-out" id="placeholderTrack">
+              <div class="h-[22px] leading-[22px] text-xs font-medium text-zinc-400 dark:text-zinc-600">Search "milk"</div>
+              <div class="h-[22px] leading-[22px] text-xs font-medium text-zinc-400 dark:text-zinc-600">Search "bread"</div>
+              <div class="h-[22px] leading-[22px] text-xs font-medium text-zinc-400 dark:text-zinc-600">Search "chocolate"</div>
+              <div class="h-[22px] leading-[22px] text-xs font-medium text-zinc-400 dark:text-zinc-600">Search "rice"</div>
+              <div class="h-[22px] leading-[22px] text-xs font-medium text-zinc-400 dark:text-zinc-600">Search "snacks"</div>
+            </div>
+          </div>
+
+          <!-- INPUT FIELD -->
+          <input
+            id="searchInput"
+            name="search"
+            type="text"
+            autocomplete="off"
+            class="w-full bg-transparent border-none outline-none pl-1 z-20 text-xs font-medium text-zinc-900 dark:text-white"
+            onfocus="pauseAnimation()"
+            onblur="resumeAnimation()"
+            oninput="searchProducts(); hidePlaceholder()"
+          />
+        </div>
+      </form>
     </div>
 
     <div class="flex items-center gap-3 shrink-0">
@@ -176,6 +179,7 @@
     </div>
   </nav>
 
+  <!-- HERO SECTION -->
   <section class="pt-40 pb-16 px-6 text-center max-w-4xl mx-auto flex flex-col items-center">
     <div class="inline-flex items-center gap-2 px-3.5 py-1.5 bg-emerald-50 border border-emerald-200/50 text-emerald-700 rounded-full text-[10px] uppercase tracking-widest font-bold mb-6 shadow-inner dark:bg-emerald-950/40 dark:border-emerald-800/40 dark:text-emerald-400">
       <span class="w-1.5 h-1.5 rounded-full bg-emerald-600 dark:bg-emerald-400 animate-ping"></span>
@@ -201,22 +205,18 @@
     </div>
   </section>
 
+  <!-- CATEGORIES -->
   <section id="categories" class="max-w-6xl mx-auto px-6 mb-12 scroll-mt-24">
-    <div class="flex items-center gap-3 overflow-x-auto pb-4 no-scrollbar text-xs font-bold tracking-wide uppercase text-zinc-500">
-
+    <div class="flex items-center gap-3 overflow-x-auto pb-4 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden text-xs font-bold tracking-wide uppercase text-zinc-500">
       <a href="/?category=atta" class="bg-zinc-900 border border-zinc-800 px-4 py-2.5 rounded-xl whitespace-nowrap text-zinc-300 hover:text-white cursor-pointer transition-colors">Atta, Rice & Dal</a>
-
       <a href="/?category=fruits" class="bg-zinc-900 border border-zinc-800 px-4 py-2.5 rounded-xl whitespace-nowrap text-zinc-300 hover:text-white cursor-pointer transition-colors">Fruits & Veggies</a>
-      
       <a href="/?category=dairy" class="bg-zinc-900 border border-zinc-800 px-4 py-2.5 rounded-xl whitespace-nowrap text-zinc-300 hover:text-white cursor-pointer transition-colors">Dairy, Bread & Eggs</a>
-      
       <a href="/?category=snacks" class="bg-zinc-900 border border-zinc-800 px-4 py-2.5 rounded-xl whitespace-nowrap text-zinc-300 hover:text-white cursor-pointer transition-colors">Snacks & Munchies</a>
-      
       <a href="/" class="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 px-4 py-2.5 rounded-xl whitespace-nowrap cursor-pointer">Show All</a>
-
     </div>
   </section>
 
+  <!-- PRODUCTS GRID -->
   <section id="products" class="max-w-6xl mx-auto px-6 pb-24">
     <div class="flex items-baseline justify-between mb-8 border-b border-zinc-100 dark:border-zinc-900/60 pb-4">
       <h3 class="text-xl font-bold tracking-tight text-zinc-800 dark:text-zinc-100 flex items-center gap-2">
@@ -228,7 +228,7 @@
     <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
       <% if(products && products.length > 0) { %>
         <% products.forEach(function(item) { %>
-          <div class="group bg-white border border-zinc-200 rounded-2xl p-4 hover:border-emerald-200 hover:shadow-xl hover:shadow-zinc-200/30 transition-all duration-300 flex flex-col justify-between dark:bg-[#0d110e]/60 dark:border-zinc-900 dark:hover:border-emerald-950 dark:hover:shadow-emerald-500/[0.01]">
+          <div class="product-card group bg-white border border-zinc-200 rounded-2xl p-4 hover:border-emerald-200 hover:shadow-xl hover:shadow-zinc-200/30 transition-all duration-300 flex flex-col justify-between dark:bg-[#0d110e]/60 dark:border-zinc-900 dark:hover:border-emerald-950 dark:hover:shadow-emerald-500/[0.01]">
             <div>
               <div class="h-40 bg-zinc-50 border border-zinc-100 rounded-xl mb-4 overflow-hidden relative flex items-center justify-center dark:bg-zinc-900/40 dark:border-zinc-900">
                 <a href="/products/view/<%= item._id %>" class="w-full h-full block">
@@ -247,7 +247,7 @@
               </span>
               
               <h4 class="font-bold text-sm text-zinc-800 dark:text-zinc-200 group-hover:text-emerald-600 dark:group-hover:text-white mt-1.5 transition-colors line-clamp-1">
-                <a href="/products/view/<%= item._id %>" class="hover:underline">
+                <a href="/products/view/<%= item._id %>" class="hover:underline product-name">
                   <%= item.name %>
                 </a>
               </h4>
@@ -286,12 +286,13 @@
       <% } else { %>
         <div class="col-span-full text-center py-12 text-zinc-500 text-sm font-medium">
           <i class="fa-solid fa-box-open text-3xl mb-3 block opacity-40"></i>
-          No products found in the database. Please add some products from the dashboard!
+          No products found in the database.
         </div>
       <% } %>
     </div>
   </section>
 
+  <!-- ABOUT SECTION -->
   <section id="about" class="mt-12 px-6 md:px-12 overflow-hidden border-t border-zinc-200 dark:border-zinc-900 pt-16 bg-[#fafdfb] dark:bg-[#040805] transition-colors duration-300">
     <div class="max-w-6xl mx-auto">
       <div class="grid grid-cols-1 md:grid-cols-3 gap-10 mb-16 items-start">
@@ -304,11 +305,11 @@
           </a>
           <a href="/about">
             <div class="text-center sm:text-left space-y-2">
-              <h4 class="text-emerald-700 dark:text-emerald-400 font-black text-lg tracking-wide hindi-trust-font">
+              <h4 class="text-emerald-700 dark:text-emerald-400 font-black text-lg tracking-wide [font-family:'Noto_Serif_Devanagari',serif]">
                 "विश्वास सालों का, तकनीक आज की!"
               </h4>
               <p class="text-zinc-600 dark:text-zinc-400 text-xs leading-relaxed font-medium">
-                For decades, Kushwaha Kirana Store has been your trusted partner for clean, pure, and premium daily essentials. To bring unparalleled convenience to your family, our store is now completely digital. Pure quality, genuine pricing, and instant doorstep delivery remain our solemn promise.
+                For decades, Kushwaha Kirana Store has been your trusted partner for clean, pure, and premium daily essentials. To bring unparalleled convenience to your family, our store is now completely digital.
               </p>
               <div class="pt-1">
                 <span class="text-xs font-black text-zinc-800 dark:text-zinc-200 block">Ramesh Kushwaha</span>
@@ -325,38 +326,27 @@
             <p class="flex items-center md:justify-end gap-2"><i class="fa-solid fa-location-dot text-emerald-500 text-[10px]"></i> Baikunthpur ward no.01, Rewa, MP</p>
             <p class="flex items-center md:justify-end gap-2 font-bold text-zinc-700 dark:text-zinc-300"><i class="fa-solid fa-phone text-emerald-500 text-[10px]"></i> +91 9039301184</p>
           </div>
-          
-          <div class="pt-3 border-t border-zinc-200 dark:border-zinc-800 w-full md:text-right">
-            <p class="text-[10px] text-zinc-400 italic font-bold tracking-wide dark:text-zinc-500">
-              ❤️ डिजिटल भारत, हमारा डिजिटल गाँव — रमेश कुशवाहा जी के सुपुत्र द्वारा निर्मित।
-            </p>
-          </div>
         </div>
 
       </div>
 
       <div class="select-none pointer-events-none mt-6 overflow-hidden">
-        <h1 style="font-family: 'Archivo Black', sans-serif;" 
-            class="text-[12vw] font-black leading-none tracking-[-0.05em] text-center text-emerald-500/[0.04] dark:text-emerald-500/[0.02] opacity-[0.95]">
+        <h1 class="text-[12vw] font-black leading-none tracking-[-0.05em] text-center text-emerald-500/[0.04] dark:text-emerald-500/[0.02] opacity-[0.95] [font-family:'Archivo_Black',sans-serif]">
           Apna mart
         </h1>
       </div>
     </div>
   </section>
 
+  <!-- FOOTER -->
   <footer class="bg-[#fafdfb] dark:bg-[#040805] py-8 px-6 md:px-12 border-t border-zinc-200 dark:border-zinc-950 flex flex-col sm:flex-row justify-between items-center text-zinc-500 text-[11px] font-medium gap-4 transition-colors duration-300">
     <div class="max-w-6xl mx-auto w-full flex flex-col sm:flex-row justify-between items-center gap-4">
       <p>© 2026 Apna Mart Kirana Store. Freshness Guaranteed.</p>
-      <div class="flex gap-6 uppercase tracking-widest text-[10px] text-zinc-400 dark:text-zinc-500">
-        <a href="https://www.instagram.com/gaurav.kushwaha7" target="_blank" class="hover:text-zinc-800 dark:hover:text-white transition-colors"><i class="fa-brands fa-instagram text-sm mr-1"></i> Instagram</a>
-        <a href="#" class="hover:text-zinc-800 dark:hover:text-white transition-colors"><i class="fa-brands fa-x-twitter text-sm mr-1"></i> Twitter</a>
-      </div>
     </div>
   </footer>
 
-
+  <!-- SCRIPTS -->
   <script>
-
     async function increaseQty(productId) {
       let res = await fetch(`/users/cart/update/increaseQty/${productId}`, { method: 'POST' });
       let data = await res.json();
@@ -368,24 +358,16 @@
       let data = await res.json();
       if(data.success) { location.reload(); }
     }
-  </script>
 
-  <script>
     async function addToCart (productId){
-      let res = await fetch(`/users/cart/add-to-cart/${productId}`,{
-          method: "POST"
-      });
+      let res = await fetch(`/users/cart/add-to-cart/${productId}`,{ method: "POST" });
       let data = await res.json();
       alert(data.message); 
-      if(data.success){
-        location.reload()
-      }
+      if(data.success){ location.reload() }
     }
 
-    // Toggle Theme Logic (Light Mode is Default)
     function toggleTheme() {
       const html = document.documentElement;
-      
       if (html.classList.contains('dark')) {
         html.classList.remove('dark');
         localStorage.setItem('theme', 'light');
@@ -395,17 +377,66 @@
       }
     }
 
-    // Load Theme State on Refresh (Light Mode Default Fallback)
     (function () {
       const savedTheme = localStorage.getItem('theme');
       const html = document.documentElement;
-      
-      if (savedTheme === 'dark') {
-        html.classList.add('dark');
-      } else {
-        html.classList.remove('dark');
-      }
+      if (savedTheme === 'dark') { html.classList.add('dark'); } 
+      else { html.classList.remove('dark'); }
     })();
+  </script>
+
+  <!-- BLINKIT SEARCH SCRIPT -->
+  <script>
+    const track = document.getElementById('placeholderTrack');
+    const searchInput = document.getElementById('searchInput');
+    const placeholderContainer = document.querySelector('.placeholder-container');
+    const itemsCount = track.children.length;
+
+    let index = 0;
+    let interval;
+
+    function startAnimation(){
+      interval = setInterval(()=>{
+        index++;
+        if(index >= itemsCount){
+          index = 0;
+          track.style.transition = 'none';
+          track.style.transform = 'translateY(0)';
+          setTimeout(()=>{
+            track.style.transition = 'transform 0.5s ease-in-out';
+          }, 50);
+        } else {
+          track.style.transform = `translateY(-${index * 22}px)`;
+        }
+      }, 2000);
+    }
+
+    function pauseAnimation(){ clearInterval(interval); }
+
+    function resumeAnimation(){
+      if(searchInput.value === ""){
+        placeholderContainer.style.display = 'block';
+        startAnimation();
+      }
+    }
+
+    function hidePlaceholder(){ placeholderContainer.style.display = 'none'; }
+
+    function searchProducts(){
+      const value = searchInput.value.toLowerCase().trim();
+      document.querySelectorAll('.product-card').forEach(card => {
+        const nameTag = card.querySelector('.product-name');
+        if (nameTag) {
+          const name = nameTag.innerText.toLowerCase();
+          card.style.display = name.includes(value) ? '' : 'none';
+        }
+      });
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      searchInput.value = ""; // Form input reset on refresh
+      startAnimation();
+    });
   </script>
 
 </body>
