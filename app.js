@@ -10,7 +10,8 @@ const db = require('./config/dbConnection')
 const userRouter = require('./routes/userRouter')
 const productRouter = require('./routes/productRouter')
 const router = require('./routes/index');
-const attachUser = require('./middlewares/attachUser')
+const adminRouter = require('./routes/adminRouter');
+const attachUser = require('./middlewares/attachUser');
 
 const app = express();
 
@@ -29,8 +30,9 @@ app.use(cookieParser())
 app.use(attachUser)
 app.set('view engine', 'ejs')
 
-app.use('/', router)
+app.use('/', router);
 app.use('/users', userRouter);
+app.use('/admin', adminRouter);
 app.use('/products', productRouter);
 
 

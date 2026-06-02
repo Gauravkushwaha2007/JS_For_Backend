@@ -4,6 +4,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const generateToken = require('../utils/generateToken');
 const sendmail = require('../utils/mailer');
+const orderModel = require('../models/orderModel');
 
 // 1. REGISTER USER
 const registerUser = async (req, res)=>{
@@ -221,6 +222,56 @@ const logoutUser = async (req, res) => {
     res.redirect('/users/login')
 }
 
+
+// CART CHECKOUT 
+const cartCheckout = async (req, res) => {
+    try {
+        // 1. कार्ट के प्रोडक्ट्स को पॉपुलेट करो ताकि टोटल प्राइस निकाल सकें
+        const user = await userModel.findById(req.user._id).populate('cart.product');
+        
+        if (!user || user.cart.length === 0) {
+            return res.status(400).send("Your cart is empty!");
+        }
+
+        let totalCartPrice = user.cart.reduce((acc, item) => acc + (item.product.price * item.quantity), 0);
+        
+        const orderProducts = user.cart.map(item => ({
+            product: item.product._id, 
+            quantity: item.quantity,
+        }));
+
+        let newOrder = await orderModel.create({
+            user: user._id,
+            products: orderProducts,   
+            totalPrice: totalCartPrice,
+            address: req.body.address,
+            
+        });
+    
+        user.cart = [];
+        await user.save();
+    
+        res.redirect('/users/orders');
+    }
+    
+    catch (error) {
+        console.error("Critical Checkout Error:", error.message, error);
+        res.status(500).send("Something went wrong while placing the order.");
+    }
+};
+
+const getOrders = async (req, res)=>{
+    try {
+        let orders = await orderModel.find({ user: req.user._id })
+                                     .populate('products.product')
+                                     .sort({ createdAt: -1 }); 
+
+        res.render('orders', { orders, user: req.user });
+    } catch (error) {
+        res.status(500).send("Error fetching orders");
+    }
+}
+
 module.exports = {
-    registerUser, loginUser, addToCart, cartProducts, removeToCart, increaseQty, descreaseQty, logoutUser
+    registerUser, loginUser, addToCart, cartProducts, removeToCart, increaseQty, descreaseQty, logoutUser, cartCheckout, getOrders
 };

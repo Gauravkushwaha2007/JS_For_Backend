@@ -5,7 +5,7 @@ const isAdmin =  (req, res, next) =>{
         return res.status(401).redirect('/users/login');
     }
 
-    if(req.user.role === 'admin'){
+    if(req.user && req.user.role === 'admin'){
         next()
     }
     else{
