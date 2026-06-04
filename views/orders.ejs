@@ -204,57 +204,58 @@
 
             <!-- proudcts list which are purchased -->
             <div class="p-5 space-y-4">
-              <% order.products.forEach(item => { %>
-                <% if(item.product) { %>
-                  <div class="flex items-center justify-between gap-4 bg-zinc-50/40 dark:bg-zinc-950/10 p-2.5 rounded-2xl border border-zinc-100/70 dark:border-zinc-900/30">
-                    
-                    <!-- Image -->
-                    <div class="flex items-center gap-3.5 min-w-0">
-                      
-                      <a href="/products/view/<%= item.product._id %>" class="flex items-center gap-3.5 min-w-0 group cursor-pointer hover:opacity-85 transition-all">
-                      
-                        <div class="w-12 h-12 rounded-xl bg-zinc-100 dark:bg-zinc-900 border border-zinc-200/60 dark:border-zinc-800 flex items-center justify-center overflow-hidden shrink-0 shadow-sm font-black text-xs uppercase text-emerald-600 dark:text-emerald-400 group-hover:scale-105 group-hover:border-emerald-400/50 transition-all duration-200">
-                          <% if (item.product.image) { %>
-                            <img src="/uploads/<%= item.product.image %>" 
-                                class="w-full h-full object-cover" 
-                                onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                            
-                            <span class="hidden w-full h-full items-center justify-center bg-gradient-to-br from-emerald-500/20 to-teal-500/20">
-                              <%= item.product.name ? item.product.name.substring(0,2) : 'KP' %>
-                            </span>
-                          <% } else { %>
-                            <span class="w-full h-full flex items-center justify-center bg-gradient-to-br from-emerald-500/20 to-teal-500/20">
-                              <%= item.product.name ? item.product.name.substring(0,2) : 'KP' %>
-                            </span>
-                          <% } %>
-                        </div>
+  <% order.products.forEach(item => { %>
+    <% if(item.product) { %>
+      <div class="flex items-center justify-between gap-4 bg-zinc-50/40 dark:bg-zinc-950/10 p-2.5 rounded-2xl border border-zinc-100/70 dark:border-zinc-900/30">
+        
+        <div class="flex items-center gap-3.5 min-w-0 flex-1">
+          <a href="/products/view/<%= item.product._id %>" class="flex items-center gap-3.5 min-w-0 group cursor-pointer hover:opacity-85 transition-all">
+            
+            <div class="w-12 h-12 rounded-xl bg-zinc-100 dark:bg-zinc-900 border border-zinc-200/60 dark:border-zinc-800 flex items-center justify-center overflow-hidden shrink-0 shadow-sm font-black text-xs uppercase text-emerald-600 dark:text-emerald-400 group-hover:scale-105 group-hover:border-emerald-400/50 transition-all duration-200">
+              <% if (item.product.image) { %>
+                <img src="/uploads/<%= item.product.image %>" 
+                    class="w-full h-full object-cover" 
+                    onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                
+                <span class="hidden w-full h-full items-center justify-center bg-gradient-to-br from-emerald-500/20 to-teal-500/20">
+                  <%= item.product.name ? item.product.name.substring(0,2) : 'KP' %>
+                </span>
+              <% } else { %>
+                <span class="w-full h-full flex items-center justify-center bg-gradient-to-br from-emerald-500/20 to-teal-500/20">
+                  <%= item.product.name ? item.product.name.substring(0,2) : 'KP' %>
+                </span>
+              <% } %>
+            </div>
 
-                        <div class="min-w-0">
-                          <h4 class="text-xs font-black text-zinc-900 dark:text-zinc-100 truncate group-hover:text-emerald-500 dark:group-hover:text-emerald-400 transition-colors">
-                            <%= item.product.name %>
-                          </h4>
-                          <p class="text-[10px] font-bold text-zinc-400 mt-0.5 uppercase tracking-wide">
-                            Qty: <span class="text-emerald-500 bg-emerald-500/10 px-1.5 py-0.2 rounded font-black">x<%= item.quantity %></span>
-                          </p>
-                        </div>
+            <div class="min-w-0">
+              <h4 class="text-xs font-black text-zinc-900 dark:text-zinc-100 truncate group-hover:text-emerald-500 dark:group-hover:text-emerald-400 transition-colors">
+                <%= item.product.name %>
+              </h4>
+              <p class="text-[10px] font-bold text-zinc-400 mt-0.5 uppercase tracking-wide">
+                Qty: <span class="text-emerald-500 bg-emerald-500/10 px-1.5 py-0.2 rounded font-black">x<%= item.quantity %></span>
+              </p>
+            </div>
+          </a>
+        </div>
 
-                    </a>
+        <div class="flex items-center gap-4 shrink-0">
+          
+          <div class="text-right">
+            <span class="text-xs font-black text-zinc-900 dark:text-white">₹<%= item.product.price * item.quantity %></span>
+            <p class="text-[9px] text-zinc-400 font-medium mt-0.5">₹<%= item.product.price %> each</p>
+          </div>
 
-                      <!-- Name and quantity -->
-                      <div class="min-w-0">
-                      
-                      </div>
-                    </div>
+          <a href="/users/orders/bill/<%= order._id %>" 
+             title="View Invoice"
+             class="w-8 h-8 rounded-xl bg-zinc-100 hover:bg-emerald-500 hover:text-black dark:bg-zinc-900 dark:text-zinc-400 dark:hover:bg-emerald-500/20 dark:hover:text-emerald-400 flex items-center justify-center transition-all border border-zinc-200 dark:border-zinc-800 shadow-sm">
+            <i class="fa-solid fa-file-invoice text-xs"></i>
+          </a>
 
-                    <!-- Total price of product -->
-                    <div class="text-right shrink-0">
-                      <span class="text-xs font-black text-zinc-900 dark:text-white">₹<%= item.product.price * item.quantity %></span>
-                      <p class="text-[9px] text-zinc-400 font-medium mt-0.5">₹<%= item.product.price %> each</p>
-                    </div>
+        </div>
 
-                  </div>
-                <% } %>
-              <% }) %>
+      </div>
+    <% } %>
+  <% }) %>
             </div>
 
             <div class="px-5 py-4 bg-zinc-50/30 dark:bg-zinc-950/20 border-t border-zinc-100 dark:border-zinc-900/60 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">

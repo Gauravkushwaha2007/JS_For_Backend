@@ -140,6 +140,7 @@ const removeToCart = async (req, res)=>{
 // 5. CART PRODUCTS PAGE
 const cartProducts = async (req, res)=>{
     try{
+        
         const userEmail = req.user ? req.user.email : jwt.verify(req.cookies.token, process.env.JWT_SECRET).email;
         let user = await userModel.findOne({email: userEmail}).populate('cart.product');
 
@@ -151,7 +152,7 @@ const cartProducts = async (req, res)=>{
         await user.save();
 
         let products = user.cart;
-        res.render('cartProducts', {products: products, user: user});
+        res.render('cartProducts', {products: products, user: user, addresses: user.addresses});
 
     }
     catch (error) {
@@ -222,8 +223,6 @@ const logoutUser = async (req, res) => {
     res.redirect('/users/login')
 }
 
-
-// CART CHECKOUT 
 const cartCheckout = async (req, res) => {
     try {
         // 1. कार्ट के प्रोडक्ट्स को पॉपुलेट करो ताकि टोटल प्राइस निकाल सकें
@@ -272,6 +271,67 @@ const getOrders = async (req, res)=>{
     }
 }
 
+const getBill = async (req, res)=>{
+    try {
+    const order = await orderModel.findById(req.params.orderId).populate('products.product');
+    
+    if (!order) {
+      return res.status(404).send("Order not found");
+    }
+
+    let subtotal = order.totalPrice; 
+    let deliveryCharge = subtotal > 500 ? 0 : 29; // मान लो 500 से ऊपर फ्री डिलीवरी
+    let gst = Math.round(subtotal * 0.05); // 5% GST (अगर आप अलग से दिखाना चाहो)
+    let finalBillAmount = subtotal + deliveryCharge;
+
+    // 3. bill.ejs पेज को सारा डेटा भेज दो
+    res.render('bill', { 
+      user: req.user, 
+      order, 
+      subtotal, 
+      deliveryCharge, 
+      gst, 
+      finalBillAmount 
+    });
+
+  } catch (error) {
+    console.log('Error from userController getBill function ', error.message, error)
+    res.status(500).send("Server Error");
+  }
+}
+
+const getProfile = async(req, res)=>{
+      try {
+        const user = await userModel.findById(req.user._id);
+        res.render('profile', { user });
+      }
+      catch (err) {
+        console.log(err);
+        res.status(500).send("Server Error");
+      }
+}
+
+const addAddress = async (req, res)=>{
+      try {
+        const { title, flatNo, area, landmark, city, state, pincode } = req.body;
+        
+        const user = await userModel.findById(req.user._id);
+        
+        const newAddress = { title, flatNo, area, landmark, city, state, pincode };
+        
+        if (user.addresses.length === 0) {
+          newAddress.isDefault = true;
+        }
+
+        user.addresses.push(newAddress);
+        await user.save();
+    
+        res.redirect('/users/profile'); 
+      } catch (err) {
+        res.status(500).send("Address add karne me dikkat aayi");
+      }
+}
+
 module.exports = {
-    registerUser, loginUser, addToCart, cartProducts, removeToCart, increaseQty, descreaseQty, logoutUser, cartCheckout, getOrders
+    registerUser, loginUser, addToCart, cartProducts, removeToCart, increaseQty, descreaseQty, logoutUser, cartCheckout, getOrders, getBill, getProfile, addAddress
 };

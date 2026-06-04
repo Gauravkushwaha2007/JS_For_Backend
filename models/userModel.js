@@ -27,8 +27,19 @@ const userSchema = mongoose.Schema({
         type: String,
         enum: ['admin', 'user'],
         default: 'user'
-    }
+    },
+    
+    addresses: [{
+        title: { type: String, enum: ['Home', 'Office', 'Other'], default: 'Home' },
+        flatNo: { type: String, required: true }, 
+        area: { type: String, required: true },
+        landmark: { type: String, default: "" },
+        city: { type: String, required: true }, 
+        state: { type: String, required: true },
+        pincode: { type: String, required: true },
+        isDefault: { type: Boolean, default: false }
+    }],
 
-})
+});
 
 module.exports = mongoose.model('user', userSchema);
