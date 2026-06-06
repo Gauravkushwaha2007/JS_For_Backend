@@ -76,15 +76,14 @@
           <% if(product.stock > 0) { %>
             
             <% 
-              // चेक कर रहे हैं कि क्या यह स्पेसिफिक प्रोडक्ट यूजर के कार्ट में पहले से है
               let detailCartItem = user && user.cart ? user.cart.find(c => c.product && c.product._id.toString() === product._id.toString()) : null; 
             %>
 
             <% if (detailCartItem) { %>
               <div class="flex items-center bg-[#24963f] text-white rounded-2xl overflow-hidden shadow-xl shadow-emerald-900/10 font-black text-sm h-[52px]">
-                <button onclick="updateQty('<%= product._id %>', 'decrease')" class="px-5 h-full hover:bg-[#1e7e34] transition-colors font-black text-base">-</button>
+                <button onclick="descreaseQty('<%= product._id %>')" class="px-5 h-full hover:bg-[#1e7e34] transition-colors font-black text-base">-</button>
                 <span class="px-2 min-w-[24px] text-center font-black text-sm"><%= detailCartItem.quantity %></span>
-                <button onclick="updateQty('<%= product._id %>', 'increase')" class="px-5 h-full hover:bg-[#1e7e34] transition-colors font-black text-base">+</button>
+                <button onclick="increaseQty('<%= product._id %>')" class="px-5 h-full hover:bg-[#1e7e34] transition-colors font-black text-base">+</button>
               </div>
             <% } else { %>
               <button onclick="addToCart('<%= product._id %>')" 
@@ -138,5 +137,6 @@
     }
   </script>
   <%- include('partials/header-scripts') %>
+  <%- include('partials/updateQty') %>
 </body>
 </html>

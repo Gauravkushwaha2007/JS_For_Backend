@@ -248,50 +248,65 @@ const cartCheckout = async (req, res) => {
             return res.status(400).send("Your cart is empty!");
         }
 
+        // कार्ट का टोटल प्राइस कैलकुलेट करें
         let totalCartPrice = user.cart.reduce((acc, item) => acc + (item.product.price * item.quantity), 0);
         
+        // ऑर्डर के लिए प्रोडक्ट्स का एरे तैयार करें
         const orderProducts = user.cart.map(item => ({
             product: item.product._id, 
             quantity: item.quantity,
         }));
 
+        // नया ऑर्डर बनाएं
         let newOrder = await orderModel.create({
             user: user._id,
             products: orderProducts,   
             totalPrice: totalCartPrice,
-            address: req.body.address,
-            
+            address: req.body.address || "Main Address", // अगर एड्रेस न आए तो फॉलबैक
         });
     
+        // ऑर्डर बनने के बाद कार्ट को खाली करें
         user.cart = [];
         await user.save();
     
+        // सीधे ऑर्डर्स पेज पर भेजें
         res.redirect('/users/orders');
     }
-    
     catch (error) {
         console.error("Critical Checkout Error:", error.message, error);
         res.status(500).send("Something went wrong while placing the order.");
     }
 };
 
-const getOrders = async (req, res)=>{
+const getOrders = async (req, res) => {
     try {
-        const user = await userModel.findById(req.user._id).populate('cart.product');
-        if (!user || user.cart.length === 0) {
-            return res.status(400).send("Your cart is empty!");
-        }
-        let totalCartPrice = user.cart.reduce((acc, item) => acc + (item.product.price * item.quantity), 0);
+        const currentUser = await userModel.findById(req.user._id).populate('cart.product');
         
+        let totalCartPrice = 0;
+        if (currentUser && currentUser.cart && currentUser.cart.length > 0) {
+            totalCartPrice = currentUser.cart.reduce((acc, item) => {
+                if (item.product && item.product.price) {
+                    return acc + (item.product.price * item.quantity);
+                }
+                return acc;
+            }, 0);
+        }
+
         let orders = await orderModel.find({ user: req.user._id })
                                      .populate('products.product')
                                      .sort({ createdAt: -1 }); 
 
-        res.render('orders', { orders, user: req.user, totalCartPrice });
+        res.render('orders', { 
+            orders, 
+            user: currentUser,
+            totalCartPrice 
+        });
+
     } catch (error) {
+        console.error("Error in getOrders:", error);
         res.status(500).send("Error fetching orders");
     }
-}
+};
 
 const getBill = async (req, res)=>{
     try {

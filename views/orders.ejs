@@ -1,185 +1,167 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Your Orders - Apna Mart</title>
-  <!-- Tailwind CSS CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Font Awesome Icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <script>
-    // डार्क मोड और थीम टॉगल फंक्शनलिटी
-    function toggleTheme() {
-      if (document.documentElement.classList.contains('dark')) {
-        document.documentElement.classList.remove('dark');
-        localStorage.setItem('theme', 'light');
-      } else {
-        document.documentElement.classList.add('dark');
-        localStorage.setItem('theme', 'dark');
-      }
-    }
-    // पेज लोड होते ही थीम सेट करना
-    if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-  </script>
+  <title>Your Orders | KushNova</title>
+  <%- include('partials/head') %>
 </head>
-<body class="bg-zinc-50 text-zinc-900 dark:bg-[#050906] dark:text-zinc-100 min-h-screen font-sans antialiased transition-colors duration-300">
 
-<%- include('partials/header') %>
+<body class="bg-[#f8f9fa] text-gray-900 antialiased dark:bg-[#050906] dark:text-zinc-100 transition-colors duration-300">
 
-  <main class="max-w-3xl mx-auto px-4 md:px-6 pt-28 pb-16 select-none">
+  <%- include('partials/header') %>
+
+  <div class="max-w-7xl mx-auto flex flex-col md:flex-row min-h-[calc(100vh-5rem)]">
     
-    <div class="flex items-center justify-between mb-8 border-b border-zinc-100 dark:border-zinc-900/80 pb-5">
-      <div>
-        <h1 class="text-xl font-black text-zinc-900 dark:text-white uppercase tracking-tight">Your Order History</h1>
-        <p class="text-[11px] font-bold text-zinc-400 mt-0.5">Track and manage your grocery deliveries</p>
-      </div>
-      <div class="w-10 h-10 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-[#24963f] border border-emerald-500/20 dark:border-emerald-500/10">
-        <i class="fa-solid fa-clock-rotate-left text-sm"></i>
-      </div>
-    </div>
+    <%- include('partials/sidebar') %>
 
-    <% if(orders.length === 0) { %>
-      <div class="text-center py-20 border border-dashed rounded-[32px] border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/20 shadow-sm">
-        <div class="w-16 h-16 mx-auto bg-zinc-100 dark:bg-zinc-900 text-zinc-400 dark:text-zinc-600 rounded-full flex items-center justify-center text-2xl mb-4">
-          <i class="fa-solid fa-box-open"></i>
-        </div>
-        <h3 class="text-sm font-black text-zinc-800 dark:text-zinc-200 uppercase tracking-wider">No Orders Yet!</h3>
-        <p class="text-xs text-zinc-400 font-bold mt-1 max-w-xs mx-auto">Looks like you haven't bought any groceries yet. Let's fill your kitchen!</p>
-        <a href="/" class="mt-6 inline-block bg-[#24963f] hover:bg-[#1e7e34] text-white text-xs font-black px-8 py-3.5 rounded-xl transition-all active:scale-95 shadow-md shadow-emerald-900/10 uppercase tracking-wider">
-          Start Shopping
-        </a>
-      </div>
-    <% } else { %>
+    <main class="flex-1 p-4 sm:p-6 lg:p-8 select-none">
       
-      <!-- list of Orders -->
-      <div class="space-y-6">
-        <% orders.forEach(order => { %>
-          <div class="border border-zinc-200/80 dark:border-zinc-800/80 rounded-3xl bg-white dark:bg-[#090f0b]/40 shadow-sm overflow-hidden hover:border-zinc-300 dark:hover:border-zinc-700 transition-all duration-200">
-            
-            <!-- 1. Card data -->
-            <div class="bg-zinc-50/70 dark:bg-zinc-950/40 px-5 py-4 border-b border-zinc-100 dark:border-zinc-900 flex flex-wrap items-center justify-between gap-3">
-              <div class="flex items-center gap-4 text-[11px] font-bold text-zinc-500">
-                <div>
-                  <span class="text-[9px] text-zinc-400 font-black uppercase block tracking-wider mb-0.5">Order Placed</span>
-                  <span class="text-zinc-700 dark:text-zinc-300 font-black">
-                    <%= new Date(order.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) %>
-                  </span>
-                </div>
-                <div class="hidden sm:block h-6 w-[1px] bg-zinc-200 dark:bg-zinc-800"></div>
-                <div>
-                  <span class="text-[9px] text-zinc-400 font-black uppercase block tracking-wider mb-0.5">Order ID</span>
-                  <span class="font-mono text-zinc-600 dark:text-zinc-400 uppercase"><%= order._id %></span>
-                </div>
-              </div>
-              
-              <!-- Live status Badge -->
-              <div>
-                <% if(order.status === 'Pending') { %>
-                  <span class="text-[10px] font-black px-3 py-1 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 uppercase tracking-wider">
-                    ⏳ Pending
-                  </span>
-                <% } else if(order.status === 'Dispatched') { %>
-                  <span class="text-[10px] font-black px-3 py-1 rounded-xl bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20 uppercase tracking-wider">
-                    🚚 Out For Delivery
-                  </span>
-                <% } else { %>
-                  <span class="text-[10px] font-black px-3 py-1 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 uppercase tracking-wider">
-                    ✅ Delivered
-                  </span>
-                <% } %>
-              </div>
-            </div>
-
-            <!-- proudcts list which are purchased -->
-            <div class="p-5 space-y-4">
-            <% order.products.forEach(item => { %>
-              <% if(item.product) { %>
-                <div class="flex items-center justify-between gap-4 bg-zinc-50/40 dark:bg-zinc-950/10 p-2.5 rounded-2xl border border-zinc-100/70 dark:border-zinc-900/30">
-                  
-                  <div class="flex items-center gap-3.5 min-w-0 flex-1">
-                    <a href="/products/view/<%= item.product._id %>" class="flex items-center gap-3.5 min-w-0 group cursor-pointer hover:opacity-85 transition-all">
-                      
-                      <div class="w-12 h-12 rounded-xl bg-zinc-100 dark:bg-zinc-900 border border-zinc-200/60 dark:border-zinc-800 flex items-center justify-center overflow-hidden shrink-0 shadow-sm font-black text-xs uppercase text-emerald-600 dark:text-emerald-400 group-hover:scale-105 group-hover:border-emerald-400/50 transition-all duration-200">
-                        <% if (item.product.image) { %>
-                          <img src="/uploads/<%= item.product.image %>" 
-                              class="w-full h-full object-cover" 
-                              onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                          
-                          <span class="hidden w-full h-full items-center justify-center bg-gradient-to-br from-emerald-500/20 to-teal-500/20">
-                            <%= item.product.name ? item.product.name.substring(0,2) : 'KP' %>
-                          </span>
-                        <% } else { %>
-                          <span class="w-full h-full flex items-center justify-center bg-gradient-to-br from-emerald-500/20 to-teal-500/20">
-                            <%= item.product.name ? item.product.name.substring(0,2) : 'KP' %>
-                          </span>
-                        <% } %>
-                      </div>
-
-                      <div class="min-w-0">
-                        <h4 class="text-xs font-black text-zinc-900 dark:text-zinc-100 truncate group-hover:text-emerald-500 dark:group-hover:text-emerald-400 transition-colors">
-                          <%= item.product.name %>
-                        </h4>
-                        <p class="text-[10px] font-bold text-zinc-400 mt-0.5 uppercase tracking-wide">
-                          Qty: <span class="text-emerald-500 bg-emerald-500/10 px-1.5 py-0.2 rounded font-black">x<%= item.quantity %></span>
-                        </p>
-                      </div>
-                    </a>
-                  </div>
-
-                  <div class="flex items-center gap-4 shrink-0">
-                    
-                    <div class="text-right">
-                      <span class="text-xs font-black text-zinc-900 dark:text-white">₹<%= item.product.price * item.quantity %></span>
-                      <p class="text-[9px] text-zinc-400 font-medium mt-0.5">₹<%= item.product.price %> each</p>
-                    </div>
-
-                    <a href="/users/orders/bill/<%= order._id %>" 
-                      title="View Invoice"
-                      class="w-8 h-8 rounded-xl bg-zinc-100 hover:bg-emerald-500 hover:text-black dark:bg-zinc-900 dark:text-zinc-400 dark:hover:bg-emerald-500/20 dark:hover:text-emerald-400 flex items-center justify-center transition-all border border-zinc-200 dark:border-zinc-800 shadow-sm">
-                      <i class="fa-solid fa-file-invoice text-xs"></i>
-                    </a>
-
-                  </div>
-
-                </div>
-              <% } %>
-            <% }) %>
-            </div>
-
-            <div class="px-5 py-4 bg-zinc-50/30 dark:bg-zinc-950/20 border-t border-zinc-100 dark:border-zinc-900/60 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-              
-              <!-- डिलीवरी एड्रेस -->
-              <div class="space-y-0.5 max-w-md">
-                <span class="text-[9px] text-zinc-400 font-black uppercase tracking-wider block">Delivery Location</span>
-                <div class="flex items-start gap-1.5 text-zinc-600 dark:text-zinc-400">
-                  <i class="fa-solid fa-map-pin text-[10px] text-emerald-500 mt-1"></i>
-                  <p class="text-[11px] font-semibold leading-relaxed"><%= order.address || "Main Address" %></p>
-                </div>
-              </div>
-              
-              <!-- टोटल अमाउंट -->
-              <div class="w-full sm:w-auto flex sm:flex-col justify-between items-center sm:items-end bg-emerald-500/5 dark:bg-emerald-500/10 border border-emerald-500/10 sm:bg-transparent sm:border-0 p-3 sm:p-0 rounded-xl">
-                <div>
-                  <span class="text-[9px] text-zinc-400 font-black uppercase tracking-wider block sm:text-right">Total Paid</span>
-                  <span class="text-base font-black text-zinc-900 dark:text-white mt-0.5">₹<%= order.totalPrice %></span>
-                </div>
-                <span class="text-[9px] font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-widest hidden sm:block mt-0.5">Cash On Delivery</span>
-              </div>
-
-            </div>
-
+      <div class="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-white dark:bg-zinc-900 p-5 rounded-2xl border border-gray-100 dark:border-zinc-800 shadow-sm">
+        <div>
+          <div class="flex items-center gap-2 mb-1 text-[11px] font-medium text-zinc-400">
+            <a href="/" class="hover:text-black dark:hover:text-white transition-colors"><i class="fa-solid fa-house"></i> Home</a>
+            <span class="text-gray-300 dark:text-zinc-700">/</span>
+            <span class="font-semibold text-zinc-700 dark:text-zinc-300">Orders</span>
           </div>
-        <% }) %>
+          <h2 class="text-xl font-black tracking-tight text-gray-900 dark:text-white uppercase">Your Order History</h2>
+          <p class="text-[11px] font-bold text-zinc-400 mt-0.5">Track and manage your grocery deliveries</p>
+        </div>
+        
+        <div class="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-900/10 flex items-center justify-center text-[#24963f] border border-emerald-100 dark:border-emerald-900/20">
+          <i class="fa-solid fa-clock-rotate-left text-sm"></i>
+        </div>
       </div>
-      
-    <% } %>
 
-  </main>
+      <% if(orders.length === 0) { %>
+        <div class="max-w-md mx-auto text-center py-16 bg-white dark:bg-zinc-900 rounded-3xl border border-gray-100 dark:border-zinc-800 shadow-sm my-10 px-6">
+          <div class="w-16 h-16 mx-auto bg-zinc-50 dark:bg-zinc-800/50 text-zinc-300 dark:text-zinc-600 rounded-2xl flex items-center justify-center text-2xl mb-4 border border-gray-100 dark:border-zinc-700">
+            <i class="fa-solid fa-box-open"></i>
+          </div>
+          <h3 class="text-base font-bold text-zinc-800 dark:text-zinc-200">No Orders Yet!</h3>
+          <p class="text-xs text-zinc-400 mt-1 max-w-xs mx-auto">Looks like you haven't bought any groceries yet. Let's fill your kitchen!</p>
+          <a href="/products/allProducts" class="mt-6 inline-flex bg-[#24963f] hover:bg-[#1e7e34] text-white text-xs font-black px-6 py-3 rounded-xl transition-all active:scale-95 shadow-sm uppercase tracking-wider">
+            Start Shopping
+          </a>
+        </div>
+      <% } else { %>
+        
+        <div class="space-y-6">
+          <% orders.forEach(order => { %>
+            <div class="border border-gray-100 dark:border-zinc-800/80 rounded-2xl bg-white dark:bg-zinc-900/40 shadow-sm overflow-hidden hover:shadow-md transition-all duration-300">
+              
+              <div class="bg-gray-50/70 dark:bg-zinc-900/50 px-5 py-4 border-b border-gray-100 dark:border-zinc-800 flex flex-wrap items-center justify-between gap-3">
+                <div class="flex items-center gap-5 text-xs font-semibold">
+                  <div>
+                    <span class="text-[9px] text-zinc-400 font-bold uppercase block tracking-wider mb-0.5">Order Placed</span>
+                    <span class="text-zinc-800 dark:text-zinc-200 font-extrabold">
+                      <%= new Date(order.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) %>
+                    </span>
+                  </div>
+                  <div class="h-6 w-[1px] bg-gray-200 dark:bg-zinc-800"></div>
+                  <div>
+                    <span class="text-[9px] text-zinc-400 font-bold uppercase block tracking-wider mb-0.5">Order ID</span>
+                    <span class="font-mono text-zinc-600 dark:text-zinc-400 font-bold text-[11px] uppercase tracking-tight"><%= order._id %></span>
+                  </div>
+                </div>
+                
+                <div>
+                  <% if(order.status === 'Pending') { %>
+                    <span class="text-[10px] font-black px-3 py-1.5 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 uppercase tracking-wider flex items-center gap-1.5 animate-pulse">
+                      <i class="fa-solid fa-circle-notch animate-spin text-[9px]"></i> Processing
+                    </span>
+                  <% } else if(order.status === 'Dispatched') { %>
+                    <span class="text-[10px] font-black px-3 py-1.5 rounded-xl bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20 uppercase tracking-wider flex items-center gap-1.5">
+                      <i class="fa-solid fa-truck-fast text-[11px]"></i> Out For Delivery
+                    </span>
+                  <% } else { %>
+                    <span class="text-[10px] font-black px-3 py-1.5 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 uppercase tracking-wider flex items-center gap-1.5">
+                      <i class="fa-solid fa-circle-check text-[11px]"></i> Delivered
+                    </span>
+                  <% } %>
+                </div>
+              </div>
+
+              <div class="p-4 sm:p-5 space-y-3">
+                <% order.products.forEach(item => { %>
+                  <% if(item.product) { %>
+                    <div class="flex items-center justify-between gap-4 bg-gray-50/40 dark:bg-zinc-950/20 p-3 rounded-xl border border-gray-100 dark:border-zinc-800/40">
+                      
+                      <div class="flex items-center gap-3.5 min-w-0 flex-1">
+                        <a href="/products/view/<%= item.product._id %>" class="flex items-center gap-3.5 min-w-0 group cursor-pointer">
+                          <div class="w-12 h-12 rounded-xl bg-white dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 flex items-center justify-center overflow-hidden shrink-0 shadow-sm transition-transform group-hover:scale-105">
+                            <% if (item.product.image) { %>
+                              <img src="/uploads/<%= item.product.image %>" 
+                                   class="w-full h-full object-contain p-1" 
+                                   onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                              <span class="hidden w-full h-full items-center justify-center bg-gradient-to-br from-emerald-500/10 to-teal-500/10 font-bold text-xs text-[#24963f]">
+                                <%= item.product.name ? item.product.name.substring(0,2).toUpperCase() : 'KP' %>
+                              </span>
+                            <% } else { %>
+                              <span class="w-full h-full flex items-center justify-center bg-gradient-to-br from-emerald-500/10 to-teal-500/10 font-bold text-xs text-[#24963f]">
+                                <%= item.product.name ? item.product.name.substring(0,2).toUpperCase() : 'KP' %>
+                              </span>
+                            <% } %>
+                          </div>
+
+                          <div class="min-w-0">
+                            <h4 class="text-xs font-bold text-zinc-900 dark:text-zinc-100 truncate group-hover:text-[#24963f] transition-colors">
+                              <%= item.product.name %>
+                            </h4>
+                            <p class="text-[10px] font-bold text-zinc-400 mt-0.5">
+                              Quantity: <span class="text-[#24963f] font-black">x<%= item.quantity %></span>
+                            </p>
+                          </div>
+                        </a>
+                      </div>
+
+                      <div class="flex items-center gap-4 shrink-0">
+                        <div class="text-right">
+                          <span class="text-xs font-black text-zinc-900 dark:text-white">₹<%= item.product.price * item.quantity %></span>
+                          <p class="text-[9px] text-zinc-400 font-medium mt-0.5">₹<%= item.product.price %> each</p>
+                        </div>
+
+                        <a href="/users/orders/bill/<%= order._id %>" 
+                           title="Download Invoice"
+                           class="px-3 py-1.5 rounded-lg bg-gray-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:bg-[#24963f] hover:text-white dark:hover:bg-[#24963f] dark:hover:text-white flex items-center gap-1.5 transition-all text-[10px] font-bold border border-gray-200 dark:border-zinc-700">
+                          <i class="fa-solid fa-file-invoice"></i> Bill
+                        </a>
+                      </div>
+
+                    </div>
+                  <% } %>
+                <% }) %>
+              </div>
+
+              <div class="px-5 py-4 bg-gray-50/40 dark:bg-zinc-900/20 border-t border-gray-100 dark:border-zinc-800 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                
+                <div class="space-y-0.5 max-w-sm">
+                  <span class="text-[9px] text-zinc-400 dark:text-zinc-500 font-bold uppercase tracking-wider block">Delivery Location</span>
+                  <div class="flex items-start gap-1.5 text-zinc-600 dark:text-zinc-400">
+                    <i class="fa-solid fa-location-dot text-[10px] text-[#24963f] mt-0.5"></i>
+                    <p class="text-[11px] font-bold leading-tight truncate"><%= order.address || "Main Address" %></p>
+                  </div>
+                </div>
+                
+                <div class="w-full sm:w-auto flex sm:flex-col justify-between items-center sm:items-end bg-emerald-500/[0.04] dark:bg-emerald-500/[0.06] border border-emerald-500/10 p-3 sm:p-0 rounded-xl sm:bg-transparent sm:border-0">
+                  <div class="sm:text-right">
+                    <span class="text-[9px] text-zinc-400 dark:text-zinc-500 font-bold uppercase tracking-wider block">Total Paid</span>
+                    <span class="text-sm font-black text-zinc-900 dark:text-white mt-0.5">₹<%= order.totalPrice %></span>
+                  </div>
+                  <span class="text-[8px] font-black text-[#24963f] bg-emerald-500/10 px-1.5 py-0.5 rounded uppercase tracking-wider sm:mt-1">
+                    Cash On Delivery
+                  </span>
+                </div>
+
+              </div>
+
+            </div>
+          <% }) %>
+        </div>
+        
+      <% } %>
+
+    </main>
+  </div>
+
   <%- include('partials/header-scripts') %>
 </body>
 </html>

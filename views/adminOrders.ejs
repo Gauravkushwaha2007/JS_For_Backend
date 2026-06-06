@@ -3,266 +3,234 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Order Control Center - Kushwaha Kirana Store</title>
-  <!-- Tailwind CSS CDN -->
+  <title>Admin Order Control Center | Kushwaha Kirana Store</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Font Awesome Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <script>
-    function toggleTheme() {
-      if (document.documentElement.classList.contains('dark')) {
-        document.documentElement.classList.remove('dark');
-        localStorage.setItem('theme', 'light');
-      } else {
-        document.documentElement.classList.add('dark');
-        localStorage.setItem('theme', 'dark');
-      }
-    }
-    if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
 
-    function filterOrders(status) {
-      const rows = document.querySelectorAll('.order-row');
-      const tabs = document.querySelectorAll('.tab-btn');
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    /* हाइड स्क्रॉलबार */
+    .scrollbar-none::-webkit-scrollbar { display: none; }
+    .scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
+  </style>
+</head>
+
+<body class="bg-[#fafafa] text-gray-950 antialiased">
+
+  <div class="flex min-h-screen flex-col md:flex-row">
+    <%- include('partials/adminSidebar')%>
+    <main class="flex-1 p-5 sm:p-8 lg:p-12 overflow-x-hidden">
       
-      tabs.forEach(tab => tab.classList.remove('border-emerald-500', 'text-emerald-600', 'dark:text-emerald-400', 'bg-emerald-50/50', 'dark:bg-emerald-950/10'));
-      event.currentTarget.classList.add('border-emerald-500', 'text-emerald-600', 'dark:text-emerald-400', 'bg-emerald-50/50', 'dark:bg-emerald-950/10');
+      <div class="mb-8 pb-5 border-b border-zinc-200/60 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <div class="flex items-center gap-2 mb-1.5 text-[11px] font-medium text-gray-400">
+            <span>Admin Control Panel</span>
+            <span class="text-gray-300">/</span>
+            <span class="font-semibold text-red-600">Order Routing Center</span>
+          </div>
+          <h2 class="text-2xl sm:text-3xl font-black tracking-tight text-gray-900">
+            Live Order Control Console
+          </h2>
+        </div>
+        
+        <div>
+          <span class="inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider px-3 py-1.5 rounded-xl bg-red-50 text-red-700 border border-red-100">
+            <span class="w-1.5 h-1.5 rounded-full bg-red-600 animate-ping"></span>
+            Real-Time Monitor Active
+          </span>
+        </div>
+      </div>
 
-      rows.forEach(row => {
-        if (status === 'All' || row.getAttribute('data-status') === status) {
-          row.style.display = '';
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <div class="bg-white border border-zinc-100 p-5 rounded-2xl flex items-center justify-between shadow-sm hover:shadow-md transition-shadow">
+          <div>
+            <span class="text-[10px] text-gray-400 font-black uppercase tracking-wider block">Total Bookings</span>
+            <p class="text-2xl font-black mt-1 text-zinc-900"><%= orders.length %></p>
+          </div>
+          <div class="w-10 h-10 rounded-xl bg-zinc-100 text-zinc-800 flex items-center justify-center border border-zinc-200/60 shadow-sm"><i class="fa-solid fa-boxes-stacked text-sm"></i></div>
+        </div>
+        
+        <div class="bg-white border border-zinc-100 p-5 rounded-2xl flex items-center justify-between shadow-sm hover:shadow-md transition-shadow">
+          <div>
+            <span class="text-[10px] text-gray-400 font-black uppercase tracking-wider block">Awaiting Dispatch</span>
+            <p class="text-2xl font-black mt-1 text-amber-600"><%= orders.filter(o => o.status === 'Pending').length %></p>
+          </div>
+          <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center border border-amber-100 shadow-sm"><i class="fa-solid fa-spinner animate-spin text-sm"></i></div>
+        </div>
+
+        <div class="bg-white border border-zinc-100 p-5 rounded-2xl flex items-center justify-between shadow-sm hover:shadow-md transition-shadow">
+          <div>
+            <span class="text-[10px] text-gray-400 font-black uppercase tracking-wider block">On Transit Delivery</span>
+            <p class="text-2xl font-black mt-1 text-blue-600"><%= orders.filter(o => o.status === 'Dispatched').length %></p>
+          </div>
+          <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center border border-blue-100 shadow-sm"><i class="fa-solid fa-truck-fast text-sm"></i></div>
+        </div>
+
+        <div class="bg-white border border-zinc-100 p-5 rounded-2xl flex items-center justify-between shadow-sm hover:shadow-md transition-shadow">
+          <div>
+            <span class="text-[10px] text-gray-400 font-black uppercase tracking-wider block">Gross Turnover</span>
+            <% let grandTotal = orders.reduce((acc, o) => acc + o.totalPrice, 0); %>
+            <p class="text-2xl font-black mt-1 text-emerald-600">₹<%= grandTotal %></p>
+          </div>
+          <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center border border-emerald-100 shadow-sm"><i class="fa-solid fa-indian-rupee-sign text-sm"></i></div>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2 border-b border-zinc-200/60 pb-3 mb-6 overflow-x-auto scrollbar-none select-none">
+        <button onclick="filterOrders('All')" class="tab-btn px-4 py-2 text-xs font-black uppercase tracking-wider border-b-2 border-red-600 text-red-600 bg-red-50/50 rounded-t-xl transition-all">All Inbound</button>
+        <button onclick="filterOrders('Pending')" class="tab-btn px-4 py-2 text-xs font-bold uppercase tracking-wider border-b-2 border-transparent text-gray-400 hover:text-gray-900 transition-all">Pending Pipeline</button>
+        <button onclick="filterOrders('Dispatched')" class="tab-btn px-4 py-2 text-xs font-bold uppercase tracking-wider border-b-2 border-transparent text-gray-400 hover:text-gray-900 transition-all">Out For Delivery</button>
+        <button onclick="filterOrders('Delivered')" class="tab-btn px-4 py-2 text-xs font-bold uppercase tracking-wider border-b-2 border-transparent text-gray-400 hover:text-gray-900 transition-all">Completed Orders</button>
+      </div>
+
+      <% if(orders.length === 0) { %>
+        <div class="text-center py-24 border border-dashed rounded-[32px] border-zinc-200 bg-white shadow-sm">
+          <i class="fa-solid fa-circle-nodes text-3xl text-zinc-300 mb-4 block"></i>
+          <p class="text-xs text-gray-400 font-black uppercase tracking-wider">No Orders Inbound In System Log</p>
+        </div>
+      <% } else { %>
+        
+        <div class="bg-white border border-zinc-100 rounded-3xl overflow-hidden shadow-xl shadow-zinc-100/50">
+          <div class="overflow-x-auto w-full">
+            <table class="w-full text-left border-collapse min-w-[1100px]">
+              <thead>
+                <tr class="bg-zinc-50 border-b border-zinc-100 text-[10px] font-black text-gray-400 uppercase tracking-widest select-none">
+                  <th class="p-5 w-80">Ordered Products & Vol</th>
+                  <th class="p-5">Customer Profile</th>
+                  <th class="p-5 w-64">Fulfillment Address</th>
+                  <th class="p-5">Gross Bill</th>
+                  <th class="p-5">Order Reference Hash</th>
+                  <th class="p-5 text-right">Console Actions</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-zinc-100 text-xs font-semibold text-gray-700">
+                <% orders.forEach(order => { %>
+                  <tr class="order-row hover:bg-zinc-50/80 transition-colors duration-150" data-status="<%= order.status %>">
+                    
+                    <td class="p-5">
+                      <div class="space-y-3">
+                        <% order.products.forEach(item => { %>
+                          <div class="flex items-center gap-3 border-b border-zinc-50/60 pb-2 last:border-0 last:pb-0">
+                            
+                            <div class="w-10 h-10 rounded-xl bg-zinc-50 border border-zinc-200/60 flex items-center justify-center overflow-hidden shrink-0 shadow-inner font-black text-[10px] text-red-600 uppercase">
+                              <% if (item.product && item.product.image) { %>
+                                <img src="/uploads/<%= item.product.image %>" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                <span class="hidden w-full h-full items-center justify-center bg-red-50 text-red-600"><%= item.product.name ? item.product.name.substring(0,2) : 'KP' %></span>
+                              <% } else { %>
+                                <span class="w-full h-full flex items-center justify-center bg-red-50 text-red-600"><%= item.product.name ? item.product.name.substring(0,2) : 'KP' %></span>
+                              <% } %>
+                            </div>
+
+                            <div class="truncate">
+                              <p class="font-black text-zinc-950 text-xs truncate"><%= item.product ? item.product.name : '📦 Grocery Asset Item' %></p>
+                              <p class="text-[10px] text-gray-400 font-bold mt-0.5">
+                                Price: ₹<%= item.product ? item.product.price : 0 %> 
+                                <span class="text-red-600 ml-1.5 bg-red-50 border border-red-100/60 px-1.5 py-0.5 rounded font-black">QTY: x<%= item.quantity %></span>
+                              </p>
+                            </div>
+                          </div>
+                        <% }) %>
+                      </div>
+                    </td>
+
+                    <td class="p-5">
+                      <div class="flex items-center gap-2.5">
+                        <div class="w-8 h-8 rounded-xl bg-zinc-900 text-white text-[11px] font-black flex items-center justify-center uppercase shadow-sm">
+                          <%= (order.user && order.user.name) ? order.user.name.substring(0,2) : 'CU' %>
+                        </div>
+                        <div>
+                          <p class="font-black text-zinc-950"><%= (order.user && order.user.name) ? order.user.name : 'Unregistered User' %></p>
+                          <p class="text-[10px] text-gray-400 font-bold mt-0.5 flex items-center gap-1">
+                            <i class="fa-solid fa-phone text-[9px] text-red-500"></i><%= (order.user && order.user.contact) ? order.user.contact : 'No Info' %>
+                          </p>
+                        </div>
+                      </div>
+                    </td>
+
+                    <td class="p-5">
+                      <p class="text-[11px] text-gray-600 leading-relaxed font-bold select-text">
+                        <i class="fa-solid fa-location-dot text-[10px] text-red-600 mr-1"></i><%= order.address || "Counter Pick Address" %>
+                      </p>
+                    </td>
+
+                    <td class="p-5">
+                      <p class="text-sm font-black text-zinc-950">₹<%= order.totalPrice %></p>
+                      
+                      <span class="inline-block text-[8px] font-black uppercase tracking-wider px-2 py-0.5 rounded border mt-1.5
+                        <%= order.status === 'Pending' ? 'bg-amber-50 text-amber-700 border-amber-200' : '' %>
+                        <%= order.status === 'Dispatched' ? 'bg-blue-50 text-blue-700 border-blue-200' : '' %>
+                        <%= order.status === 'Delivered' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : '' %>">
+                        <%= order.status %>
+                      </span>
+                    </td>
+
+                    <td class="p-5">
+                      <p class="font-mono font-bold text-gray-400 select-text text-[10px] tracking-tight"><%= order._id %></p>
+                      <p class="text-[9px] text-gray-400 font-black uppercase mt-1">
+                        <%= new Date(order.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }) %> • 
+                        <%= new Date(order.createdAt).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }) %>
+                      </p>
+                    </td>
+
+                    <td class="p-5 text-right">
+                      <div class="inline-flex items-center gap-1.5">
+                        
+                        <a href="/admin/orders/invoice/<%= order._id %>" target="_blank" class="bg-zinc-50 hover:bg-zinc-100 border border-zinc-200 text-zinc-600 w-8 h-8 flex items-center justify-center rounded-xl text-xs transition-all hover:scale-105 active:scale-95" title="Print Invoice Statement">
+                          <i class="fa-solid fa-print"></i>
+                        </a>
+
+                        <form action="/admin/orders/update/<%= order._id %>" method="POST" class="inline-flex items-center gap-1.5 bg-zinc-50 p-1 border border-zinc-200 rounded-xl shadow-sm">
+                          <select name="status" class="bg-transparent text-[10px] font-black uppercase tracking-wider text-zinc-800 focus:outline-none px-2 cursor-pointer">
+                            <option value="Pending" <%= order.status === 'Pending' ? 'selected' : '' %>>⏳ Pending</option>
+                            <option value="Dispatched" <%= order.status === 'Dispatched' ? 'selected' : '' %>>🚚 Dispatch</option>
+                            <option value="Delivered" <%= order.status === 'Delivered' ? 'selected' : '' %>>✅ Deliver</option>
+                          </select>
+
+                          <button type="submit" class="bg-red-600 hover:bg-red-700 text-white w-7 h-7 flex items-center justify-center rounded-lg transition-all active:scale-90 shadow-sm" title="Save Order Status">
+                            <i class="fa-solid fa-floppy-disk text-xs"></i>
+                          </button>
+                        </form>
+
+                      </div>
+                    </td>
+
+                  </tr>
+                <% }) %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      <% } %>
+
+    </main>
+
+  </div>
+
+  <script>
+    function filterOrders(status) {
+      // सारे बटन्स से एक्टिव क्लास हटाओ
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('border-red-600', 'text-red-600', 'bg-red-50/50');
+        btn.classList.add('border-transparent', 'text-gray-400');
+      });
+
+      // क्लिक हुए बटन को एक्टिव करो
+      const activeBtn = event.currentTarget;
+      activeBtn.classList.remove('border-transparent', 'text-gray-400');
+      activeBtn.classList.add('border-red-600', 'text-red-600', 'bg-red-50/50');
+
+      // रोज़ फ़िल्टर करो
+      document.querySelectorAll('.order-row').forEach(row => {
+        if(status === 'All' || row.getAttribute('data-status') === status) {
+          row.style.display = 'table-row';
         } else {
           row.style.display = 'none';
         }
       });
     }
   </script>
-</head>
-<body class="bg-zinc-50 text-zinc-900 dark:bg-[#050906] dark:text-zinc-100 min-h-screen font-sans antialiased">
-
-  <!-- ─── ⚡ NAVIGATION BAR ─── -->
-  <nav class="w-full px-6 md:px-12 py-4 flex items-center justify-between border-b border-emerald-100 bg-white/70 backdrop-blur-xl fixed top-0 left-0 z-50 transition-all duration-300 dark:bg-[#050906]/70 dark:border-emerald-950/40 shadow-sm">
-    <a href="/" class="flex items-center gap-2.5 group cursor-pointer shrink-0">
-      <div class="w-8 h-8 bg-red-500 rounded-xl flex items-center justify-center shadow-[0_0_15px_rgba(239,68,68,0.3)]">
-        <i class="fa-solid fa-shield-halved text-black text-xs"></i>
-      </div>
-      <div>
-        <h1 class="text-lg font-black tracking-tight text-zinc-900 dark:text-white leading-none">Kushwaha Kirana <span class="text-red-500 text-[10px] font-black uppercase tracking-widest ml-1">Admin</span></h1>
-        <span class="text-[9px] uppercase font-bold tracking-widest text-zinc-400 dark:text-zinc-500">Store Management Console</span>
-      </div>
-    </a>
-
-    <div class="hidden md:flex gap-6 text-[11px] font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
-      <a href="/products/allProducts" class="hover:text-emerald-600 transition-colors">Catalog Dashboard</a>
-      <a href="/products/create" class="hover:text-emerald-600 transition-colors">Add New Product</a>
-      <a href="/admin/orders" class="text-emerald-600 dark:text-emerald-400 font-black border-b-2 border-emerald-500 pb-1">Live Orders</a>
-    </div>
-
-    <div class="flex items-center gap-4">
-      <button onclick="toggleTheme()" type="button" class="w-9 h-9 flex items-center justify-center bg-zinc-100 hover:bg-zinc-200 border border-zinc-200 rounded-xl text-zinc-700 transition-all dark:bg-zinc-900/80 dark:border-zinc-800 dark:text-zinc-300">
-        <i class="fa-solid fa-sun text-sm hidden dark:block"></i>
-        <i class="fa-solid fa-moon text-sm dark:hidden"></i>
-      </button>
-      <a href="/users/logout" class="text-xs font-black text-rose-600 border border-rose-200 bg-rose-50/50 px-4 py-2 rounded-xl hover:bg-rose-100 transition-all dark:border-rose-950/40 dark:bg-rose-950/10 dark:text-rose-400">
-        <i class="fa-solid fa-power-off mr-1.5"></i> Exit
-      </a>
-    </div>
-  </nav>
-
-  <!-- ─── 📦 MAIN WRAPPER ─── -->
-  <main class="max-w-7xl mx-auto px-4 md:px-8 pt-28 pb-16 select-none">
-    
-    <!-- Stats Cards -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-      <div class="bg-white dark:bg-zinc-900/40 border border-zinc-200 dark:border-zinc-800 p-5 rounded-2xl flex items-center justify-between shadow-sm">
-        <div>
-          <span class="text-[10px] text-zinc-400 font-black uppercase tracking-wider">Total Orders</span>
-          <p class="text-2xl font-black mt-1 text-zinc-900 dark:text-white"><%= orders.length %></p>
-        </div>
-        <div class="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-500 flex items-center justify-center border border-blue-500/20"><i class="fa-solid fa-boxes-stacked text-sm"></i></div>
-      </div>
-      
-      <div class="bg-white dark:bg-zinc-900/40 border border-zinc-200 dark:border-zinc-800 p-5 rounded-2xl flex items-center justify-between shadow-sm">
-        <div>
-          <span class="text-[10px] text-zinc-400 font-black uppercase tracking-wider">Pending Orders</span>
-          <p class="text-2xl font-black mt-1 text-amber-600 dark:text-amber-400"><%= orders.filter(o => o.status === 'Pending').length %></p>
-        </div>
-        <div class="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-500 flex items-center justify-center border border-amber-500/20"><i class="fa-solid fa-spinner animate-spin text-sm"></i></div>
-      </div>
-
-      <div class="bg-white dark:bg-zinc-900/40 border border-zinc-200 dark:border-zinc-800 p-5 rounded-2xl flex items-center justify-between shadow-sm">
-        <div>
-          <span class="text-[10px] text-zinc-400 font-black uppercase tracking-wider">Out For Delivery</span>
-          <p class="text-2xl font-black mt-1 text-blue-600 dark:text-blue-400"><%= orders.filter(o => o.status === 'Dispatched').length %></p>
-        </div>
-        <div class="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-500 flex items-center justify-center border border-blue-500/20"><i class="fa-solid fa-truck-fast text-sm"></i></div>
-      </div>
-
-      <div class="bg-white dark:bg-zinc-900/40 border border-zinc-200 dark:border-zinc-800 p-5 rounded-2xl flex items-center justify-between shadow-sm">
-        <div>
-          <span class="text-[10px] text-zinc-400 font-black uppercase tracking-wider">Gross Business</span>
-          <% let grandTotal = orders.reduce((acc, o) => acc + o.totalPrice, 0); %>
-          <p class="text-2xl font-black mt-1 text-emerald-600 dark:text-emerald-400">₹<%= grandTotal %></p>
-        </div>
-        <div class="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center border border-emerald-500/20"><i class="fa-solid fa-indian-rupee-sign text-sm"></i></div>
-      </div>
-    </div>
-
-    <!-- Live Filters -->
-    <div class="flex items-center gap-2 border-b border-zinc-200 dark:border-zinc-800 pb-3 mb-6 overflow-x-auto scrollbar-none">
-      <button onclick="filterOrders('All')" class="tab-btn px-4 py-2 text-xs font-black uppercase tracking-wider border-b-2 border-emerald-500 text-emerald-600 dark:text-emerald-400 bg-emerald-50/50 dark:bg-emerald-950/10 rounded-t-xl transition-all">All incoming</button>
-      <button onclick="filterOrders('Pending')" class="tab-btn px-4 py-2 text-xs font-black uppercase tracking-wider border-b-2 border-transparent text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 transition-all">Pending</button>
-      <button onclick="filterOrders('Dispatched')" class="tab-btn px-4 py-2 text-xs font-black uppercase tracking-wider border-b-2 border-transparent text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 transition-all">Dispatched</button>
-      <button onclick="filterOrders('Delivered')" class="tab-btn px-4 py-2 text-xs font-black uppercase tracking-wider border-b-2 border-transparent text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 transition-all">Delivered</button>
-    </div>
-
-    <!-- ─── 📊 CONTROL CONSOLE TABLE ─── -->
-    <% if(orders.length === 0) { %>
-      <div class="text-center py-24 border border-dashed rounded-[32px] border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/10 shadow-sm">
-        <i class="fa-solid fa-circle-nodes text-3xl text-zinc-300 dark:text-zinc-700 mb-4 block"></i>
-        <p class="text-sm text-zinc-400 font-bold uppercase tracking-wider">No Orders Received Yet</p>
-      </div>
-    <% } else { %>
-      
-      <div class="bg-white dark:bg-[#090f0b]/30 border border-zinc-200 dark:border-zinc-800/80 rounded-3xl overflow-hidden shadow-sm">
-        <div class="overflow-x-auto w-full">
-          <table class="w-full text-left border-collapse min-w-[1050px]">
-            <thead>
-              <tr class="bg-zinc-50 dark:bg-zinc-950/60 border-b border-zinc-100 dark:border-zinc-900 text-[10px] font-black text-zinc-400 dark:text-zinc-500 uppercase tracking-widest select-none">
-                <!-- 🔥 आइटम्स को सबसे पहले रखा गया है -->
-                <th class="p-5 w-80">Items Ordered & Qty</th>
-                <th class="p-5">Customer Profile</th>
-                <th class="p-5">Delivery Location</th>
-                <th class="p-5">Grand Total</th>
-                <!-- 🔍 आर्डर आईडी को पीछे खिसका दिया -->
-                <th class="p-5">Order ID & Date</th>
-                <th class="p-5 text-right">System Actions</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-zinc-100 dark:divide-zinc-900 text-xs font-medium">
-              <% orders.forEach(order => { %>
-                <tr class="order-row hover:bg-zinc-100 dark:hover:bg-zinc-900/20 transition-colors duration-150" data-status="<%= order.status %>">
-                  
-                  <!-- 🔥 1. सामान की जानकारी (अब सबसे पहले नंबर पर) -->
-                  <td class="p-5">
-                    <div class="space-y-2.5">
-                      <% order.products.forEach(item => { %>
-                        <div class="flex items-center gap-3 border-b border-zinc-50 dark:border-zinc-900/40 pb-1.5 last:border-0 last:pb-0">
-                          
-                          <!-- प्रोडक्ट इमेज (फॉलबैक के साथ अगर इमेज लोड न हो) -->
-                          <div class="w-9 h-9 rounded-xl bg-zinc-100 dark:bg-zinc-800 border border-zinc-200/60 dark:border-zinc-700 flex items-center justify-center overflow-hidden shrink-0 shadow-sm font-black text-[10px] uppercase">
-                            <% if (item.product && item.product.image) { %>
-                              
-                              <img src="/uploads/<%= item.product.image %>" 
-                                  class="w-full h-full object-cover" 
-                                  onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                              
-                              <span class="hidden w-full h-full items-center justify-center bg-gradient-to-br from-emerald-500/20 to-teal-500/20 text-emerald-600 dark:text-emerald-400">
-                                <%= item.product.name ? item.product.name.substring(0,2) : 'KP' %>
-                              </span>
-
-                            <% } else { %>
-                              <span class="w-full h-full flex items-center justify-center bg-gradient-to-br from-emerald-500/20 to-teal-500/20 text-emerald-600 dark:text-emerald-400">
-                                <%= item.product.name ? item.product.name.substring(0,2) : 'KP' %>
-                              </span>
-                            <% } %>
-                          </div>
-
-                          <!-- नाम, दाम और मात्रा (Quantity) -->
-                          <div class="truncate">
-                            <p class="font-black text-zinc-900 dark:text-zinc-100 text-xs truncate">
-                              <%= item.product ? item.product.name : '📦 Grocery Item' %>
-                            </p>
-                            <p class="text-[10px] text-zinc-400 font-bold mt-0.5">
-                              ₹<%= item.product ? item.product.price : 0 %> 
-                              <span class="text-emerald-500 ml-1 bg-emerald-500/10 px-1.5 py-0.2 rounded font-black">x<%= item.quantity %></span>
-                            </p>
-                          </div>
-
-                        </div>
-                      <% }) %>
-                    </div>
-                  </td>
-
-                  <!-- 2. कस्टमर प्रोफाइल -->
-                  <td class="p-5">
-                    <div class="flex items-center gap-2.5">
-                      <div class="w-7 h-7 rounded-lg bg-emerald-500 text-black text-[10px] font-black flex items-center justify-center uppercase shadow-sm">
-                        <%= (order.user && order.user.name) ? order.user.name.substring(0,2) : 'CU' %>
-                      </div>
-                      <div>
-                        <p class="font-bold text-zinc-800 dark:text-zinc-200">
-                          <%= (order.user && order.user.name) ? order.user.name : 'Customer' %>
-                        </p>
-                        <p class="text-[10px] text-zinc-500 dark:text-zinc-400 font-bold mt-0.5">
-                          <i class="fa-solid fa-phone mr-1 text-[9px] text-emerald-500"></i><%= (order.user && order.user.contact) ? order.user.contact : 'No Number' %>
-                        </p>
-                      </div>
-                    </div>
-                  </td>
-
-                  <!-- 3. डिलीवरी लोकेशन -->
-                  <td class="p-5 max-w-xs">
-                    <p class="text-[11px] text-zinc-600 dark:text-zinc-400 leading-relaxed font-semibold select-text">
-                      <i class="fa-solid fa-location-dot text-[10px] text-red-500 mr-1"></i><%= order.address || "Main Market Address" %>
-                    </p>
-                  </td>
-
-                  <!-- 4. ग्रैंड टोटल बिल -->
-                  <td class="p-5">
-                    <p class="text-sm font-black text-zinc-900 dark:text-white">₹<%= order.totalPrice %></p>
-                    <span class="text-[9px] font-black text-emerald-600 bg-emerald-50 dark:bg-emerald-500/10 dark:text-emerald-400 px-2 py-0.5 rounded border border-emerald-100 dark:border-emerald-950/30 uppercase tracking-wider block w-max mt-1">
-                      <i class="fa-solid fa-money-bill-wave mr-1"></i>COD Mode
-                    </span>
-                  </td>
-
-                  <!-- 🔍 5. आर्डर आईडी और तारीख (अब पीछे खिसक गई) -->
-                  <td class="p-5">
-                    <p class="font-mono font-bold text-zinc-500 dark:text-zinc-400 select-text text-[11px]"><%= order._id %></p>
-                    <p class="text-[10px] text-zinc-400 font-bold uppercase mt-1">
-                      <%= new Date(order.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }) %> • 
-                      <%= new Date(order.createdAt).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }) %>
-                    </p>
-                  </td>
-
-                  <!-- 6. सिस्टम एक्शन्स -->
-                  <td class="p-5 text-right">
-                    <div class="inline-flex items-center gap-2">
-                      
-                      <!-- इनवॉइस / रसीद प्रिंटर -->
-                      <a href="/admin/orders/invoice/<%= order._id %>" target="_blank" class="bg-zinc-100 hover:bg-zinc-200 border text-zinc-700 w-8 h-8 flex items-center justify-center rounded-xl text-xs transition-all dark:bg-zinc-900 dark:border-zinc-800 dark:text-zinc-300 hover:scale-105" title="Print Bill / Invoice">
-                        <i class="fa-solid fa-print text-zinc-600 dark:text-zinc-400"></i>
-                      </a>
-
-                      <!-- लाइव स्टेटस अपडेटर -->
-                      <form action="/admin/orders/update/<%= order._id %>" method="POST" class="inline-flex items-center gap-2 bg-zinc-100 dark:bg-zinc-950 p-1.5 border border-zinc-200 dark:border-zinc-800 rounded-xl">
-                        <select name="status" class="bg-transparent text-[11px] font-black uppercase tracking-wider text-zinc-700 dark:text-zinc-300 focus:outline-none px-2 cursor-pointer">
-                          <option value="Pending" class="bg-white dark:bg-zinc-950 text-amber-500 font-bold" <%= order.status === 'Pending' ? 'selected' : '' %>>⏳ Pending</option>
-                          <option value="Dispatched" class="bg-white dark:bg-zinc-950 text-blue-500 font-bold" <%= order.status === 'Dispatched' ? 'selected' : '' %>>🚚 Dispatch</option>
-                          <option value="Delivered" class="bg-white dark:bg-zinc-950 text-emerald-500 font-bold" <%= order.status === 'Delivered' ? 'selected' : '' %>>✅ Deliver</option>
-                        </select>
-
-                        <button type="submit" aria-label="Update Order Status" class="bg-[#24963f] hover:bg-[#1e7e34] text-white w-7 h-7 flex items-center justify-center rounded-lg transition-all active:scale-90 shadow-sm" title="Save Status">
-                          <i class="fa-solid fa-floppy-disk text-xs"></i>
-                        </button>
-                      </form>
-
-                    </div>
-                  </td>
-
-                </tr>
-              <% }) %>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-    <% } %>
-
-  </main>
 
 </body>
 </html>

@@ -3,90 +3,64 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title><%= product ? "Edit Product" : "Create Product" %> | KushNova</title>
-  <!-- Tailwind CSS -->
+  <title><%= product ? "Edit Product" : "Create Product" %> | KushNova Admin</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-  <!-- FontAwesome for Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
   <style>
     body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    /* स्मूथ फोकस रिंग्स के लिए कस्टम क्लास */
+    .admin-input:focus {
+      border-color: #dc2626;
+      box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.08);
+    }
   </style>
 </head>
 
-<body class="bg-[#f8f9fa] text-gray-900 antialiased">
+<body class="bg-[#fafafa] text-gray-950 antialiased">
 
   <div class="flex min-h-screen flex-col md:flex-row">
+    <%- include('partials/adminSidebar') %>
 
-    <!-- ─── SIDEBAR / NAVIGATION (Matched with Catalog) ─── -->
-    <div class="w-full md:w-64 bg-white border-b md:border-b-0 md:border-r border-gray-100 p-6 flex-shrink-0">
-      <div class="mb-8">
-        <h1 class="text-2xl font-black tracking-tight text-black">Apna Mart</h1>
-        <p class="text-[10px] uppercase font-bold tracking-widest text-emerald-600 mt-1">Admin Dashboard</p>
-      </div>
-
-      <div class="space-y-6">
-        <div>
-          <p class="font-bold text-[11px] uppercase text-gray-400 mb-2.5 tracking-wider">Navigation</p>
-          <div class="space-y-1 text-xs font-medium text-gray-500">
-            <!-- Shop Catalogue Link -->
-            <a href="/products/allProducts" class="flex items-center gap-2 py-2.5 px-3 rounded-xl hover:bg-gray-50 hover:text-black transition-all">
-              <i class="fa-solid fa-store text-[11px] opacity-70"></i> Shop Catalogue
-            </a>
-            
-            <!-- Create Product (Active State) -->
-            <a href="/products/create" class="bg-black text-white py-2.5 px-3 rounded-xl font-semibold flex items-center gap-2 shadow-sm shadow-black/10">
-              <i class="fa-solid fa-plus text-[11px]"></i> 
-              <span><%= product ? "Modify Product" : "Create New Product" %></span>
-            </a>
-          </div>
-        </div>
-
-        <!-- Back to Dashboard quick info -->
-        <div class="bg-gray-50 border border-gray-100 rounded-2xl p-4 text-center">
-          <i class="fa-solid fa-shield-halved text-gray-400 text-lg mb-2"></i>
-          <p class="text-xs font-bold text-gray-700">Admin Control Mode</p>
-          <p class="text-[10px] text-gray-400 mt-0.5">बदलाव सीधे लाइव स्टोर पर रिफ्लेक्ट होंगे।</p>
-        </div>
-      </div>
-    </div>
-
-
-    <!-- ─── MAIN CONTENT: FORM CONTAINER ─── -->
-    <div class="flex-1 p-6 md:p-10 lg:px-12">
+    <main class="flex-1 p-5 sm:p-8 lg:p-12">
       
-      <!-- Top Breadcrumb Bar -->
-      <div class="mb-8 border-b border-gray-100 pb-6">
-        <div class="flex items-center gap-3 mb-2">
-          <a href="/products/allProducts" class="text-xs font-medium text-gray-400 hover:text-black transition-colors">Catalogue</a>
-          <span class="text-gray-300 text-xs">/</span>
-          <span class="text-xs font-semibold text-gray-800"><%= product ? "Edit Mode" : "Add Mode" %></span>
+      <div class="mb-8 pb-5 border-b border-zinc-200/60 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <div class="flex items-center gap-2 mb-1.5 text-[11px] font-medium text-gray-400">
+            <a href="/products/allProducts" class="hover:text-black transition-colors">Catalogue</a>
+            <span class="text-gray-300">/</span>
+            <span class="font-semibold text-red-600"><%= product ? "Edit Dashboard" : "Creation Dashboard" %></span>
+          </div>
+          <h2 class="text-2xl sm:text-3xl font-black tracking-tight text-gray-900">
+            <%= product ? "Modify Live Product" : "Publish New Product" %>
+          </h2>
         </div>
-        <h2 class="text-3xl font-extrabold tracking-tight text-gray-900">
-          <%= product ? "Edit Product Details" : "Create New Product" %>
-        </h2>
+
+        <div class="self-start sm:self-auto">
+          <span class="inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider px-3 py-1.5 rounded-xl border <%= product ? 'bg-amber-50 text-amber-700 border-amber-200' : 'bg-red-50 text-red-700 border-red-200' %>">
+            <span class="w-1.5 h-1.5 rounded-full <%= product ? 'bg-amber-500' : 'bg-red-600' %>"></span>
+            <%= product ? 'Edit Mode Active' : 'Fresh Listing Mode' %>
+          </span>
+        </div>
       </div>
 
-      <!-- Main Form Card -->
-      <div class="max-w-3xl bg-white border border-gray-100 rounded-3xl p-6 md:p-8 shadow-xl shadow-gray-100/40">
+      <div class="max-w-3xl bg-white border <%= product ? 'border-amber-200/70 shadow-amber-100/30' : 'border-zinc-100 shadow-zinc-100/60' %> rounded-3xl p-6 sm:p-8 shadow-2xl transition-all">
         
         <form action="<%= product ? '/products/edit/' + product._id : '/products/create' %>" 
               method="post" 
               enctype="multipart/form-data" 
               class="space-y-8">
           
-          <!-- SECTION 1: MEDIA UPLOAD -->
-          <div>
-            <h3 class="text-xs font-bold uppercase tracking-wider text-gray-400 mb-4 flex items-center gap-2">
-              <i class="fa-regular fa-image text-sm"></i> Product Image
+          <div class="bg-zinc-50/50 p-5 rounded-2xl border border-zinc-100">
+            <h3 class="text-[11px] font-black uppercase tracking-wider text-gray-400 mb-4 flex items-center gap-2">
+              <i class="fa-regular fa-image text-xs text-red-600"></i> Product Media Asset
             </h3>
             
-            <div class="flex flex-col sm:flex-row items-start sm:items-center gap-5">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center gap-6">
               <% if(product && product.image){ %>
-                <div class="w-28 h-28 bg-gray-50 rounded-2xl border border-gray-100 p-2 flex items-center justify-center relative overflow-hidden shadow-inner flex-shrink-0">
-                  <img src="/uploads/<%= product.image %>" class="max-w-full max-h-full object-contain">
+                <div class="w-24 h-24 bg-white rounded-xl border border-zinc-200 p-2 flex items-center justify-center relative overflow-hidden shadow-sm flex-shrink-0 group">
+                  <img src="/uploads/<%= product.image %>" class="max-w-full max-h-full object-contain transition-transform duration-300 group-hover:scale-105">
                 </div>
               <% } %>
               
@@ -97,128 +71,118 @@
                          class="block w-full text-xs text-gray-500
                                 file:mr-4 file:py-2.5 file:px-4
                                 file:rounded-xl file:border-0
-                                file:text-xs file:font-bold
-                                file:bg-gray-100 file:text-gray-700
-                                hover:file:bg-black hover:file:text-white
+                                file:text-[11px] file:font-extrabold file:uppercase file:tracking-wider
+                                file:bg-zinc-900 file:text-white
+                                hover:file:bg-red-600 hover:file:text-white
                                 file:transition-all file:cursor-pointer" />
                 </label>
-                <p class="text-[10px] text-gray-400 mt-2">पारदर्शी (PNG) या साफ़ बैकग्राउंड वाली इमेज सबसे बेहतरीन दिखती है।</p>
+                <p class="text-[10px] text-gray-400 mt-2.5">PNG format with clear background looks exceptionally sleek on product display cards.</p>
               </div>
             </div>
           </div>
 
-          <!-- SECTION 2: BASIC INFO -->
-          <div class="space-y-4">
-            <h3 class="text-xs font-bold uppercase tracking-wider text-gray-400 mb-2 flex items-center gap-2">
-              <i class="fa-solid fa-tags text-sm"></i> Product Identification & Pricing
+          <div class="space-y-5">
+            <h3 class="text-[11px] font-black uppercase tracking-wider text-gray-400 mb-1 flex items-center gap-2">
+              <i class="fa-solid fa-tags text-xs text-red-600"></i> Inventory Specifications
             </h3>
             
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <!-- Product name -->
               <div>
-                <label class="block text-xs font-semibold text-gray-600 mb-1.5">Product Title / Name</label>
+                <label class="block text-xs font-bold text-gray-700 mb-1.5">Product Title / Name</label>
                 <input type="text" name="name" placeholder="e.g. Fresh Amul Butter"
                        value="<%= product ? product.name : '' %>"
-                       class="w-full text-xs font-medium p-3.5 border border-gray-200 rounded-xl focus:outline-none focus:border-black focus:ring-1 focus:ring-black bg-gray-50/30 transition-all" required>
+                       class="admin-input w-full text-xs font-medium p-3.5 border border-gray-200 rounded-xl focus:outline-none bg-zinc-50/20 transition-all shadow-sm" required>
               </div>
-              <!-- Product Price -->
               <div>
-                <label class="block text-xs font-semibold text-gray-600 mb-1.5">Base Price (₹)</label>
-                <input type="number" name="price" placeholder="0.00"
+                <label class="block text-xs font-bold text-gray-700 mb-1.5">Base Retail Price (₹)</label>
+                <input type="number" name="price" placeholder="0" min="0"
                        value="<%= product ? product.price : '' %>"
-                       class="w-full text-xs font-medium p-3.5 border border-gray-200 rounded-xl focus:outline-none focus:border-black focus:ring-1 focus:ring-black bg-gray-50/30 transition-all" required>
+                       class="admin-input w-full text-xs font-medium p-3.5 border border-gray-200 rounded-xl focus:outline-none bg-zinc-50/20 transition-all shadow-sm" required>
               </div>
             </div>
-            <!-- Product Discount -->
-            <div>
-              <label class="block text-xs font-semibold text-gray-600 mb-1.5">Discount On Item (₹) <span class="text-gray-400 font-normal">(Optional)</span></label>
-              <input type="number" name="discount" placeholder="0"
-                     value="<%= product ? product.discount : '' %>"
-                     class="w-full text-xs font-medium p-3.5 border border-gray-200 rounded-xl focus:outline-none focus:border-black focus:ring-1 focus:ring-black bg-gray-50/30 transition-all">
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div class="sm:col-span-1">
+                <label class="block text-xs font-bold text-gray-700 mb-1.5">Discount Amount (₹)</label>
+                <input type="number" name="discount" placeholder="0" min="0"
+                       value="<%= product ? product.discount : '0' %>"
+                       class="admin-input w-full text-xs font-medium p-3.5 border border-gray-200 rounded-xl focus:outline-none bg-zinc-50/20 transition-all shadow-sm">
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-gray-700 mb-1.5">Stock Count (Units)</label>
+                <input type="number" name="stock" placeholder="e.g. 50" min="0"
+                      value="<%= product ? product.stock : '10' %>"
+                      class="admin-input w-full text-xs font-medium p-3.5 border border-gray-200 rounded-xl focus:outline-none bg-zinc-50/20 transition-all shadow-sm" required>
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-gray-700 mb-1.5">Quantity Metric / Unit</label>
+                <input type="text" name="quantity" placeholder="e.g. 1 kg, 500 g, 1 L"
+                      value="<%= product ? product.quantity : '' %>"
+                      class="admin-input w-full text-xs font-medium p-3.5 border border-gray-200 rounded-xl focus:outline-none bg-zinc-50/20 transition-all shadow-sm" required>
+              </div>
             </div>
-            
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
-            <!-- Product Stock -->
+
             <div>
-              <label class="block text-xs font-semibold text-gray-600 mb-1.5">Available Stock</label>
-              <input type="number" name="stock" placeholder="e.g. 50"
-                    value="<%= product ? product.stock : '10' %>"
-                    class="w-full text-xs font-medium p-3.5 border border-gray-200 rounded-xl focus:outline-none focus:border-black bg-gray-50/30 transition-all" required>
-            </div>
-            <!-- Product Quantity -->
-            <div>
-              <label class="block text-xs font-semibold text-gray-600 mb-1.5">Product Quantity / Unit</label>
-              <input type="text" name="quantity" placeholder="e.g. 1 kg, 500 g, 1 L"
-                    value="<%= product ? product.quantity : '' %>"
-                    class="w-full text-xs font-medium p-3.5 border border-gray-200 rounded-xl focus:outline-none focus:border-black bg-gray-50/30 transition-all" required>
-            </div>
-            <div class="flex flex-col gap-1.5 mt-4">
-              <label class="text-xs font-bold text-zinc-400 uppercase tracking-wider">Select Category</label>
+              <label class="block text-xs font-bold text-gray-700 mb-1.5">Product Department Hierarchy</label>
               <select name="category" required 
-                      class="bg-zinc-900 border border-zinc-800 rounded-xl py-2.5 px-4 text-xs font-medium text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all">
-                <option value="" disabled selected>-- Choose a Category --</option>
-                <option value="fruits">Fruits & Veggies</option>
-                <option value="fruits">Atta Rice & Dal</option>
-                <option value="dairy">Dairy, Bread & Eggs</option>
-                <option value="snacks">Snacks & Munchies</option>
+                      class="admin-input w-full text-xs font-medium p-3.5 border border-gray-200 rounded-xl bg-white focus:outline-none shadow-sm transition-all cursor-pointer">
+                <option value="" disabled <%= !product ? 'selected' : '' %>>-- Choose Department Category --</option>
+                <option value="fruits" <%= product && product.category === 'fruits' ? 'selected' : '' %>>Fruits & Veggies</option>
+                <option value="staples" <%= product && product.category === 'staples' ? 'selected' : '' %>>Atta, Rice & Dal</option>
+                <option value="dairy" <%= product && product.category === 'dairy' ? 'selected' : '' %>>Dairy, Bread & Eggs</option>
+                <option value="snacks" <%= product && product.category === 'snacks' ? 'selected' : '' %>>Snacks & Munchies</option>
               </select>
             </div>
           </div>
-          </div>
 
-          <!-- SECTION 3: VISUAL DESIGN CONSOLE -->
-          <div class="space-y-4">
-            <h3 class="text-xs font-bold uppercase tracking-wider text-gray-400 mb-2 flex items-center gap-2">
-              <i class="fa-solid fa-palette text-sm"></i> Card Theming (Visuals)
+          <div class="p-5 bg-zinc-50/50 rounded-2xl border border-zinc-100 space-y-4">
+            <h3 class="text-[11px] font-black uppercase tracking-wider text-gray-400 flex items-center gap-2">
+              <i class="fa-solid fa-palette text-xs text-red-600"></i> Card Personalization Console
             </h3>
             
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 bg-gray-50/60 border border-gray-100 p-5 rounded-2xl">
-              
-              <!-- Background Color Picker -->
-              <div>
-                <label class="block text-xs font-semibold text-gray-600 mb-1.5">Outer Bg Color</label>
-                <div class="flex items-center gap-2 bg-white border border-gray-200 rounded-xl p-2.5">
-                  <input type="color" name="bgColor" value="<%= product && product.bgColor ? product.bgColor : '#ffffff' %>" class="w-7 h-7 border-0 rounded-lg cursor-pointer">
-                  <span class="text-[11px] text-gray-400 font-medium">Pick Palette</span>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div class="bg-white p-3 rounded-xl border border-zinc-200/60 shadow-sm flex items-center justify-between gap-3">
+                <div class="min-w-0">
+                  <label class="block text-[11px] font-bold text-gray-700">Outer Card Bg</label>
+                  <span class="text-[9px] text-gray-400 block truncate">Card framing setup</span>
                 </div>
+                <input type="color" name="bgColor" value="<%= product && product.bgColor ? product.bgColor : '#ffffff' %>" class="w-8 h-8 border-0 rounded-lg cursor-pointer bg-transparent">
               </div>
 
-              <!-- Panel Color Picker -->
-              <div>
-                <label class="block text-xs font-semibold text-gray-600 mb-1.5">Bottom Panel Color</label>
-                <div class="flex items-center gap-2 bg-white border border-gray-200 rounded-xl p-2.5">
-                  <input type="color" name="panelColor" value="<%= product && product.panelColor ? product.panelColor : '#f3f4f6' %>" class="w-7 h-7 border-0 rounded-lg cursor-pointer">
-                  <span class="text-[11px] text-gray-400 font-medium">Pick Palette</span>
+              <div class="bg-white p-3 rounded-xl border border-zinc-200/60 shadow-sm flex items-center justify-between gap-3">
+                <div class="min-w-0">
+                  <label class="block text-[11px] font-bold text-gray-700">Bottom Info Panel</label>
+                  <span class="text-[9px] text-gray-400 block truncate">Action section color</span>
                 </div>
+                <input type="color" name="panelColor" value="<%= product && product.panelColor ? product.panelColor : '#f3f4f6' %>" class="w-8 h-8 border-0 rounded-lg cursor-pointer bg-transparent">
               </div>
 
-              <!-- Text Color Picker -->
-              <div>
-                <label class="block text-xs font-semibold text-gray-600 mb-1.5">Text Labels Color</label>
-                <div class="flex items-center gap-2 bg-white border border-gray-200 rounded-xl p-2.5">
-                  <input type="color" name="textColor" value="<%= product && product.textColor ? product.textColor : '#111827' %>" class="w-7 h-7 border-0 rounded-lg cursor-pointer">
-                  <span class="text-[11px] text-gray-400 font-medium">Pick Palette</span>
+              <div class="bg-white p-3 rounded-xl border border-zinc-200/60 shadow-sm flex items-center justify-between gap-3">
+                <div class="min-w-0">
+                  <label class="block text-[11px] font-bold text-gray-700">Text Labels Color</label>
+                  <span class="text-[9px] text-gray-400 block truncate">Title/Price palette</span>
                 </div>
+                <input type="color" name="textColor" value="<%= product && product.textColor ? product.textColor : '#111827' %>" class="w-8 h-8 border-0 rounded-lg cursor-pointer bg-transparent">
               </div>
-
             </div>
           </div>
 
-          <!-- SECTION 4: DESCRIPTION -->
           <div>
-            <h3 class="text-xs font-bold uppercase tracking-wider text-gray-400 mb-2 flex items-center gap-2">
-              <i class="fa-solid fa-align-left text-sm"></i> Product Description
+            <h3 class="text-[11px] font-black uppercase tracking-wider text-gray-400 mb-2 flex items-center gap-2">
+              <i class="fa-solid fa-align-left text-xs text-red-600"></i> Editorial Product Copy
             </h3>
-            <textarea name="description" rows="3" placeholder="Enter deep info about stock, weight, or package configuration..."
-                      class="w-full text-xs font-medium p-3.5 border border-gray-200 rounded-xl focus:outline-none focus:border-black focus:ring-1 focus:ring-black bg-gray-50/30 transition-all"><%= product && product.description ? product.description : '' %></textarea>
+            <textarea name="description" rows="3" placeholder="Enter explicit weight specs, shelf life details, or pack configurations..."
+                      class="admin-input w-full text-xs font-medium p-3.5 border border-gray-200 rounded-xl focus:outline-none bg-zinc-50/20 transition-all shadow-sm"><%= product && product.description ? product.description : '' %></textarea>
           </div>
 
-          <!-- FORM SUBMIT BUTTON -->
-          <div class="pt-2 border-t border-gray-50 flex items-center justify-end">
+          <div class="pt-4 border-t border-zinc-100 flex flex-col sm:flex-row items-center justify-end gap-3">
+            <a href="/products/allProducts" class="w-full sm:w-auto text-center text-xs font-bold py-3.5 px-6 rounded-xl border border-zinc-200 hover:bg-zinc-50 text-gray-600 transition-all uppercase tracking-wider">
+              Cancel
+            </a>
             <button type="submit"
-                    class="w-full sm:w-auto bg-black text-white hover:bg-gray-800 text-xs font-bold py-3.5 px-8 rounded-xl transition-all shadow-md shadow-black/5 active:scale-95 flex items-center justify-center gap-2">
-              <i class="fa-regular fa-square-check text-sm"></i>
-              <%= product ? "Commit & Update Product" : "Publish Product Live" %>
+                    class="w-full sm:w-auto <%= product ? 'bg-amber-600 hover:bg-amber-700' : 'bg-red-600 hover:bg-red-700' %> text-white text-xs font-black py-3.5 px-8 rounded-xl transition-all shadow-lg active:scale-95 flex items-center justify-center gap-2 uppercase tracking-wider">
+              <i class="fa-solid <%= product ? 'fa-cloud-arrow-up' : 'fa-rocket' %> text-sm"></i>
+              <%= product ? "Commit System Changes" : "Deploy Product Live" %>
             </button>
           </div>
 
@@ -226,7 +190,7 @@
 
       </div>
 
-    </div>
+    </main>
 
   </div>
 

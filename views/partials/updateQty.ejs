@@ -1,0 +1,91 @@
+<div id="cart-toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 pointer-events-none opacity-0 translate-y-4 transition-all duration-300 ease-out w-[calc(100%-2rem)] max-w-md select-none">
+  <div class="bg-white text-gray-900 px-4 py-3.5 rounded-2xl shadow-[0_10px_30px_rgba(0,0,0,0.08)] border border-gray-100 flex items-center justify-between gap-3 pointer-events-auto">
+    
+    <div class="flex items-center gap-3 min-w-0 flex-1">
+      <div class="w-9 h-9 rounded-xl bg-emerald-50 text-[#24963f] flex items-center justify-center border border-emerald-100/50 shrink-0">
+        <i class="fa-solid fa-basket-shopping text-sm"></i>
+      </div>
+      <div class="min-w-0 flex-1">
+        <p class="text-[10px] font-black tracking-wider uppercase text-[#24963f]">Added To Basket</p>
+        <p id="toast-message" class="text-xs font-bold text-gray-800 truncate mt-0.5">Item added successfully!</p>
+      </div>
+    </div>
+
+    <div class="flex items-center gap-2 shrink-0">
+      <a href="/users/cart/products" class="flex items-center gap-1.5 bg-[#24963f] hover:bg-[#1e7e34] text-white text-[11px] font-black px-3 py-2 rounded-xl transition-all uppercase tracking-wider shadow-sm shadow-emerald-700/10 active:scale-95">
+        View Basket
+        <i class="fa-solid fa-arrow-right text-[10px]"></i>
+      </a>
+      
+      <button onclick="closeToastAndReload()" class="w-8 h-8 rounded-xl hover:bg-gray-50 text-gray-400 hover:text-gray-900 flex items-center justify-center transition-colors border border-transparent hover:border-gray-100" title="Close">
+        <i class="fa-solid fa-xmark text-xs"></i>
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  let reloadTimeout = null;
+
+  function showCartToast(message) {
+    const toast = document.getElementById('cart-toast');
+    const toastMsg = document.getElementById('toast-message');
+    
+    if (!toast || !toastMsg) return;
+
+    toastMsg.textContent = message;
+
+    toast.classList.remove('opacity-0', 'translate-y-4', 'pointer-events-none');
+    toast.classList.add('opacity-100', 'translate-y-0');
+
+    reloadTimeout = setTimeout(() => {
+      location.reload();
+    }, 2000);
+  }
+
+  // क्रॉस बटन दबाने पर तुरंत क्लोज और रीलोड करने का फंक्शन
+  function closeToastAndReload() {
+    if (reloadTimeout) clearTimeout(reloadTimeout); // पुराना टाइमर रोको
+    
+    const toast = document.getElementById('cart-toast');
+    if (toast) {
+      toast.classList.remove('opacity-100', 'translate-y-0');
+      toast.classList.add('opacity-0', 'translate-y-4', 'pointer-events-none');
+    }
+    
+    // बिना इंतज़ार किए तुरंत रीलोड
+    location.reload();
+  }
+
+  async function increaseQty(productId) {
+    try {
+      let res = await fetch(`/users/cart/update/increaseQty/${productId}`, { method: 'POST' });
+      let data = await res.json();
+      if(data.success) { location.reload(); }
+    } catch (err) { console.error(err); }
+  }
+
+  async function descreaseQty(productId) {
+    try {
+      let res = await fetch(`/users/cart/update/descreaseQty/${productId}`, { method: 'POST' });
+      let data = await res.json();
+      if(data.success) { location.reload(); }
+    } catch (err) { console.error(err); }
+  }
+
+  async function addToCart(productId) {
+    try {
+      let res = await fetch(`/users/cart/add-to-cart/${productId}`, { method: "POST" });
+      let data = await res.json();
+      
+      if(data.success) {
+        showCartToast(data.message || "Product added to your basket!");
+      } else {
+        window.location.href = '/users/login';
+      }
+    } catch (err) {
+      console.error("Cart Error:", err);
+    }
+  }
+</script>

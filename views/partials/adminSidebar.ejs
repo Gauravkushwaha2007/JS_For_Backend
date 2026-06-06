@@ -1,0 +1,108 @@
+<div class="w-full bg-zinc-950 text-white p-4 flex items-center justify-between border-b border-zinc-800 sticky top-0 z-50 md:hidden">
+  <h1 class="text-xl font-black tracking-tight flex items-center gap-2">
+    <span class="w-2 h-5 bg-red-600 rounded-sm inline-block"></span>
+    Kush Mart <span class="text-[9px] bg-red-600/20 text-red-500 border border-red-500/30 px-1.5 py-0.5 rounded font-black uppercase tracking-wider">Admin</span>
+  </h1>
+  
+  <button onclick="toggleAdminSidebar()" type="button" class="w-10 h-10 flex items-center justify-center bg-zinc-900 border border-zinc-800 rounded-xl text-white active:scale-95 transition-all" aria-label="Toggle Navigation">
+    <i id="hamburgerIcon" class="fa-solid fa-bars text-base"></i>
+  </button>
+</div>
+
+<aside id="adminSidebar" class="fixed inset-y-0 left-0 w-64 bg-zinc-950 text-white p-6 border-r border-zinc-800 z-50 transform -translate-x-full md:transform-none md:fixed md:h-screen flex flex-col justify-between transition-transform duration-300 ease-in-out">
+  
+  <div>
+    <div class="hidden md:block mb-8 pb-4 border-b border-zinc-800/60">
+      <h1 class="text-2xl font-black tracking-tight flex items-center gap-2 text-white">
+        <span class="w-2.5 h-6 bg-red-600 rounded-sm inline-block animate-pulse"></span>
+        Kush Mart
+      </h1>
+      <p class="text-[9px] uppercase font-black tracking-widest text-red-500 mt-1.5 flex items-center gap-1.5">
+        <i class="fa-solid fa-circle-user text-[7px]"></i> KushMart Admin Console
+      </p>
+    </div>
+
+    <div class="flex items-center justify-between md:hidden mb-6 pb-4 border-b border-zinc-800/60">
+      <p class="text-[10px] uppercase font-black tracking-widest text-red-500 flex items-center gap-1.5">
+        <i class="fa-solid fa-shield-halved text-[9px]"></i> Navigation Console
+      </p>
+      <button onclick="toggleAdminSidebar()" class="text-zinc-400 hover:text-white p-1">
+        <i class="fa-solid fa-xmark text-base"></i>
+      </button>
+    </div>
+
+    <div class="space-y-6">
+      <div>
+        <p class="font-bold text-[10px] uppercase text-zinc-500 mb-2.5 tracking-wider">Store Operations</p>
+        <nav class="space-y-1.5 text-xs font-semibold">
+          <a href="/products/allProducts" class="flex items-center gap-3 py-2.5 px-3 rounded-xl text-zinc-400 hover:bg-zinc-900 hover:text-white transition-all duration-200">
+            <i class="fa-solid fa-store text-xs opacity-70"></i> 
+            <span>Back to Catalogue</span>
+          </a>
+          
+          <a href="/products/create" class="flex items-center gap-3 py-2.5 px-3 rounded-xl text-zinc-400 hover:bg-zinc-900 hover:text-white transition-all duration-200">
+            <i class="fa-solid fa-plus text-xs opacity-70"></i> 
+            <span>Add New Item</span>
+          </a>
+        </nav>
+      </div>
+
+      <div>
+        <p class="font-bold text-[10px] uppercase text-zinc-500 mb-2.5 tracking-wider">Quick Management</p>
+        <nav class="space-y-1.5 text-xs font-semibold">
+          <a href="/admin/orders" class="bg-red-600 text-white py-2.5 px-3 rounded-xl flex items-center justify-between shadow-md shadow-red-900/20 transition-all group">
+            <div class="flex items-center gap-3">
+              <i class="fa-solid fa-truck-ramp-box text-xs"></i>
+              <span>Live Store Orders</span>
+            </div>
+            <span class="flex h-2 w-2 relative">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-2 w-2 bg-white"></span>
+            </span>
+          </a>
+        </nav>
+      </div>
+    </div>
+  </div>
+
+  <div class="space-y-4 mt-6">
+    <div class="bg-zinc-900/60 border border-zinc-800/80 rounded-2xl p-4 text-center">
+      <div class="w-8 h-8 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-500 mx-auto mb-2">
+        <i class="fa-solid fa-shield-halved text-sm"></i>
+      </div>
+      <p class="text-xs font-black text-zinc-200">Secure Admin Mode</p>
+      <p class="text-[10px] text-zinc-400 mt-1 leading-relaxed">बदलाव सीधे आपके लाइव स्टोर फ्रंट पर लागू होंगे।</p>
+    </div>
+
+    <a href="/users/logout" class="w-full flex items-center justify-center gap-2.5 py-3 px-4 bg-zinc-900 hover:bg-red-600/10 border border-zinc-800 hover:border-red-600/30 text-zinc-400 hover:text-red-500 rounded-xl font-bold text-xs uppercase tracking-wider transition-all duration-200 active:scale-[0.98] group" title="Exit Dashboard">
+      <i class="fa-solid fa-arrow-right-from-bracket text-xs transform group-hover:-translate-x-0.5 transition-transform"></i>
+      <span>Exit Console</span>
+    </a>
+  </div>
+</aside>
+
+<div id="sidebarOverlay" onclick="toggleAdminSidebar()" class="fixed inset-0 bg-black/50 z-40 hidden md:hidden transition-opacity duration-300"></div>
+
+<script>
+  function toggleAdminSidebar() {
+    const sidebar = document.getElementById('adminSidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+    const icon = document.getElementById('hamburgerIcon');
+
+    // अगर साइडबार छुपा हुआ है तो उसे बाहर लाओ
+    if (sidebar.classList.contains('-translate-x-full')) {
+      sidebar.classList.remove('-translate-x-full');
+      sidebar.classList.add('translate-x-0');
+      overlay.classList.remove('hidden');
+      icon.classList.remove('fa-bars');
+      icon.classList.add('fa-xmark');
+    } else {
+      // वरना साइडबार छुपा दो
+      sidebar.classList.remove('translate-x-0');
+      sidebar.classList.add('-translate-x-full');
+      overlay.classList.add('hidden');
+      icon.classList.remove('fa-xmark');
+      icon.classList.add('fa-bars');
+    }
+  }
+</script>

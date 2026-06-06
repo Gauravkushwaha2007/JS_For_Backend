@@ -355,27 +355,8 @@
     </div>
   </footer>
 
-  <!-- SCRIPTS -->
+  <!-- SCRIPTS for toggle theme -->
   <script>
-    async function increaseQty(productId) {
-      let res = await fetch(`/users/cart/update/increaseQty/${productId}`, { method: 'POST' });
-      let data = await res.json();
-      if(data.success) { location.reload(); }
-    }
-
-    async function descreaseQty(productId) {
-      let res = await fetch(`/users/cart/update/descreaseQty/${productId}`, { method: 'POST' });
-      let data = await res.json();
-      if(data.success) { location.reload(); }
-    }
-
-    async function addToCart (productId){
-      let res = await fetch(`/users/cart/add-to-cart/${productId}`,{ method: "POST" });
-      let data = await res.json();
-      alert(data.message); 
-      if(data.success){ location.reload() }
-    }
-
     function toggleTheme() {
       const html = document.documentElement;
       if (html.classList.contains('dark')) {
@@ -448,6 +429,8 @@
       startAnimation();
     });
   </script>
+
+   <%- include('partials/updateQty') %>
 
 </body>
 </html>
