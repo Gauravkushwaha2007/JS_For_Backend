@@ -54,8 +54,28 @@ router.get('/', attachUser, async(req, res)=>{
 });
 
 
+// 📡 लाइव सर्च एंडपॉइंट (यह फ्रंटएंड की रिक्वेस्ट को हैंडल करेगा)
+router.get('/products/search', async (req, res) => {
+  try {
+    const query = req.query.q;
+    
+    if (!query || query.trim() === "") {
+      return res.json({ success: true, products: [] });
+    }
+    const products = await productModel.find({
+      name: { $regex: query.trim(), $options: 'i' }
+    }).limit(6);
+    
+    return res.json({ success: true, products: products });
+    
+  } catch (err) {
+    console.error("Backend Search Error:", err);
+    return res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 router.get('/about', (req, res)=>{
     res.render('about')
-})
+});
 
 module.exports = router;

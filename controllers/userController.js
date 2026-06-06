@@ -147,12 +147,29 @@ const cartProducts = async (req, res)=>{
         if(!user){
             return res.redirect('/users/login');
         }
+        let totalCartPrice = 0;
+        const populatedUser = await userModel.findById(user._id).populate('cart.product');
+        
+        if (populatedUser && populatedUser.cart) {
+            user.cart = populatedUser.cart.filter(item => item.product !== null);
+            
+            user.cart.forEach(item => {
+                if (item.product && item.product.price) {
+                    totalCartPrice += (Number(item.product.price) * Number(item.quantity || 1));
+                }
+            });
+        }
 
         user.cart = user.cart.filter(item => item.product !== null);
         await user.save();
 
         let products = user.cart;
-        res.render('cartProducts', {products: products, user: user, addresses: user.addresses});
+        res.render('cartProducts', {
+            products: products, 
+            user: user, 
+            addresses: user.addresses,
+            totalCartPrice: totalCartPrice
+        });
 
     }
     catch (error) {
@@ -225,7 +242,6 @@ const logoutUser = async (req, res) => {
 
 const cartCheckout = async (req, res) => {
     try {
-        // 1. कार्ट के प्रोडक्ट्स को पॉपुलेट करो ताकि टोटल प्राइस निकाल सकें
         const user = await userModel.findById(req.user._id).populate('cart.product');
         
         if (!user || user.cart.length === 0) {
@@ -261,11 +277,17 @@ const cartCheckout = async (req, res) => {
 
 const getOrders = async (req, res)=>{
     try {
+        const user = await userModel.findById(req.user._id).populate('cart.product');
+        if (!user || user.cart.length === 0) {
+            return res.status(400).send("Your cart is empty!");
+        }
+        let totalCartPrice = user.cart.reduce((acc, item) => acc + (item.product.price * item.quantity), 0);
+        
         let orders = await orderModel.find({ user: req.user._id })
                                      .populate('products.product')
                                      .sort({ createdAt: -1 }); 
 
-        res.render('orders', { orders, user: req.user });
+        res.render('orders', { orders, user: req.user, totalCartPrice });
     } catch (error) {
         res.status(500).send("Error fetching orders");
     }
@@ -332,6 +354,80 @@ const addAddress = async (req, res)=>{
       }
 }
 
+// 1. DELETE ADDRESS
+const deleteAddress = async (req, res) => {
+    try {
+        const userId = req.user._id; 
+        const addressId = req.params.addressId; 
+
+        await userModel.findByIdAndUpdate(userId, {
+            $pull: { addresses: { _id: addressId } }
+        });
+
+        // फ्रंटएंड पर Fetch API को JSON रिस्पॉन्स भेजो
+        return res.json({ success: true, message: "Address deleted successfully" });
+    } catch (error) {
+        console.error("Delete Address Error:", error.message);
+        return res.status(500).json({ success: false, message: "Server error while deleting" });
+    }
+};
+
+// 2. SET PRIMARY/DEFAULT ADDRESS
+const makeAddressPrimary = async (req, res) => {
+    try {
+        const userId = req.user._id;
+        const addressId = req.params.addressId;
+
+        const user = await userModel.findById(userId);
+        if (!user) return res.status(404).json({ success: false, message: "User not found" });
+
+        user.addresses.forEach(addr => {
+            if (addr._id.toString() === addressId) {
+                addr.isDefault = true;
+            } else {
+                addr.isDefault = false;
+            }
+        });
+
+        await user.save();
+        return res.json({ success: true, message: "Primary address updated" });
+    } catch (error) {
+        console.error("Primary Address Error:", error.message);
+        return res.status(500).json({ success: false, message: "Server error" });
+    }
+};
+
+// 3. EDIT ADDRESS
+const editAddress = async (req, res) => {
+    try {
+        const userId = req.user._id;
+        const addressId = req.params.addressId;
+        const { title, flatNo, area, landmark, city, state, pincode } = req.body;
+
+        await userModel.updateOne(
+            { _id: userId, "addresses._id": addressId },
+            {
+                $set: {
+                    "addresses.$.title": title,
+                    "addresses.$.flatNo": flatNo,
+                    "addresses.$.area": area,
+                    "addresses.$.landmark": landmark,
+                    "addresses.$.city": city,
+                    "addresses.$.state": state,
+                    "addresses.$.pincode": pincode
+                }
+            }
+        );
+
+        res.redirect('/users/profile');
+    } catch (error) {
+        console.error("Edit Address Error:", error.message);
+        res.status(500).send("Address update karne me dikkat aayi");
+    }
+};
+
 module.exports = {
-    registerUser, loginUser, addToCart, cartProducts, removeToCart, increaseQty, descreaseQty, logoutUser, cartCheckout, getOrders, getBill, getProfile, addAddress
+    registerUser, loginUser, addToCart, cartProducts, removeToCart,
+    increaseQty, descreaseQty, logoutUser, cartCheckout, getOrders, getBill, getProfile,
+    addAddress, deleteAddress, makeAddressPrimary, editAddress
 };

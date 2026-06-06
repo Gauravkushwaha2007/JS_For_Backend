@@ -1,0 +1,155 @@
+<script>
+  // === 1. ADDRESS DROPDOWN LOGIC ===
+  function toggleAddressDropdown(event) {
+    event.stopPropagation();
+    const menu = document.getElementById('addressDropdownMenu');
+    if (menu) {
+      menu.classList.toggle('hidden');
+    }
+  }
+
+  // एड्रेस सेलेक्ट करने पर हेडर का टेक्स्ट लाइव चेंज करने के लिए
+  function selectHeaderAddress(title, flatNo, area, city, addrId) {
+    const titleEl = document.getElementById('header-addr-title');
+    const textEl = document.getElementById('header-addr-text');
+    
+    if (titleEl && textEl) {
+      let icon = 'fa-location-dot';
+      if (title === 'Home') icon = 'fa-house';
+      if (title === 'Office') icon = 'fa-briefcase';
+      
+      titleEl.innerHTML = `<i class="fa-solid ${icon} mr-1"></i> Delivering to ${title}`;
+      textEl.innerText = `${flatNo}, ${area}, ${city}`;
+      textEl.title = `${flatNo}, ${area}, ${city}`;
+    }
+    
+    // ड्रॉपडाउन बंद करो
+    const menu = document.getElementById('addressDropdownMenu');
+    if (menu) menu.classList.add('hidden');
+    
+    // (ऑप्शनल) तुम यहाँ बैकएंड पर सिलेक्टेड एड्रेस को सेव करने के लिए भी Fetch API डाल सकते हो
+  }
+
+  // === 2. BLINKIT PLACEHOLDER ANIMATION LOGIC ===
+  const cartTrack = document.getElementById('cartPlaceholderTrack');
+  const cartSearchInput = document.getElementById('cartSearchInput');
+  const cartPlaceholderContainer = document.querySelector('.placeholder-container');
+  const cartResultsContainer = document.getElementById('cartSearchResults');
+  const cartItemsCount = cartTrack ? cartTrack.children.length : 0;
+
+  let cartIndex = 0;
+  let cartInterval;
+
+  function startCartAnimation(){
+    if(!cartTrack) return;
+    cartInterval = setInterval(()=>{
+      cartIndex++;
+      if(cartIndex >= cartItemsCount){
+        cartIndex = 0;
+        cartTrack.style.transition = 'none';
+        cartTrack.style.transform = 'translateY(0)';
+        setTimeout(()=>{
+          cartTrack.style.transition = 'transform 0.5s ease-in-out';
+        }, 50);
+      } else {
+        cartTrack.style.transform = `translateY(-${cartIndex * 22}px)`;
+      }
+    }, 2000);
+  }
+
+  if (cartSearchInput) {
+    cartSearchInput.addEventListener('focus', () => clearInterval(cartInterval));
+    cartSearchInput.addEventListener('blur', () => {
+      if(cartSearchInput.value === ""){
+        if (cartPlaceholderContainer) cartPlaceholderContainer.style.display = 'block';
+        startCartAnimation();
+      }
+    });
+    cartSearchInput.addEventListener('input', () => {
+      if (cartPlaceholderContainer) cartPlaceholderContainer.style.display = 'none';
+    });
+  }
+
+  // === 3. DEBOUNCE LOGIC FOR LIVE FETCH ===
+  function debounce(func, delay) {
+    let timeoutId;
+    return function (...args) {
+      if (timeoutId) clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => func.apply(this, args), delay);
+    };
+  }
+
+  // === 4. LIVE DB SEARCH LOGIC ===
+  const performCartLiveSearch = async (query) => {
+    const trimmed = query.trim();
+    if (trimmed.length === 0) {
+      if (cartResultsContainer) cartResultsContainer.classList.add('hidden');
+      return;
+    }
+
+    try {
+      let res = await fetch(`/products/search?q=${encodeURIComponent(trimmed)}`);
+      let data = await res.json();
+      let products = data.products || (Array.isArray(data) ? data : []);
+
+      if (!cartResultsContainer) return;
+      cartResultsContainer.innerHTML = '';
+      
+      if (products.length === 0) {
+        cartResultsContainer.classList.remove('hidden');
+        cartResultsContainer.innerHTML = `
+          <div class="text-center py-4 text-xs font-bold text-gray-400">
+            <i class="fa-solid fa-face-frown mb-1 text-sm block"></i> No products found
+          </div>`;
+        return;
+      }
+
+      cartResultsContainer.classList.remove('hidden');
+      products.forEach(product => {
+        const item = document.createElement('a');
+        item.href = `/products/view/${product._id}`; 
+        item.className = "flex items-center gap-3 p-2 hover:bg-emerald-50 rounded-xl transition-all group w-full text-left";
+        
+        item.innerHTML = `
+          <div class="w-10 h-10 rounded-lg bg-gray-50 border border-gray-100 overflow-hidden shrink-0">
+            <img src="/uploads/${product.image || 'default.png'}" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/100'">
+          </div>
+          <div class="min-w-0 flex-1">
+            <p class="text-xs font-bold text-gray-800 truncate group-hover:text-[#24963f] transition-colors">${product.name}</p>
+            <p class="text-[10px] text-gray-400 truncate">${product.category || 'Fresh Grocery'}</p>
+          </div>
+          <div class="text-right shrink-0">
+            <p class="text-xs font-black text-gray-900">₹${product.price}</p>
+          </div>
+        `;
+        cartResultsContainer.appendChild(item);
+      });
+    } catch (err) {
+      console.error("Cart search error:", err);
+    }
+  };
+
+  if (cartSearchInput) {
+    cartSearchInput.addEventListener('input', debounce((e) => {
+      performCartLiveSearch(e.target.value);
+    }, 300));
+  }
+
+  // ग्लोबल क्लिक्स को हैंडल करना (ड्रॉपडाउन बंद करने के लिए)
+  window.addEventListener('click', (e) => {
+    // सर्च बंद करने के लिए
+    if (cartSearchInput && cartResultsContainer && !cartSearchInput.contains(e.target) && !cartResultsContainer.contains(e.target)) {
+      cartResultsContainer.classList.add('hidden');
+    }
+    // एड्रेस मेनू बंद करने के लिए
+    const addrMenu = document.getElementById('addressDropdownMenu');
+    if (addrMenu && !e.target.closest('#addressDropdownMenu') && !e.target.closest('button[onclick="toggleAddressDropdown(event)"]')) {
+      addrMenu.classList.add('hidden');
+    }
+  });
+
+  window.addEventListener('DOMContentLoaded', () => {
+    if(cartSearchInput) cartSearchInput.value = "";
+    startCartAnimation();
+  });
+</script>

@@ -1,0 +1,176 @@
+<header class="sticky top-0 bg-white border-b border-gray-100 shadow-sm z-40">
+  <div class="max-w-7xl mx-auto px-4 md:px-6 h-20 flex items-center justify-between gap-4">
+    
+    <div class="flex items-center gap-6 shrink-0">
+      <a href="/" class="text-2xl font-black tracking-tighter text-[#24963f]">APNA<span class="text-black">MART</span></a>
+      
+      <div class="hidden lg:block border-l border-gray-200 pl-6 relative">
+        <% if (typeof user !== 'undefined' && user && user.addresses && user.addresses.length > 0) { %>
+          <% let primaryAddr = user.addresses.find(a => a.isDefault) || user.addresses[0]; %>
+          
+          <button onclick="toggleAddressDropdown(event)" class="text-left focus:outline-none group/addr">
+            <p id="header-addr-title" class="text-[10px] font-black uppercase tracking-widest text-[#24963f] leading-none mb-1">
+              <i class="fa-solid <%= primaryAddr.title === 'Home' ? 'fa-house' : primaryAddr.title === 'Office' ? 'fa-briefcase' : 'fa-location-dot' %> mr-1"></i> 
+              Delivering to <%= primaryAddr.title %>
+            </p>
+            <p class="text-xs font-bold text-gray-900 flex items-center gap-1 max-w-[220px]">
+              <span id="header-addr-text" class="truncate" title="<%= primaryAddr.flatNo %>, <%= primaryAddr.area %>, <%= primaryAddr.city %>">
+                <%= primaryAddr.flatNo %>, <%= primaryAddr.area %>, <%= primaryAddr.city %>
+              </span>
+              <i class="fa-solid fa-caret-down text-[10px] text-[#24963f] transition-transform duration-200 group-hover/addr:translate-y-0.5 shrink-0"></i>
+            </p>
+          </button>
+
+          <div id="addressDropdownMenu" class="absolute left-6 top-full mt-2 w-72 bg-white border border-gray-100 rounded-2xl shadow-[0_10px_30px_rgba(0,0,0,0.1)] hidden z-50 p-2 space-y-1">
+            <p class="text-[9px] font-black text-gray-400 uppercase tracking-wider px-2 py-1 border-b border-gray-50 mb-1">Select Delivery Address</p>
+            
+            <div class="max-h-60 overflow-y-auto space-y-1 pr-0.5">
+              <% user.addresses.forEach((addr, idx) => { %>
+                <button onclick="selectHeaderAddress('<%= addr.title %>', '<%= addr.flatNo %>', '<%= addr.area %>', '<%= addr.city %>', '<%= addr._id %>')" 
+                        class="w-full text-left p-2.5 hover:bg-emerald-50/60 rounded-xl transition-all flex flex-col gap-0.5 group">
+                  <div class="flex items-center justify-between w-full">
+                    <span class="text-[10px] font-black uppercase text-gray-700 bg-gray-100 px-1.5 py-0.5 rounded group-hover:bg-[#24963f] group-hover:text-white transition-colors">
+                      <%= addr.title %>
+                    </span>
+                    <% if(addr.isDefault) { %>
+                      <span class="text-[9px] font-bold text-[#24963f]">Primary</span>
+                    <% } %>
+                  </div>
+                  <p class="text-xs font-bold text-gray-800 truncate w-full mt-1.5"><%= addr.flatNo %>, <%= addr.area %></p>
+                  <p class="text-[11px] text-gray-400 truncate w-full"><%= addr.city %> - <%= addr.pincode %></p>
+                </button>
+              <% }) %>
+            </div>
+
+            <div class="pt-1.5 border-t border-gray-50 mt-1">
+              <a href="/users/profile" class="flex items-center justify-center gap-2 w-full py-2 px-3 bg-emerald-50 hover:bg-[#24963f] text-emerald-700 hover:text-white text-xs font-extrabold rounded-xl transition-all duration-200">
+                <i class="fa-solid fa-circle-plus text-sm"></i>
+                ADD NEW ADDRESS
+              </a>
+            </div>
+          </div>
+
+        <% } else { %>
+          <p class="text-[10px] font-black uppercase tracking-widest text-gray-400 leading-none mb-1">Delivery in 10-12 mins</p>
+          <div class="flex items-center gap-1">
+            <a href="/users/profile" class="text-xs font-bold text-gray-900 hover:text-[#24963f] flex items-center gap-1">
+              Set Location / Add Address <i class="fa-solid fa-plus text-[10px] text-[#24963f]"></i>
+            </a>
+          </div>
+        <% } %>
+      </div>
+    </div>
+
+    <div class="w-full max-w-[420px] hidden sm:block mx-4 flex-1 relative">
+      <div class="relative flex items-center bg-white border border-gray-200 rounded-xl p-2 px-3.5 overflow-hidden transition-all duration-200 focus-within:border-[#24963f] focus-within:ring-2 focus-within:ring-emerald-500/20">
+        
+        <span class="mr-2.5 z-10 shrink-0">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+            <circle cx="11" cy="11" r="8"/>
+            <path d="M21 21l-4.3-4.3"/>
+          </svg>
+        </span>
+
+        <div class="placeholder-container h-[22px] overflow-hidden pointer-events-none absolute left-11">
+          <div class="flex flex-col transition-transform duration-500 ease-in-out" id="cartPlaceholderTrack">
+            <div class="h-[22px] leading-[22px] text-xs font-medium text-gray-400">Search "milk"</div>
+            <div class="h-[22px] leading-[22px] text-xs font-medium text-gray-400">Search "bread"</div>
+            <div class="h-[22px] leading-[22px] text-xs font-medium text-gray-400">Search "chocolate"</div>
+            <div class="h-[22px] leading-[22px] text-xs font-medium text-gray-400">Search "rice"</div>
+            <div class="h-[22px] leading-[22px] text-xs font-medium text-gray-400">Search "snacks"</div>
+          </div>
+        </div>
+
+        <input
+          id="cartSearchInput"
+          type="text"
+          autocomplete="off"
+          class="w-full bg-transparent border-none outline-none pl-1 z-20 text-xs font-medium text-gray-900"
+        />
+      </div>
+
+      <div 
+        id="cartSearchResults" 
+        class="absolute left-0 right-0 mt-2 bg-white border border-gray-200 rounded-2xl shadow-xl hidden z-50 p-2 max-h-80 overflow-y-auto space-y-1"
+      ></div>
+    </div>
+
+    <div class="flex items-center gap-4 shrink-0">
+      
+      <% if(typeof user !== 'undefined' && user){ %>
+        <div class="relative inline-block text-left group">
+          <button type="button" class="flex items-center gap-2 py-2.5 px-3.5 bg-gray-50 hover:bg-gray-100 border border-gray-100 rounded-xl transition-all duration-200">
+            <div class="w-6 h-6 rounded-lg bg-[#24963f] text-white flex items-center justify-center text-[10px] font-black uppercase shadow-sm">
+              <%= user.name ? user.name.substring(0, 2) : 'A' %>
+            </div>
+            <span class="text-xs font-bold text-gray-700 hidden sm:block">My Account</span>
+            <i class="fa-solid fa-chevron-down text-[9px] text-gray-400 group-hover:rotate-180 transition-transform duration-200"></i>
+          </button>
+
+          <div class="absolute right-0 w-56 mt-2 origin-top-right bg-white border border-gray-100 rounded-2xl shadow-[0_10px_30px_rgba(0,0,0,0.08)] opacity-0 scale-95 pointer-events-none group-hover:opacity-100 group-hover:scale-100 group-hover:pointer-events-auto transition-all duration-150 z-50">
+            <div class="p-4 border-b border-gray-50">
+              <span class="inline-block text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded <%= user.role === 'admin' ? 'bg-red-50 text-red-600 border border-red-100' : 'bg-emerald-50 text-emerald-600 border border-emerald-100' %>">
+                <%= user.role ? user.role : 'Customer' %>
+              </span>
+              <p class="text-sm font-extrabold text-gray-900 truncate mt-1.5"><%= user.name %></p>
+              <p class="text-xs text-gray-400 truncate"><%= user.email %></p>
+            </div>
+            
+            <div class="p-2 space-y-0.5">
+              <% if(user.role === 'admin') { %>
+                <a href="/products/allProducts" class="flex items-center gap-3 px-3 py-2.5 text-xs font-bold text-gray-600 hover:bg-gray-50 hover:text-[#24963f] rounded-xl transition-all">
+                  <i class="fa-solid fa-boxes-stacked text-sm opacity-70"></i> Dashboard
+                </a>
+                <a href="/products/create" class="flex items-center gap-3 px-3 py-2.5 text-xs font-bold text-gray-600 hover:bg-gray-50 hover:text-[#24963f] rounded-xl transition-all">
+                  <i class="fa-solid fa-plus text-sm opacity-70"></i> Add New Item
+                </a>
+              <% } %>
+              
+              <a href="/users/cart/products" class="flex items-center gap-3 px-3 py-2.5 text-xs font-bold text-gray-600 hover:bg-gray-50 hover:text-[#24963f] rounded-xl transition-all">
+                <i class="fa-solid fa-basket-shopping text-sm opacity-70"></i> My Cart
+              </a>
+              <a href="/users/profile" class="flex items-center gap-3 px-3 py-2.5 text-xs font-bold text-gray-600 hover:bg-gray-50 hover:text-[#24963f] rounded-xl transition-all">
+                <i class="fa-solid fa-location-dot text-sm opacity-70"></i> Addresses
+              </a>
+              <a href="/users/orders" class="flex items-center gap-3 px-3 py-2.5 text-xs font-bold text-gray-600 hover:bg-gray-50 hover:text-[#24963f] rounded-xl transition-all">
+                <i class="fa-solid fa-clock-rotate-left text-sm opacity-70"></i> My Orders
+              </a>
+            </div>
+
+            <div class="p-2 border-t border-gray-50 bg-gray-50/50 rounded-b-2xl">
+              <a href="/users/logout" class="flex items-center gap-3 px-3 py-2.5 text-xs font-extrabold text-red-500 hover:bg-red-50 rounded-xl transition-all">
+                <i class="fa-solid fa-arrow-right-from-bracket text-sm"></i> Secure Logout
+              </a>
+            </div>
+          </div>
+        </div>
+      <% } else { %>
+        <a href="/users/login" class="text-xs font-bold text-gray-600 hover:text-[#24963f] transition-colors">Login</a>
+      <% } %>
+
+      <% if(typeof user !== 'undefined' && user && user.cart && user.cart.length > 0) { %>
+        <a href="/users/cart/products" class="flex items-center gap-3 bg-[#24963f] hover:bg-[#1e7e34] text-white px-4 py-2.5 rounded-xl transition-all shadow-md shadow-emerald-700/20">
+          <div class="flex flex-col text-left">
+            <span class="text-[10px] font-black uppercase tracking-wider text-emerald-200 leading-none">
+              <%= user.cart.length %> Items
+            </span>
+            <span class="text-xs font-black mt-0.5">
+              ₹<%= typeof totalCartPrice !== 'undefined' ? totalCartPrice : 0 %>
+            </span>
+          </div>
+          <div class="h-6 w-[1px] bg-white/20"></div>
+          <div class="flex items-center gap-1.5 font-extrabold text-xs tracking-tight">
+            <i class="fa-solid fa-basket-shopping"></i>
+            <span class="hidden sm:inline">Basket</span>
+          </div>
+        </a>
+      <% } else { %>
+        <a href="/users/cart/products" class="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2.5 rounded-xl transition-all font-extrabold text-xs uppercase tracking-wider">
+          <i class="fa-solid fa-basket-shopping text-gray-400"></i>
+          <span>Cart</span>
+        </a>
+      <% } %>
+
+    </div>
+  </div>
+</header>

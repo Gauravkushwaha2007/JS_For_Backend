@@ -12,7 +12,8 @@
     body { font-family: 'Plus Jakarta Sans', sans-serif; }
     .dropdown-menu { display: none; }
     .dropdown-menu.show { display: block; }
-    /* स्मूथ स्क्रॉलिंग के लिए */
+    
+    /* प्रीमियम स्क्रॉलबार */
     ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-track { background: #f1f1f1; }
     ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
@@ -22,126 +23,14 @@
 
 <body class="bg-[#f8f9fa] text-gray-900 antialiased">
 
-  <!-- TOP HEADER NAV -->
-  <header class="sticky top-0 bg-white border-b border-gray-100 shadow-sm z-40">
-    <div class="max-w-7xl mx-auto px-4 md:px-6 h-20 flex items-center justify-between gap-4">
-      
-      <!-- Logo & Delivery Info -->
-      <div class="flex items-center gap-6 shrink-0">
-        <a href="/" class="text-2xl font-black tracking-tighter text-[#24963f]">APNA<span class="text-black">MART</span></a>
-        
-        <div class="hidden lg:block border-l border-gray-200 pl-6">
-          <p class="text-[10px] font-black uppercase tracking-widest text-gray-400 leading-none mb-1">Delivery in 10-12 mins</p>
-          <p class="text-xs font-bold text-gray-900 flex items-center gap-1">
-            Bhopal, India <i class="fa-solid fa-caret-down text-[10px] text-[#24963f]"></i>
-          </p>
-        </div>
-      </div>
+  <%- include('partials/header') %>
 
-      <!-- Realtime Search Bar -->
-      <div class="flex-1 max-w-xl relative group mx-2">
-        <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#24963f] transition-colors"></i>
-        <input type="text" 
-               id="searchInput"
-               autocomplete="off"
-               placeholder='Search for "milk", "bread" or "veggies"...' 
-               class="w-full bg-gray-50 border border-gray-100 rounded-xl py-3 pl-12 pr-4 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#24963f]/20 focus:bg-white focus:border-[#24963f] transition-all">
-
-        <div id="searchSuggestions" class="absolute left-0 right-0 mt-2 bg-white border border-gray-100 rounded-2xl shadow-[0_10px_30px_rgba(0,0,0,0.08)] hidden z-50 max-h-80 overflow-y-auto p-2 space-y-0.5">
-        </div>
-      </div>
-
-      <!-- Right Action Controls -->
-      <div class="flex items-center gap-4 shrink-0">
-        
-        <% if(user){ %>
-          <div class="relative inline-block text-left group">
-            <button type="button" class="flex items-center gap-2 py-2.5 px-3.5 bg-gray-50 hover:bg-gray-100 border border-gray-100 rounded-xl transition-all duration-200">
-              <div class="w-6 h-6 rounded-lg bg-[#24963f] text-white flex items-center justify-center text-[10px] font-black uppercase shadow-sm">
-                <%= user.name ? user.name.substring(0, 2) : 'A' %>
-              </div>
-              <span class="text-xs font-bold text-gray-700 hidden sm:block">My Account</span>
-              <i class="fa-solid fa-chevron-down text-[9px] text-gray-400 group-hover:rotate-180 transition-transform duration-200"></i>
-            </button>
-
-            <!-- Dropdown Actions -->
-            <div class="absolute right-0 w-56 mt-2 origin-top-right bg-white border border-gray-100 rounded-2xl shadow-[0_10px_30px_rgba(0,0,0,0.08)] opacity-0 scale-95 pointer-events-none group-hover:opacity-100 group-hover:scale-100 group-hover:pointer-events-auto transition-all duration-150 z-50">
-              <div class="p-4 border-b border-gray-50">
-                <span class="inline-block text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded <%= user.role === 'admin' ? 'bg-red-50 text-red-600 border border-red-100' : 'bg-emerald-50 text-emerald-600 border border-emerald-100' %>">
-                  <%= user.role ? user.role : 'Customer' %>
-                </span>
-                <p class="text-sm font-extrabold text-gray-900 truncate mt-1.5"><%= user.name %></p>
-                <p class="text-xs text-gray-400 truncate"><%= user.email %></p>
-              </div>
-              
-              <div class="p-2 space-y-0.5">
-                <% if(user.role === 'admin') { %>
-                  <a href="/products/allProducts" class="flex items-center gap-3 px-3 py-2.5 text-xs font-bold text-gray-600 hover:bg-gray-50 hover:text-[#24963f] rounded-xl transition-all">
-                    <i class="fa-solid fa-boxes-stacked text-sm opacity-70"></i> Dashboard
-                  </a>
-                  <a href="/products/create" class="flex items-center gap-3 px-3 py-2.5 text-xs font-bold text-gray-600 hover:bg-gray-50 hover:text-[#24963f] rounded-xl transition-all">
-                    <i class="fa-solid fa-plus text-sm opacity-70"></i> Add New Item
-                  </a>
-                <% } %>
-                
-                <a href="/users/cart/products" class="flex items-center gap-3 px-3 py-2.5 text-xs font-bold text-gray-600 hover:bg-gray-50 hover:text-[#24963f] rounded-xl transition-all">
-                  <i class="fa-solid fa-basket-shopping text-sm opacity-70"></i> View My Cart
-                </a>
-                <a href="/users/profile" class="flex items-center gap-3 px-3 py-2.5 text-xs font-bold text-gray-600 hover:bg-gray-50 hover:text-[#24963f] rounded-xl transition-all">
-                  <i class="fa-solid fa-location-dot text-sm opacity-70"></i> Addresses
-                </a>
-                <a href="/users/orders" class="flex items-center gap-3 px-3 py-2.5 text-xs font-bold text-gray-600 hover:bg-gray-50 hover:text-[#24963f] rounded-xl transition-all">
-                  <i class="fa-solid fa-clock-rotate-left text-sm opacity-70"></i> My Orders
-                </a>
-              </div>
-
-              <div class="p-2 border-t border-gray-50 bg-gray-50/50 rounded-b-2xl">
-                <a href="/users/logout" class="flex items-center gap-3 px-3 py-2.5 text-xs font-extrabold text-red-500 hover:bg-red-50 rounded-xl transition-all">
-                  <i class="fa-solid fa-arrow-right-from-bracket text-sm"></i> Secure Logout
-                </a>
-              </div>
-            </div>
-          </div>
-        <% } else { %>
-          <a href="/users/login" class="text-xs font-bold text-gray-600 hover:text-[#24963f] transition-colors">Login</a>
-        <% } %>
-
-        <!-- Sticky Cart Tracker -->
-        <% if(user && user.cart && user.cart.length > 0) { %>
-          <a href="/users/cart/products" class="flex items-center gap-3 bg-[#24963f] hover:bg-[#1e7e34] text-white px-4 py-2.5 rounded-xl transition-all shadow-md shadow-emerald-700/20">
-            <div class="flex flex-col text-left">
-              <span class="text-[10px] font-black uppercase tracking-wider text-emerald-200 leading-none">
-                <%= user.cart.length %> Items
-              </span>
-              <span class="text-xs font-black mt-0.5">
-                ₹<%= typeof totalCartPrice !== 'undefined' ? totalCartPrice : 0 %>
-              </span>
-            </div>
-            <div class="h-6 w-[1px] bg-white/20"></div>
-            <div class="flex items-center gap-1.5 font-extrabold text-xs tracking-tight">
-              <i class="fa-solid fa-basket-shopping"></i>
-              <span class="hidden sm:inline">Basket</span>
-            </div>
-          </a>
-        <% } else { %>
-          <a href="/users/cart/products" class="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2.5 rounded-xl transition-all font-extrabold text-xs uppercase tracking-wider">
-            <i class="fa-solid fa-basket-shopping text-gray-400"></i>
-            <span>Cart</span>
-          </a>
-        <% } %>
-
-      </div>
-    </div>
-  </header>
-
-  <!-- MAIN BODY CONTENT -->
   <div class="max-w-7xl mx-auto flex flex-col md:flex-row min-h-[calc(100vh-5rem)]">
     
-    <!-- LEFT STICKY SIDEBAR (Cleaned & Optimized) -->
     <aside class="w-full md:w-60 bg-white border-b md:border-b-0 md:border-r border-gray-100 p-6 flex-shrink-0 md:sticky md:top-20 md:h-[calc(100vh-5rem)] overflow-y-auto">
       <div class="mb-6">
         <h1 class="text-xl font-black tracking-tight text-black">Apna Mart</h1>
-        <p class="text-[10px] uppercase font-bold tracking-widest text-emerald-600 mt-0.5">
+        <p class="text-[10px] uppercase font-bold tracking-widest text-[#24963f] mt-0.5">
           <%= (user && user.role === 'admin') ? 'Admin Control' : 'Shop Catalogue' %>
         </p>
       </div>
@@ -154,7 +43,7 @@
         </a>
         
         <a href="/users/cart/products" class="flex items-center gap-2.5 py-2.5 px-3 rounded-xl hover:bg-gray-50 hover:text-black transition-all">
-          <i class="fa-solid fa-basket-shopping text-xs opacity-70"></i> Active Basket
+          <i class="fa-solid fa-basket-shopping text-xs opacity-70"></i> Your Basket
         </a>
 
         <% if(user) { %>
@@ -165,10 +54,8 @@
       </nav>
     </aside>
 
-    <!-- RIGHT MAIN FEED -->
     <main class="flex-1 p-4 sm:p-6 lg:p-8">
       
-      <!-- Breadcrumb & Feed Info Header -->
       <div class="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-white p-4 rounded-2xl border border-gray-100">
         <div>
           <div class="flex items-center gap-2 mb-1 text-[11px] font-medium text-gray-400">
@@ -193,18 +80,15 @@
         </div>
       </div>
 
-      <!-- PRODUCT CONTENT AREA -->
       <% if(products.length > 0 ){ %>
         <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           <% products.forEach((product) => { %>
             
-            <!-- Standardized Clean Card Grid -->
             <div class="group bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-[0_12px_30px_rgba(0,0,0,0.04)] transition-all duration-300 relative flex flex-col justify-between">
               
-              <!-- Admin Action Popover Context Trigger -->
               <% if(user && user.role === 'admin' ){ %>
                 <div class="absolute top-2.5 right-2.5 z-20">
-                  <button onclick="toggleMenu(event, 'menu-<%= product._id %>')" 
+                  <button onclick="toggleAdminMenu(event, 'menu-<%= product._id %>')" 
                           class="w-7 h-7 flex items-center justify-center bg-white/90 backdrop-blur shadow-sm rounded-full border border-gray-100 hover:bg-white text-gray-600 transition-all">
                     <i class="fa-solid fa-ellipsis-vertical text-xs"></i>
                   </button>
@@ -224,12 +108,12 @@
                 </div>
               <% } %>
     
-              <!-- Visual Content Showcase Container -->
               <div class="h-40 sm:h-48 bg-[#fafafa] flex items-center justify-center relative overflow-hidden p-4 border-b border-gray-50/60 shrink-0">
                 <a href="/products/view/<%= product._id %>" class="w-full h-full flex items-center justify-center">
                   <img src="/uploads/<%= product.image %>" 
                        alt="<%= product.name %>" 
-                       class="max-w-[85%] max-h-[85%] object-contain group-hover:scale-105 transition-transform duration-500">
+                       class="max-w-[85%] max-h-[85%] object-contain group-hover:scale-105 transition-transform duration-500"
+                       onerror="this.src='https://placehold.co/150'">
                 </a>
                 
                 <% if(product.discount > 0) { %>
@@ -239,7 +123,6 @@
                 <% } %>
               </div>
     
-              <!-- Description and Interactive Pricing Box -->
               <div class="p-3 sm:p-4 flex-1 flex flex-col justify-between" style="background-color: <%= product.panelColor || '#ffffff' %>;">
                 <div class="flex justify-between items-center w-full gap-2">
                   <div class="flex-1 min-w-0">
@@ -253,12 +136,24 @@
                     </p>
                   </div>
 
-                  <!-- Quick Add Action Interface -->
-                  <button onclick="addToCart('<%= product._id%>')" 
-                          class="w-8 h-8 rounded-xl flex items-center justify-center bg-white border border-emerald-100 hover:bg-emerald-50 text-[#24963f] font-bold text-xs shadow-sm transition-all hover:scale-105 active:scale-95 shrink-0" 
-                          title="Add to cart">
-                    ADD
-                  </button>
+                  <div class="product-action-container shrink-0" id="action-box-<%= product._id %>">
+                    <% 
+                      let foundInCart = user && user.cart ? user.cart.find(c => c.product && c.product._id.toString() === product._id.toString()) : null; 
+                    %>
+
+                    <% if (foundInCart) { %>
+                      <div class="flex items-center bg-white border border-[#24963f] text-[#24963f] rounded-xl overflow-hidden shadow-sm font-black text-xs">
+                        <button onclick="handleQtyChange('<%= product._id %>', 'decrease')" class="px-2.5 py-1.5 hover:bg-[#24963f] hover:text-white transition-colors text-xs font-black">-</button>
+                        <span class="px-2 min-w-[22px] text-center font-black text-xs text-gray-900"><%= foundInCart.quantity %></span>
+                        <button onclick="handleQtyChange('<%= product._id %>', 'increase')" class="px-2.5 py-1.5 hover:bg-[#24963f] hover:text-white transition-colors text-xs font-black">+</button>
+                      </div>
+                    <% } else { %>
+                      <button onclick="handleAddToCart('<%= product._id %>')" class="text-center text-xs font-extrabold px-4 py-1.5 bg-white text-[#24963f] border border-gray-200 rounded-xl hover:border-[#24963f] active:scale-95 transition-all duration-200 shadow-sm uppercase">
+                        Add
+                      </button>
+                    <% } %>
+                  </div>
+                  
                 </div>
               </div>
 
@@ -267,7 +162,6 @@
         </div>
 
       <% } else { %>
-        <!-- Empty Feed Placeholder Statement -->
         <div class="max-w-md mx-auto text-center py-16 bg-white rounded-3xl border border-gray-100 shadow-sm my-10 px-6">
             <div class="w-12 h-12 bg-gray-50 rounded-xl flex items-center justify-center mx-auto mb-3 border border-gray-100 text-gray-300">
               <i class="fa-solid fa-box-open text-lg"></i>
@@ -284,99 +178,71 @@
     </main>
 
   </div>
-
-  <!-- INTERACTIVE BUSINESS SCRIPTS -->
+ 
   <script>
-    async function addToCart (productId){
-      let res = await fetch(`/users/cart/add-to-cart/${productId}`,{
-          method: "POST"
+    // === 1. ADMIN MENU THREE-DOT TOGGLE SYSTEM ===
+    function toggleAdminMenu(event, id) {
+      event.stopPropagation();
+      
+      document.querySelectorAll('.dropdown-menu').forEach(menu => {
+        if(menu.id !== id) menu.classList.remove('show');
       });
-      let data = await res.json();
-      alert(data.message); 
-      if(data.success){
-        location.reload()
-      }
-    }
-  </script>
 
-  <script>
-    function toggleMenu(event, menuId) {
-        event.stopPropagation(); 
-        const menu = document.getElementById(menuId);
-        const isOpen = menu.classList.contains('show');
-        closeAllMenus();
-        if (!isOpen) {
-            menu.classList.add('show');
-        }
+      const currentMenu = document.getElementById(id);
+      if(currentMenu) currentMenu.classList.toggle('show');
     }
 
-    function closeAllMenus() {
-        document.querySelectorAll('.dropdown-menu').forEach(m => m.classList.remove('show'));
-    }
+    window.addEventListener('click', () => {
+      document.querySelectorAll('.dropdown-menu').forEach(menu => menu.classList.remove('show'));
+    });
 
-    window.onclick = function() {
-        closeAllMenus();
-    }
-  </script>
-
-  <script>
-    const searchInput = document.getElementById('searchInput');
-    const searchSuggestions = document.getElementById('searchSuggestions');
-
-    searchInput.addEventListener('input', async (e) => {
-      const value = e.target.value.trim();
-
-      if (value.length === 0) {
-        searchSuggestions.classList.add('hidden');
-        searchSuggestions.innerHTML = '';
-        return;
-      }
-
+    // === 2. AJAX LIVE CART OVERVIEW LOGIC (NO REFRESH) ===
+    async function handleAddToCart(productId) {
       try {
-        const res = await fetch(`/api/search?q=${encodeURIComponent(value)}`);
-        const products = await res.json();
-
-        if (products.length > 0) {
-          searchSuggestions.innerHTML = '';
-          searchSuggestions.classList.remove('hidden');
-
-          products.forEach(product => {
-            const itemHtml = `
-              <a href="/products/view/${product._id}" class="flex items-center justify-between p-2.5 hover:bg-gray-50 rounded-xl transition-all group">
-                <div class="flex items-center gap-3 min-w-0">
-                  <div class="w-10 h-10 rounded-lg bg-gray-100 overflow-hidden border border-gray-100 shrink-0">
-                    <img src="/uploads/${product.image || 'default.png'}" class="w-full h-full object-cover">
-                  </div>
-                  <div class="min-w-0">
-                    <p class="text-xs font-bold text-gray-800 truncate group-hover:text-[#24963f] transition-colors">${product.name}</p>
-                    <p class="text-[10px] text-gray-400 font-medium mt-0.5 truncate">${product.description || 'Fresh item'}</p>
-                  </div>
-                </div>
-                <div class="text-right shrink-0">
-                  <span class="text-xs font-black text-gray-900">₹${product.price}</span>
-                </div>
-              </a>
-            `;
-            searchSuggestions.insertAdjacentHTML('beforeend', itemHtml);
-          });
+        let res = await fetch(`/users/cart/add-to-cart/${productId}`, { method: "POST" });
+        let data = await res.json();
+        
+        if(data.success) {
+          updateLocalCartUI(productId, 1);
+          location.reload(); 
         } else {
-          searchSuggestions.classList.remove('hidden');
-          searchSuggestions.innerHTML = `
-            <div class="p-4 text-center text-xs font-bold text-gray-400">
-              <i class="fa-solid fa-face-frown mr-1"></i> No products found
-            </div>
-          `;
+          window.location.href = '/users/login';
         }
       } catch (err) {
-        console.error("Live search error:", err);
+        console.error("Cart Error:", err);
       }
-    });
+    }
 
-    document.addEventListener('click', (e) => {
-      if (!searchInput.contains(e.target) && !searchSuggestions.contains(e.target)) {
-        searchSuggestions.classList.add('hidden');
+    async function handleQtyChange(productId, action) {
+      const url = action === 'increase' 
+        ? `/users/cart/update/increaseQty/${productId}` 
+        : `/users/cart/update/descreaseQty/${productId}`;
+        
+      try {
+        let res = await fetch(url, { method: 'POST' });
+        let data = await res.json();
+        if(data.success) {
+          location.reload();
+        }
+      } catch (err) {
+        console.error("Qty Update Error:", err);
       }
-    });
+    }
+
+    function updateLocalCartUI(productId, qty) {
+      const box = document.getElementById(`action-box-${productId}`);
+      if(!box) return;
+      box.innerHTML = `
+        <div class="flex items-center bg-white border border-[#24963f] text-[#24963f] rounded-xl overflow-hidden shadow-sm font-black text-xs">
+          <button onclick="handleQtyChange('${productId}', 'decrease')" class="px-2.5 py-1.5 hover:bg-[#24963f] hover:text-white transition-colors text-xs font-black">-</button>
+          <span class="px-2 min-w-[22px] text-center font-black text-xs text-gray-900">${qty}</span>
+          <button onclick="handleQtyChange('${productId}', 'increase')" class="px-2.5 py-1.5 hover:bg-[#24963f] hover:text-white transition-colors text-xs font-black">+</button>
+        </div>
+      `;
+    }
   </script>
+
+  <%- include('partials/header-scripts') %>
+
 </body>
 </html>

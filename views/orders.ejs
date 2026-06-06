@@ -29,115 +29,8 @@
 </head>
 <body class="bg-zinc-50 text-zinc-900 dark:bg-[#050906] dark:text-zinc-100 min-h-screen font-sans antialiased transition-colors duration-300">
 
-  <!-- ─── ⚡ COMPLETE NAVIGATION BAR ─── -->
-  <nav class="w-full px-6 md:px-12 py-4 flex items-center justify-between border-b border-emerald-100 bg-white/70 backdrop-blur-xl fixed top-0 left-0 z-50 transition-all duration-300 shadow-[0_4px_20px_rgba(0,0,0,0.03)] dark:bg-[#050906]/70 dark:border-emerald-950/40 dark:shadow-[0_4px_30px_rgba(0,0,0,0.3)]">
+<%- include('partials/header') %>
 
-    <!-- लोगो सेक्शन -->
-    <a href="/" class="flex items-center gap-2.5 group cursor-pointer shrink-0">
-      <div class="w-8 h-8 bg-emerald-500 rounded-xl flex items-center justify-center group-hover:rotate-6 transition-transform duration-300 shadow-[0_0_15px_rgba(16,185,129,0.3)]">
-        <i class="fa-solid fa-basket-shopping text-black text-sm"></i>
-      </div>
-      <div>
-        <h1 class="text-lg font-black tracking-tight text-zinc-900 dark:text-white leading-none">Apna Mart</h1>
-        <span class="text-[9px] uppercase font-bold tracking-widest text-emerald-600 dark:text-emerald-400">Supermart</span>
-      </div>
-    </a>
-
-    <!-- मेनू लिंक्स -->
-    <div class="hidden md:flex gap-6 lg:gap-8 text-[11px] font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 shrink-0">
-      <a href="/" class="hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors duration-200">Home</a>
-      <a href="/#categories" class="hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors duration-200">Categories</a>
-      <a href="/products/allProducts" class="hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors duration-200">All Products</a>
-    </div>
-
-    <!-- 🔍 वर्किंग सर्च बार फॉर्म -->
-    <form action="/" method="GET" class="flex-1 max-w-md relative group mx-4 hidden sm:block">
-      <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400 group-focus-within:text-emerald-600 dark:text-zinc-500 dark:group-focus-within:text-emerald-400 transition-colors"></i>
-      <input type="text" 
-             name="search" 
-             placeholder="Search groceries and press Enter..." 
-             class="w-full bg-zinc-100 border border-zinc-200 rounded-xl py-2 pl-11 pr-4 text-xs font-medium text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:bg-white focus:border-emerald-500 transition-all dark:bg-zinc-900/50 dark:border-zinc-800/80 dark:text-white dark:placeholder-zinc-500">
-    </form>
-
-    <!-- राइट साइड एक्शन्स -->
-    <div class="flex items-center gap-3 shrink-0">
-      
-      <!-- 🌙 थीम टॉगल बटन -->
-      <button onclick="toggleTheme()" class="w-8 h-8 flex items-center justify-center rounded-xl bg-zinc-100 border border-zinc-200 text-zinc-600 dark:bg-zinc-900/80 dark:border-zinc-800 dark:text-zinc-400 hover:border-emerald-400 transition-all">
-        <i class="fa-solid fa-moon dark:hidden"></i>
-        <i class="fa-solid fa-sun hidden dark:block text-amber-400"></i>
-      </button>
-      
-      <% if(user){ %>
-        <!-- अकाउंट ड्रापडाउन -->
-        <div class="relative inline-block text-left group">
-          <button type="button" class="flex items-center gap-2 py-2 px-3.5 bg-white border border-zinc-200 rounded-xl hover:border-emerald-300 transition-all duration-200 dark:bg-zinc-900/80 dark:border-zinc-800">
-            <div class="w-5 h-5 rounded-lg bg-emerald-500 text-black flex items-center justify-center text-[9px] font-black uppercase shadow-[0_0_10px_rgba(16,185,129,0.2)]">
-              <%= user.name ? user.name.substring(0, 2) : 'A' %>
-            </div>
-            <span class="text-xs font-bold text-zinc-700 dark:text-zinc-200 hidden sm:block">My Account</span>
-            <i class="fa-solid fa-chevron-down text-[9px] text-zinc-400 group-hover:rotate-180 transition-transform duration-200"></i>
-          </button>
-
-          <div class="absolute right-0 w-52 mt-2 origin-top-right bg-white border border-zinc-200 rounded-2xl shadow-xl shadow-zinc-200/50 opacity-0 scale-95 pointer-events-none group-hover:opacity-100 group-hover:scale-100 group-hover:pointer-events-auto transition-all duration-150 z-50 dark:bg-[#090f0b] dark:border-zinc-800 dark:shadow-2xl dark:shadow-black/90">
-            <div class="p-3.5 border-b border-zinc-100 dark:border-zinc-900/60">
-              <span class="inline-block text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded <%= user.role === 'admin' ? 'bg-red-50 text-red-600 border border-red-100 dark:bg-red-500/10 dark:text-red-400 dark:border-red-500/20' : 'bg-emerald-50 text-emerald-600 border border-emerald-100 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/20' %>">
-                <%= user.role ? user.role : 'Customer' %>
-              </span>
-              <p class="text-xs font-bold text-zinc-800 dark:text-zinc-100 truncate mt-2"><%= user.name %></p>
-              <p class="text-[10px] text-zinc-400 dark:text-zinc-500 truncate"><%= user.email %></p>
-            </div>
-            
-            <div class="p-1.5 space-y-0.5">
-              <% if(user.role === 'admin') { %>
-                <a href="/products/allProducts" class="flex items-center gap-2.5 px-3 py-2 text-xs font-semibold text-zinc-600 hover:bg-emerald-50 hover:text-emerald-600 rounded-xl transition-all dark:text-zinc-400 dark:hover:bg-emerald-500/10 dark:hover:text-emerald-400">
-                  <i class="fa-solid fa-boxes-stacked text-[11px] opacity-70"></i> Dashboard / Catalog
-                </a>
-                <a href="/products/create" class="flex items-center gap-2.5 px-3 py-2 text-xs font-semibold text-zinc-600 hover:bg-emerald-50 hover:text-emerald-600 rounded-xl transition-all dark:text-zinc-400 dark:hover:bg-emerald-500/10 dark:hover:text-emerald-400">
-                  <i class="fa-solid fa-plus text-[11px] opacity-70"></i> Add New Item
-                </a>
-              <% } %>
-              <a href="/users/cart/products" class="flex items-center gap-2.5 px-3 py-2 text-xs font-semibold text-zinc-600 hover:bg-emerald-50 hover:text-emerald-600 rounded-xl transition-all dark:text-zinc-400 dark:hover:bg-emerald-500/10 dark:hover:text-emerald-400">
-                <i class="fa-solid fa-basket-shopping text-[11px] opacity-70"></i> My Cart Page
-              </a>
-            </div>
-
-            <div class="p-1.5 border-t border-zinc-100 bg-zinc-50 rounded-b-2xl dark:border-zinc-900/60 dark:bg-black/40">
-              <a href="/users/logout" class="flex items-center gap-2.5 px-3 py-2 text-xs font-bold text-rose-600 hover:bg-rose-50 rounded-xl transition-all dark:text-rose-400 dark:hover:bg-rose-500/10">
-                <i class="fa-solid fa-arrow-right-from-bracket text-[11px]"></i> Secure Logout
-              </a>
-            </div>
-          </div>
-        </div>
-      <% } else { %>
-        <a href="/users/login" class="px-3 py-2 text-xs font-bold text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white transition-colors duration-200">Login</a>
-        <a href="/users/register" class="px-4 py-2 text-xs font-bold bg-emerald-500 text-black rounded-xl hover:bg-emerald-400 shadow-md shadow-emerald-500/10 active:scale-95 transition-all duration-200">Sign Up</a>
-      <% } %>
-
-      <!-- 🛒 प्रीमियम लाइव कार्ट बटन -->
-      <% if(user && user.cart && user.cart.length > 0) { %>
-        <a href="/users/cart/products" class="flex items-center gap-3 bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-900/60 px-3.5 py-1.5 rounded-xl transition-all duration-300 shadow-[0_4px_15px_rgba(16,185,129,0.08)] select-none hover:border-emerald-400 group">
-          <div class="relative flex items-center justify-center w-8 h-8 bg-emerald-500/15 rounded-lg text-[#24963f] dark:text-emerald-400">
-            <i class="fa-solid fa-basket-shopping text-base group-hover:scale-110 transition-transform duration-200"></i>
-            <span class="absolute -top-1.5 -right-1.5 bg-red-600 text-white font-black text-[10px] w-5 h-5 rounded-full flex items-center justify-center shadow-md border-2 border-white dark:border-zinc-950">
-              <%= user.cart.length %>
-            </span>
-          </div>
-          <span class="text-xs font-black text-zinc-900 dark:text-white tracking-tight">
-            ₹<%= typeof totalCartPrice !== 'undefined' ? totalCartPrice : 0 %>
-          </span>
-        </a>
-      <% } else { %>
-        <a href="/users/cart/products" class="flex items-center gap-2 border border-zinc-200 bg-zinc-100 text-zinc-600 px-4 py-2 rounded-xl transition-all font-bold text-xs uppercase tracking-wider hover:bg-zinc-200 dark:text-zinc-300 dark:bg-zinc-900/30 dark:border-zinc-800 dark:hover:border-zinc-700">
-          <i class="fa-solid fa-basket-shopping text-xs text-zinc-400 dark:text-zinc-500"></i>
-          <span>Cart</span>
-        </a>
-      <% } %>
-
-    </div>
-  </nav>
-
-  <!-- ─── 📦 MAIN CONTENT SECTION ─── -->
   <main class="max-w-3xl mx-auto px-4 md:px-6 pt-28 pb-16 select-none">
     
     <div class="flex items-center justify-between mb-8 border-b border-zinc-100 dark:border-zinc-900/80 pb-5">
@@ -204,58 +97,58 @@
 
             <!-- proudcts list which are purchased -->
             <div class="p-5 space-y-4">
-  <% order.products.forEach(item => { %>
-    <% if(item.product) { %>
-      <div class="flex items-center justify-between gap-4 bg-zinc-50/40 dark:bg-zinc-950/10 p-2.5 rounded-2xl border border-zinc-100/70 dark:border-zinc-900/30">
-        
-        <div class="flex items-center gap-3.5 min-w-0 flex-1">
-          <a href="/products/view/<%= item.product._id %>" class="flex items-center gap-3.5 min-w-0 group cursor-pointer hover:opacity-85 transition-all">
-            
-            <div class="w-12 h-12 rounded-xl bg-zinc-100 dark:bg-zinc-900 border border-zinc-200/60 dark:border-zinc-800 flex items-center justify-center overflow-hidden shrink-0 shadow-sm font-black text-xs uppercase text-emerald-600 dark:text-emerald-400 group-hover:scale-105 group-hover:border-emerald-400/50 transition-all duration-200">
-              <% if (item.product.image) { %>
-                <img src="/uploads/<%= item.product.image %>" 
-                    class="w-full h-full object-cover" 
-                    onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                
-                <span class="hidden w-full h-full items-center justify-center bg-gradient-to-br from-emerald-500/20 to-teal-500/20">
-                  <%= item.product.name ? item.product.name.substring(0,2) : 'KP' %>
-                </span>
-              <% } else { %>
-                <span class="w-full h-full flex items-center justify-center bg-gradient-to-br from-emerald-500/20 to-teal-500/20">
-                  <%= item.product.name ? item.product.name.substring(0,2) : 'KP' %>
-                </span>
+            <% order.products.forEach(item => { %>
+              <% if(item.product) { %>
+                <div class="flex items-center justify-between gap-4 bg-zinc-50/40 dark:bg-zinc-950/10 p-2.5 rounded-2xl border border-zinc-100/70 dark:border-zinc-900/30">
+                  
+                  <div class="flex items-center gap-3.5 min-w-0 flex-1">
+                    <a href="/products/view/<%= item.product._id %>" class="flex items-center gap-3.5 min-w-0 group cursor-pointer hover:opacity-85 transition-all">
+                      
+                      <div class="w-12 h-12 rounded-xl bg-zinc-100 dark:bg-zinc-900 border border-zinc-200/60 dark:border-zinc-800 flex items-center justify-center overflow-hidden shrink-0 shadow-sm font-black text-xs uppercase text-emerald-600 dark:text-emerald-400 group-hover:scale-105 group-hover:border-emerald-400/50 transition-all duration-200">
+                        <% if (item.product.image) { %>
+                          <img src="/uploads/<%= item.product.image %>" 
+                              class="w-full h-full object-cover" 
+                              onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                          
+                          <span class="hidden w-full h-full items-center justify-center bg-gradient-to-br from-emerald-500/20 to-teal-500/20">
+                            <%= item.product.name ? item.product.name.substring(0,2) : 'KP' %>
+                          </span>
+                        <% } else { %>
+                          <span class="w-full h-full flex items-center justify-center bg-gradient-to-br from-emerald-500/20 to-teal-500/20">
+                            <%= item.product.name ? item.product.name.substring(0,2) : 'KP' %>
+                          </span>
+                        <% } %>
+                      </div>
+
+                      <div class="min-w-0">
+                        <h4 class="text-xs font-black text-zinc-900 dark:text-zinc-100 truncate group-hover:text-emerald-500 dark:group-hover:text-emerald-400 transition-colors">
+                          <%= item.product.name %>
+                        </h4>
+                        <p class="text-[10px] font-bold text-zinc-400 mt-0.5 uppercase tracking-wide">
+                          Qty: <span class="text-emerald-500 bg-emerald-500/10 px-1.5 py-0.2 rounded font-black">x<%= item.quantity %></span>
+                        </p>
+                      </div>
+                    </a>
+                  </div>
+
+                  <div class="flex items-center gap-4 shrink-0">
+                    
+                    <div class="text-right">
+                      <span class="text-xs font-black text-zinc-900 dark:text-white">₹<%= item.product.price * item.quantity %></span>
+                      <p class="text-[9px] text-zinc-400 font-medium mt-0.5">₹<%= item.product.price %> each</p>
+                    </div>
+
+                    <a href="/users/orders/bill/<%= order._id %>" 
+                      title="View Invoice"
+                      class="w-8 h-8 rounded-xl bg-zinc-100 hover:bg-emerald-500 hover:text-black dark:bg-zinc-900 dark:text-zinc-400 dark:hover:bg-emerald-500/20 dark:hover:text-emerald-400 flex items-center justify-center transition-all border border-zinc-200 dark:border-zinc-800 shadow-sm">
+                      <i class="fa-solid fa-file-invoice text-xs"></i>
+                    </a>
+
+                  </div>
+
+                </div>
               <% } %>
-            </div>
-
-            <div class="min-w-0">
-              <h4 class="text-xs font-black text-zinc-900 dark:text-zinc-100 truncate group-hover:text-emerald-500 dark:group-hover:text-emerald-400 transition-colors">
-                <%= item.product.name %>
-              </h4>
-              <p class="text-[10px] font-bold text-zinc-400 mt-0.5 uppercase tracking-wide">
-                Qty: <span class="text-emerald-500 bg-emerald-500/10 px-1.5 py-0.2 rounded font-black">x<%= item.quantity %></span>
-              </p>
-            </div>
-          </a>
-        </div>
-
-        <div class="flex items-center gap-4 shrink-0">
-          
-          <div class="text-right">
-            <span class="text-xs font-black text-zinc-900 dark:text-white">₹<%= item.product.price * item.quantity %></span>
-            <p class="text-[9px] text-zinc-400 font-medium mt-0.5">₹<%= item.product.price %> each</p>
-          </div>
-
-          <a href="/users/orders/bill/<%= order._id %>" 
-             title="View Invoice"
-             class="w-8 h-8 rounded-xl bg-zinc-100 hover:bg-emerald-500 hover:text-black dark:bg-zinc-900 dark:text-zinc-400 dark:hover:bg-emerald-500/20 dark:hover:text-emerald-400 flex items-center justify-center transition-all border border-zinc-200 dark:border-zinc-800 shadow-sm">
-            <i class="fa-solid fa-file-invoice text-xs"></i>
-          </a>
-
-        </div>
-
-      </div>
-    <% } %>
-  <% }) %>
+            <% }) %>
             </div>
 
             <div class="px-5 py-4 bg-zinc-50/30 dark:bg-zinc-950/20 border-t border-zinc-100 dark:border-zinc-900/60 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -287,6 +180,6 @@
     <% } %>
 
   </main>
-
+  <%- include('partials/header-scripts') %>
 </body>
 </html>
