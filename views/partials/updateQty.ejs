@@ -1,23 +1,22 @@
 <div id="cart-toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 pointer-events-none opacity-0 translate-y-4 transition-all duration-300 ease-out w-[calc(100%-2rem)] max-w-md select-none">
-  <div class="bg-white text-gray-900 px-4 py-3.5 rounded-2xl shadow-[0_10px_30px_rgba(0,0,0,0.08)] border border-gray-100 flex items-center justify-between gap-3 pointer-events-auto">
+  <div id="toast-bg" class="bg-white text-gray-900 px-4 py-3.5 rounded-2xl shadow-[0_10px_30px_rgba(0,0,0,0.08)] border border-gray-100 flex items-center justify-between gap-3 pointer-events-auto">
     
     <div class="flex items-center gap-3 min-w-0 flex-1">
-      <div class="w-9 h-9 rounded-xl bg-emerald-50 text-[#24963f] flex items-center justify-center border border-emerald-100/50 shrink-0">
-        <i class="fa-solid fa-basket-shopping text-sm"></i>
+      <div id="toast-icon-box" class="w-9 h-9 rounded-xl bg-emerald-50 text-[#24963f] flex items-center justify-center border border-emerald-100/50 shrink-0">
+        <i id="toast-icon" class="fa-solid fa-basket-shopping text-sm"></i>
       </div>
       <div class="min-w-0 flex-1">
-        <p class="text-[10px] font-black tracking-wider uppercase text-[#24963f]">Added To Basket</p>
+        <p id="toast-badge" class="text-[10px] font-black tracking-wider uppercase text-[#24963f]">Added To Basket</p>
         <p id="toast-message" class="text-xs font-bold text-gray-800 truncate mt-0.5">Item added successfully!</p>
       </div>
     </div>
 
     <div class="flex items-center gap-2 shrink-0">
-      <a href="/users/cart/products" class="flex items-center gap-1.5 bg-[#24963f] hover:bg-[#1e7e34] text-white text-[11px] font-black px-3 py-2 rounded-xl transition-all uppercase tracking-wider shadow-sm shadow-emerald-700/10 active:scale-95">
+      <a id="toast-view-cart-btn" href="/users/cart/products" class="flex items-center gap-1.5 bg-[#24963f] hover:bg-[#1e7e34] text-white text-[11px] font-black px-3 py-2 rounded-xl transition-all uppercase tracking-wider shadow-sm shadow-emerald-700/10 active:scale-95">
         View Basket
         <i class="fa-solid fa-arrow-right text-[10px]"></i>
       </a>
-      
-      <button onclick="closeToastAndReload()" class="w-8 h-8 rounded-xl hover:bg-gray-50 text-gray-400 hover:text-gray-900 flex items-center justify-center transition-colors border border-transparent hover:border-gray-100" title="Close">
+      <button onclick="closeToastWithoutReload()" class="w-8 h-8 rounded-xl hover:bg-gray-50 text-gray-400 hover:text-gray-900 flex items-center justify-center transition-colors border border-transparent hover:border-gray-100" title="Close">
         <i class="fa-solid fa-xmark text-xs"></i>
       </button>
     </div>
@@ -28,64 +27,206 @@
 <script>
   let reloadTimeout = null;
 
-  function showCartToast(message) {
+  function showCartToast(message, isError = false) {
     const toast = document.getElementById('cart-toast');
+    const toastBg = document.getElementById('toast-bg');
+    const toastIconBox = document.getElementById('toast-icon-box');
+    const toastIcon = document.getElementById('toast-icon');
+    const toastBadge = document.getElementById('toast-badge');
     const toastMsg = document.getElementById('toast-message');
+    const viewCartBtn = document.getElementById('toast-view-cart-btn');
     
     if (!toast || !toastMsg) return;
 
     toastMsg.textContent = message;
 
+    if (isError) {
+      toastBg.className = "bg-zinc-950 text-white px-4 py-3.5 rounded-2xl shadow-[0_10px_40px_rgba(220,38,38,0.15)] border border-red-500/30 flex items-center justify-between gap-3 pointer-events-auto relative overflow-hidden";
+      toastIconBox.className = "w-9 h-9 rounded-xl bg-red-500/10 text-red-500 flex items-center justify-center border border-red-500/20 shrink-0";
+      toastIcon.className = "fa-solid fa-triangle-exclamation text-sm animate-pulse";
+      toastBadge.className = "text-[10px] font-black tracking-wider uppercase text-red-500";
+      toastBadge.textContent = "Stock Limit Reached!";
+      toastMsg.className = "text-xs font-bold text-zinc-300 truncate mt-0.5";
+      if(viewCartBtn) viewCartBtn.classList.add('hidden');
+      
+      if (reloadTimeout) clearTimeout(reloadTimeout);
+      reloadTimeout = setTimeout(() => { closeToastWithoutReload(); }, 3500);
+    } else {
+      toastBg.className = "bg-white text-gray-900 px-4 py-3.5 rounded-2xl shadow-[0_10px_30px_rgba(0,0,0,0.08)] border border-gray-100 flex items-center justify-between gap-3 pointer-events-auto";
+      toastIconBox.className = "w-9 h-9 rounded-xl bg-emerald-50 text-[#24963f] flex items-center justify-center border border-emerald-100/50 shrink-0";
+      toastIcon.className = "fa-solid fa-basket-shopping text-sm";
+      toastBadge.className = "text-[10px] font-black tracking-wider uppercase text-[#24963f]";
+      toastBadge.textContent = "Added To Basket";
+      toastMsg.className = "text-xs font-bold text-gray-800 truncate mt-0.5";
+      if(viewCartBtn) viewCartBtn.className = "flex items-center gap-1.5 bg-[#24963f] hover:bg-[#1e7e34] text-white text-[11px] font-black px-3 py-2 rounded-xl transition-all uppercase tracking-wider shadow-sm shadow-emerald-700/10 active:scale-95";
+
+      if (reloadTimeout) clearTimeout(reloadTimeout);
+      reloadTimeout = setTimeout(() => { closeToastWithoutReload(); }, 2000);
+    }
+
     toast.classList.remove('opacity-0', 'translate-y-4', 'pointer-events-none');
     toast.classList.add('opacity-100', 'translate-y-0');
-
-    reloadTimeout = setTimeout(() => {
-      location.reload();
-    }, 2000);
   }
 
-  // क्रॉस बटन दबाने पर तुरंत क्लोज और रीलोड करने का फंक्शन
-  function closeToastAndReload() {
-    if (reloadTimeout) clearTimeout(reloadTimeout); // पुराना टाइमर रोको
-    
+  function closeToastWithoutReload() {
+    if (reloadTimeout) clearTimeout(reloadTimeout);
     const toast = document.getElementById('cart-toast');
     if (toast) {
       toast.classList.remove('opacity-100', 'translate-y-0');
       toast.classList.add('opacity-0', 'translate-y-4', 'pointer-events-none');
     }
-    
-    // बिना इंतज़ार किए तुरंत रीलोड
-    location.reload();
   }
 
+  function findAndUpdateQtyElements(productId, newQty) {
+    const selectors = [
+      `[id="quantityNumber-${productId}"]`,
+      `[id="qty-text-${productId}"]`,
+      `#cart-display-qty`
+    ];
+    const elements = document.querySelectorAll(selectors.join(', '));
+    elements.forEach(el => { if(el) el.innerText = newQty; });
+    
+    // अगर क्वांटिटी 0 हो जाए (कार्ट से प्रोडक्ट बाहर), तो वापस 'Add' बटन दिखाओ
+    if(newQty === 0) {
+      const actionBox = document.getElementById(`action-box-${productId}`);
+      if(actionBox) {
+        actionBox.innerHTML = `<button onclick="addToCart('${productId}', '0')" class="text-center text-xs font-extrabold px-4 py-1.5 bg-white text-[#24963f] border border-gray-200 rounded-xl hover:border-[#24963f] active:scale-95 transition-all duration-200 shadow-sm uppercase">Add</button>`;
+      }
+    }
+  }
+
+  // ➕ INCREASE
   async function increaseQty(productId) {
     try {
       let res = await fetch(`/users/cart/update/increaseQty/${productId}`, { method: 'POST' });
       let data = await res.json();
-      if(data.success) { location.reload(); }
+      
+      if(data.success) { 
+        findAndUpdateQtyElements(productId, data.quantity);
+        updateCartPageTotals(productId, data.quantity);
+      } else {
+        showCartToast(data.message || "No more stock available.", true);
+      }
     } catch (err) { console.error(err); }
   }
 
+  // ➖ DECREASE
   async function descreaseQty(productId) {
     try {
       let res = await fetch(`/users/cart/update/descreaseQty/${productId}`, { method: 'POST' });
       let data = await res.json();
-      if(data.success) { location.reload(); }
+      
+      if(data.success) { 
+        findAndUpdateQtyElements(productId, data.quantity);
+        updateCartPageTotals(productId, data.quantity);
+      } 
     } catch (err) { console.error(err); }
   }
 
-  async function addToCart(productId) {
+  // 🛒 ADD TO CART (🔥 100% लाइव काउंटर स्विचर - नो रीलोड)
+  async function addToCart(productId, productPrice = 0) {
     try {
       let res = await fetch(`/users/cart/add-to-cart/${productId}`, { method: "POST" });
+      if (res.redirected) { window.location.href = res.url; return; }
       let data = await res.json();
       
       if(data.success) {
-        showCartToast(data.message || "Product added to your basket!");
+        showCartToast(data.message || "Product added to your basket!", false);
+        
+        // 1. 🔥 जादुई DOM ट्रांसफॉर्मेशन: 'Add' बटन को तुरंत हटाकर '+ 1 -' काउंटर बॉक्स बना दो
+        const actionBox = document.getElementById(`action-box-${productId}`);
+        if(actionBox) {
+          actionBox.innerHTML = `
+            <div class="flex items-center bg-white border border-[#24963f] text-[#24963f] rounded-xl overflow-hidden shadow-sm font-black text-xs">
+              <button onclick="descreaseQty('${productId}')" class="px-2.5 py-1.5 hover:bg-[#24963f] hover:text-white transition-colors text-xs font-black">-</button>
+              <span id="quantityNumber-${productId}" class="px-2 min-w-[22px] text-center font-black text-xs text-gray-900">1</span>
+              <button onclick="increaseQty('${productId}')" class="px-2.5 py-1.5 hover:bg-[#24963f] hover:text-white transition-colors text-xs font-black">+</button>
+            </div>
+          `;
+        }
+
+        // 2. 👑 हेडर बास्केट को तुरंत लाइव अपडेट करो
+        const headerTotalEl = document.getElementById('header-cart-total');
+        const headerCountEl = document.getElementById('header-cart-count');
+        
+        if (headerTotalEl && headerCountEl) {
+          let currentTotal = Number(headerTotalEl.innerText.replace('₹', '').trim()) || 0;
+          let currentCount = parseInt(headerCountEl.innerText) || 0;
+          
+          let newTotal = currentTotal + Number(productPrice);
+          
+          headerCountEl.innerText = `${currentCount + 1} Items`;
+          headerTotalEl.innerText = `₹${newTotal}`;
+        } else {
+          // अगर यूजर का कार्ट पहले बिल्कुल खाली था, तो हेडर बटन को रेंडर करने के लिए छोटा सा रिफ्रेश बैकअप ले सकते हो, 
+          // लेकिन अगर पहले से 1 भी आइटम है, तो यह बिना रीलोड के ही अपडेट हो जाएगा!
+        }
+        
       } else {
-        window.location.href = '/users/login';
+        if(data.isStockError || data.message?.toLowerCase().includes('stock')) {
+          showCartToast(data.message || "Out of stock!", true);
+        } else { window.location.href = '/users/login'; }
       }
-    } catch (err) {
-      console.error("Cart Error:", err);
+    } catch (err) { console.error("Cart Error:", err); }
+  }
+
+  // 🧮 टोटल्स कैलकुलेटर
+  function updateCartPageTotals(productId, newQty) {
+    const subtotalEl = document.getElementById(`subtotal-${productId}`);
+    
+    if (subtotalEl) {
+      const parentCard = subtotalEl.closest('.flex-wrap, .flex, [class*="bg-white"]');
+      if (parentCard) {
+        const priceElements = parentCard.querySelectorAll('span');
+        let productPrice = 0;
+        
+        priceElements.forEach(span => {
+          if (span.innerText.includes('₹') && span !== subtotalEl) {
+            productPrice = Number(span.innerText.replace('₹', '').trim());
+          }
+        });
+
+        if (productPrice > 0) {
+          subtotalEl.innerText = `₹${productPrice * newQty}`;
+        }
+      }
+    }
+
+    let grandTotal = 0;
+    const allSubtotals = document.querySelectorAll('[id^="subtotal-"]');
+    
+    if (allSubtotals.length > 0) {
+      allSubtotals.forEach(sub => {
+        grandTotal += Number(sub.innerText.replace('₹', '').trim());
+      });
+    } else {
+      const currentHeaderTotal = document.getElementById('header-cart-total');
+      if (currentHeaderTotal) {
+        grandTotal = Number(currentHeaderTotal.innerText.replace('₹', '').trim());
+      }
+    }
+
+    const grandTotalEl = document.getElementById('grand-total');
+    if (grandTotalEl && grandTotal > 0) {
+      grandTotalEl.innerText = `₹${grandTotal}`;
+    }
+
+    updateGlobalHeader(grandTotal);
+  }
+
+  function updateGlobalHeader(computedTotal) {
+    const headerTotalEl = document.getElementById('header-cart-total');
+    const headerCountEl = document.getElementById('header-cart-count');
+
+    if (headerTotalEl && computedTotal > 0) {
+      headerTotalEl.innerText = `₹${computedTotal}`;
+    }
+
+    if (headerCountEl) {
+      const uniqueItems = document.querySelectorAll('[id^="product-"]').length || document.querySelectorAll('[id^="subtotal-"]').length;
+      if (uniqueItems > 0) {
+        headerCountEl.innerText = `${uniqueItems} Items`;
+      }
     }
   }
 </script>

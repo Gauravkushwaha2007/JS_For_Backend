@@ -129,8 +129,9 @@
       <% if(typeof user !== 'undefined' && user && user.cart && user.cart.length > 0) { %>
         <a href="/users/cart/products" class="flex items-center gap-2 sm:gap-3 bg-[#24963f] hover:bg-[#1e7e34] text-white px-3 sm:px-4 py-2.5 rounded-xl transition-all shadow-md shadow-emerald-700/20">
           <div class="flex flex-col text-left">
-            <span class="text-[9px] sm:text-[10px] font-black uppercase tracking-wider text-emerald-200 leading-none"><%= user.cart.length %> Items</span>
-            <span class="text-xs font-black mt-0.5">₹<%= typeof totalCartPrice !== 'undefined' ? totalCartPrice : 0 %></span>
+            <span id="header-cart-count" class="text-[9px] sm:text-[10px] font-black uppercase tracking-wider text-emerald-200 leading-none"><%= user.cart.length %> Items</span>
+            
+            <span id="header-cart-total" class="text-xs font-black mt-0.5">₹<%= typeof totalCartPrice !== 'undefined' ? totalCartPrice : 0 %></span>
           </div>
           <div class="h-6 w-[1px] bg-white/20"></div>
           <div class="flex items-center gap-1.5 font-extrabold text-xs tracking-tight">
@@ -288,7 +289,6 @@
     }
   }
 
-  // Placeholder Animation tracks
   function startTrackAnimation(trackClass) {
     const track = document.querySelector('.' + trackClass);
     if (!track) return;
@@ -303,7 +303,6 @@
     startTrackAnimation('d-placeholder-track');
     startTrackAnimation('m-placeholder-track');
     
-    // Synced search inputs
     const dInp = document.getElementById('cartSearchInput');
     const mInp = document.getElementById('mobileCartSearchInput');
     if(dInp && mInp) {
@@ -312,7 +311,6 @@
     }
   });
 
-  // Desktop Address Menu Toggle
   function toggleAddressDropdown(event) {
     event.stopPropagation();
     const menu = document.getElementById('addressDropdownMenu');

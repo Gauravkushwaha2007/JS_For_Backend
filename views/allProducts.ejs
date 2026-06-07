@@ -95,23 +95,25 @@
                     </p>
                   </div>
 
-                  <div class="product-action-container shrink-0" id="action-box-<%= product._id %>">
-                    <% 
-                      let foundInCart = user && user.cart ? user.cart.find(c => c.product && c.product._id.toString() === product._id.toString()) : null; 
-                    %>
+                <div class="product-action-container shrink-0" id="action-box-<%= product._id %>">
+                  <% 
+                    let foundInCart = user && user.cart ? user.cart.find(c => c.product && c.product._id.toString() === product._id.toString()) : null; 
+                  %>
 
-                    <% if (foundInCart) { %>
-                      <div class="flex items-center bg-white border border-[#24963f] text-[#24963f] rounded-xl overflow-hidden shadow-sm font-black text-xs">
-                        <button onclick="descreaseQty('<%= product._id %>')" class="px-2.5 py-1.5 hover:bg-[#24963f] hover:text-white transition-colors text-xs font-black">-</button>
-                        <span class="px-2 min-w-[22px] text-center font-black text-xs text-gray-900"><%= foundInCart.quantity %></span>
-                        <button onclick="increaseQty('<%= product._id %>')" class="px-2.5 py-1.5 hover:bg-[#24963f] hover:text-white transition-colors text-xs font-black">+</button>
-                      </div>
-                    <% } else { %>
-                      <button onclick="addToCart('<%= product._id %>')" class="text-center text-xs font-extrabold px-4 py-1.5 bg-white text-[#24963f] border border-gray-200 rounded-xl hover:border-[#24963f] active:scale-95 transition-all duration-200 shadow-sm uppercase">
-                        Add
-                      </button>
-                    <% } %>
-                  </div>
+                  <% if (foundInCart) { %>
+                    <div class="flex items-center bg-white border border-[#24963f] text-[#24963f] rounded-xl overflow-hidden shadow-sm font-black text-xs">
+                      <button onclick="descreaseQty('<%= product._id %>')" class="px-2.5 py-1.5 hover:bg-[#24963f] hover:text-white transition-colors text-xs font-black">-</button>
+                      
+                      <span id="quantityNumber-<%= product._id %>" class="px-2 min-w-[22px] text-center font-black text-xs text-gray-900"><%= foundInCart.quantity %></span>
+                      
+                      <button onclick="increaseQty('<%= product._id %>')" class="px-2.5 py-1.5 hover:bg-[#24963f] hover:text-white transition-colors text-xs font-black">+</button>
+                    </div>
+                  <% } else { %>
+                    <button onclick="addToCart('<%= product._id %>', '<%= product.price %>')" class="text-center text-xs font-extrabold px-4 py-1.5 bg-white text-[#24963f] border border-gray-200 rounded-xl hover:border-[#24963f] active:scale-95 transition-all duration-200 shadow-sm uppercase">
+                      Add
+                    </button>
+                  <% } %>
+                </div>
                   
                 </div>
               </div>

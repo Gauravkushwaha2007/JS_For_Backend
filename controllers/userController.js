@@ -377,7 +377,7 @@ const descreaseQty = async (req, res)=>{
     }
 };
 
-// 7. INCREASE QUANTITY
+// 7. INCREASE QUANTITY (Updated with minimal edits)
 const increaseQty = async (req, res)=>{
     try{
         const userEmail = req.user ? req.user.email : jwt.verify(req.cookies.token, process.env.JWT_SECRET).email;
@@ -387,6 +387,11 @@ const increaseQty = async (req, res)=>{
         let cartItem = user.cart.find(item => item.product._id.toString() === productId);
         
         if(cartItem){
+            // 🔥 सिर्फ ये 3 लाइन का छोटा सा जादुई एडिट 👇
+            if (cartItem.quantity >= cartItem.product.stock) {
+                return res.json({ success: false, isStockError: true, message: `Sorry, only ${cartItem.product.stock} units available.` });
+            }
+
             cartItem.quantity += 1;
             await user.save();
     
@@ -412,6 +417,15 @@ const cartCheckout = async (req, res) => {
             return res.status(400).send("Your cart is empty!");
         }
 
+        for (let item of user.cart) {
+            if (!item.product) {
+                return res.status(400).send("One of the products in your cart is no longer available.");
+            }
+            if (item.product.stock < item.quantity) {
+                return res.status(400).send(`Sorry, only ${item.product.stock} units of "${item.product.name}" are left in stock.`);
+            }
+        }
+
         let totalCartPrice = user.cart.reduce((acc, item) => acc + (item.product.price * item.quantity), 0);
         
         const orderProducts = user.cart.map(item => ({
@@ -427,7 +441,15 @@ const cartCheckout = async (req, res) => {
             totalPrice: totalCartPrice,
             address: deliveryAddress,
         });
-    
+        const stockPromises = user.cart.map(item => {
+            return productModel.findByIdAndUpdate(
+                item.product._id,
+                { $inc: { stock: -item.quantity } }
+            );
+        });
+        
+        await Promise.all(stockPromises);
+
         user.cart = [];
         await user.save();
     

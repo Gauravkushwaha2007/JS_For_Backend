@@ -28,8 +28,6 @@ userRouter.get('/login', (req, res)=>{
 userRouter.post('/login', loginUser);
 userRouter.get('/logout', logoutUser);
 
-
-
 userRouter.get('/forgot-password', (req, res) => {
     res.render('forgot-password', { message: null, type: null });
 });

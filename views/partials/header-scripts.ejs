@@ -135,13 +135,11 @@
     }, 300));
   }
 
-  // ग्लोबल क्लिक्स को हैंडल करना (ड्रॉपडाउन बंद करने के लिए)
   window.addEventListener('click', (e) => {
     // सर्च बंद करने के लिए
     if (cartSearchInput && cartResultsContainer && !cartSearchInput.contains(e.target) && !cartResultsContainer.contains(e.target)) {
       cartResultsContainer.classList.add('hidden');
     }
-    // एड्रेस मेनू बंद करने के लिए
     const addrMenu = document.getElementById('addressDropdownMenu');
     if (addrMenu && !e.target.closest('#addressDropdownMenu') && !e.target.closest('button[onclick="toggleAddressDropdown(event)"]')) {
       addrMenu.classList.add('hidden');

@@ -16,52 +16,88 @@
 
 <%- include('partials/header') %>
 
-  <nav class="max-w-7xl mx-auto px-6 pt-8 text-[10px] text-gray-400 font-bold uppercase tracking-widest">
-    <a href="/" class="hover:text-emerald-600">Home</a>
-    <span class="mx-2 text-gray-200">/</span>
-    <a href="/products/allProducts" class="hover:text-emerald-600 text-gray-500">Products</a>
-    <span class="mx-2 text-gray-200">/</span>
-    <span class="truncate"><%= product.name %></span>
+  <nav class="max-w-7xl mx-auto px-6 pt-8 text-[10px] text-gray-400 font-bold uppercase tracking-widest flex items-center gap-2 flex-wrap">
+    <a href="/" class="hover:text-[#24963f] transition-colors flex items-center gap-1.5">
+      <i class="fa-solid fa-house text-[11px]"></i> Home
+    </a>
+    <span class="text-gray-300">/</span>
+    <a href="/products/allProducts" class="hover:text-[#24963f] text-gray-400 transition-colors flex items-center gap-1.5">
+      <i class="fa-solid fa-cubes text-[11px]"></i> Products
+    </a>
+    <span class="text-gray-300">/</span>
+    <span class="text-gray-800 truncate flex items-center gap-1.5">
+      <i class="fa-solid fa-basket-shopping text-[11px] text-[#24963f]"></i> <%= product.name %>
+    </span>
   </nav>
 
   <main class="max-w-7xl mx-auto px-6 py-8 grid grid-cols-1 md:grid-cols-12 gap-12 items-start">
     
-    <div class="md:col-span-5 flex flex-col items-center justify-center border border-gray-100 rounded-[40px] p-10 relative min-h-[400px] md:min-h-[500px]" style="background-color: <%= product.bgColor || '#f9fafb' %>;">
-      <img src="/uploads/<%= product.image %>" alt="<%= product.name %>" class="max-w-full max-h-[400px] object-contain drop-shadow-2xl">
+    <div class="md:col-span-5 flex flex-col items-center justify-center border border-gray-100 rounded-[32px] p-10 relative min-h-[400px] md:min-h-[500px] shadow-sm transition-all duration-300" style="background-color: <%= product.bgColor || '#f9fafb' %>;">
+      <img src="/uploads/<%= product.image %>" alt="<%= product.name %>" class="max-w-full max-h-[380px] object-contain drop-shadow-2xl hover:scale-105 transition-transform duration-500">
       
       <% if(product.discount > 0) { %>
-        <span class="absolute top-6 left-6 bg-red-500 text-white text-[11px] font-black px-4 py-1.5 rounded-lg uppercase tracking-widest shadow-lg">
+        <span class="absolute top-6 left-6 bg-red-500 text-white text-[10px] font-black px-3.5 py-1.5 rounded-xl uppercase tracking-widest shadow-md shadow-red-500/20">
           <%= Math.round((product.discount / (product.price + product.discount)) * 100) %>% OFF
         </span>
       <% } %>
+
+      <div class="absolute bottom-6 left-6 right-6">
+        <% if (product.stock == 0) { %>
+          <span class="w-full text-center block bg-red-500/10 border border-red-500/20 text-red-600 text-[10px] font-black py-2 px-4 rounded-xl uppercase tracking-wider">
+            🚨 Out of Stock (Re-stocking Soon)
+          </span>
+        <% } else if (product.stock <= 10) { %>
+          <span class="w-full text-center block bg-amber-500/10 border border-amber-500/20 text-amber-600 text-[10px] font-black py-2 px-4 rounded-xl uppercase tracking-wider animate-pulse">
+            ⚡ Hurry Up! Only <%= product.stock %> units left in stock
+          </span>
+        <% } else { %>
+          <span class="w-full text-center block bg-emerald-50/80 border border-emerald-100 text-emerald-600 text-[10px] font-bold py-2 px-4 rounded-xl uppercase tracking-wider">
+            ✅ In Stock (Available)
+          </span>
+        <% } %>
+      </div>
     </div>
 
-  <div class="md:col-span-7 flex flex-col space-y-8">
+    <div class="md:col-span-7 flex flex-col space-y-8">
       
       <div>
-        <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight text-gray-900 leading-tight">
+        <h1 class="text-3xl md:text-4xl font-black tracking-tight text-gray-900 leading-tight">
           <%= product.name %>
         </h1>
-        <p class="text-gray-400 font-bold text-sm mt-2 flex items-center gap-2 uppercase tracking-widest">
-          <i class="fa-solid fa-clock text-[#24963f]"></i> Delivery in 10-15 Mins
+        <div class="flex flex-wrap gap-2 mt-3">
+          <span class="text-emerald-700 bg-emerald-50 border border-emerald-100 font-bold text-[10px] px-3 py-1 rounded-lg flex items-center gap-1.5 uppercase tracking-wider">
+            <i class="fa-solid fa-truck-fast"></i> Fast & Secured Delivery
+          </span>
+          <span class="text-gray-500 bg-gray-50 border border-gray-100 font-bold text-[10px] px-3 py-1 rounded-lg flex items-center gap-1.5 uppercase tracking-wider">
+            <i class="fa-solid fa-circle-check"></i> Quality Assured
+          </span>
+        </div>
+      </div>
+
+      <div class="border-t border-b border-gray-100 py-5">
+        <h3 class="text-[11px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2">
+          <i class="fa-solid fa-circle-info text-gray-400 mr-1"></i> Product Description
+        </h3>
+        <p class="text-sm text-gray-600 leading-relaxed font-medium">
+          <%= product.description ? product.description : "Fresh and premium quality sourced directly for your daily needs. Sealed with hygiene and pure freshness to ensure maximum shelf-life and great taste." %>
         </p>
       </div>
 
       <div>
-        <h3 class="text-[11px] font-black text-gray-400 uppercase tracking-[0.2em] mb-4">Select Unit</h3>
+        <h3 class="text-[11px] font-black text-gray-400 uppercase tracking-[0.2em] mb-3">Select Unit</h3>
         <div class="flex flex-wrap gap-4">
-          <div class="border-2 border-[#24963f] bg-emerald-50/50 rounded-2xl px-6 py-4 min-w-[120px] text-center shadow-sm">
-            <p class="text-xs font-bold text-gray-600 mb-1"><%= product.quantity %></p>
-            <p class="text-lg font-black text-black">₹<%= product.price %></p>
+          <div class="border-2 border-[#24963f] bg-emerald-50/30 rounded-2xl px-6 py-3.5 min-w-[120px] text-center shadow-sm">
+            <p class="text-xs font-bold text-gray-600 mb-0.5"><%= product.quantity || '1 Unit' %></p>
+            <p class="text-base font-black text-black">₹<%= product.price %></p>
           </div>
-          <div class="border border-gray-100 bg-gray-50/50 rounded-2xl px-6 py-4 min-w-[120px] text-center opacity-40">
-            <p class="text-xs font-medium text-gray-400 mb-1">2 x <%= product.quantity %></p>
-            <p class="text-xs font-bold text-red-400 uppercase tracking-widest">Sold Out</p>
+          <div class="border border-gray-100 bg-gray-50/50 rounded-2xl px-6 py-3.5 min-w-[120px] text-center opacity-40 flex flex-col justify-center">
+            <p class="text-[11px] font-medium text-gray-400">Standard Pack</p>
+            <p class="text-[10px] font-black text-gray-500 uppercase tracking-widest mt-0.5">Default</p>
           </div>
         </div>
       </div>
 
-      <div class="flex items-center justify-between bg-emerald-50/30 p-6 rounded-[32px] border border-emerald-100/50 max-w-xl">
+      <div class="flex items-center justify-between bg-gray-50/50 p-6 rounded-[24px] border border-gray-100 max-w-xl shadow-inner">
         <div>
           <div class="flex items-baseline gap-2.5">
             <span class="text-3xl font-black text-black">₹<%= product.price %></span>
@@ -69,7 +105,7 @@
               <span class="text-sm text-gray-400 line-through font-bold">₹<%= product.price + product.discount %></span>
             <% } %>
           </div>
-          <p class="text-[10px] text-emerald-600/60 font-bold uppercase tracking-wider mt-1">(Inclusive of all taxes)</p>
+          <p class="text-[9px] text-gray-400 font-bold uppercase tracking-wider mt-1">(Inclusive of all taxes)</p>
         </div>
 
         <div class="flex flex-col items-end">
@@ -80,59 +116,99 @@
             %>
 
             <% if (detailCartItem) { %>
-              <div class="flex items-center bg-[#24963f] text-white rounded-2xl overflow-hidden shadow-xl shadow-emerald-900/10 font-black text-sm h-[52px]">
-                <button onclick="descreaseQty('<%= product._id %>')" class="px-5 h-full hover:bg-[#1e7e34] transition-colors font-black text-base">-</button>
-                <span class="px-2 min-w-[24px] text-center font-black text-sm"><%= detailCartItem.quantity %></span>
-                <button onclick="increaseQty('<%= product._id %>')" class="px-5 h-full hover:bg-[#1e7e34] transition-colors font-black text-base">+</button>
+              <div class="flex items-center bg-[#24963f] text-white rounded-xl overflow-hidden shadow-lg shadow-emerald-900/10 font-black text-sm h-[48px]">
+                <button onclick="descreaseQty('<%= product._id %>')" class="px-5 h-full hover:bg-[#1e7e34] transition-colors font-black text-base active:scale-95">-</button>
+                <span id="quantityNumber-<%= product._id %>"  class="px-2 min-w-[28px] text-center font-black text-sm bg-[#1e7e34]/20 h-full flex items-center justify-center"><%= detailCartItem.quantity %></span>
+                <button onclick="increaseQty('<%= product._id %>')" class="px-5 h-full hover:bg-[#1e7e34] transition-colors font-black text-base active:scale-95">+</button>
               </div>
             <% } else { %>
               <button onclick="addToCart('<%= product._id %>')" 
-                      class="bg-[#24963f] hover:bg-[#1e7e34] text-white font-black text-sm px-8 py-4 rounded-2xl transition-all active:scale-95 shadow-xl shadow-emerald-900/10 flex items-center gap-2 group">
+                      class="bg-[#24963f] hover:bg-[#1e7e34] text-white font-black text-xs px-7 py-3.5 rounded-xl transition-all active:scale-95 shadow-lg shadow-emerald-900/10 flex items-center gap-2 group tracking-wider uppercase">
                 <i class="fa-solid fa-basket-shopping text-xs group-hover:animate-bounce"></i> 
                 <span>ADD TO BASKET</span>
               </button>
             <% } %>
 
           <% } else { %>
-            <button disabled class="bg-gray-200 text-gray-400 font-black text-sm px-10 py-4 rounded-2xl cursor-not-allowed">OUT OF STOCK</button>
+            <button disabled class="bg-gray-100 border border-gray-200 text-gray-400 font-black text-xs px-8 py-4 rounded-xl cursor-not-allowed uppercase tracking-wider">OUT OF STOCK</button>
           <% } %>
         </div>
-        
       </div>
 
-      <div class="grid grid-cols-2 gap-6 pt-4 max-w-xl">
-        <div class="flex items-start gap-4">
-          <div class="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center text-[#24963f] border border-gray-100">
-            <i class="fa-solid fa-bolt text-sm"></i>
+      <div class="grid grid-cols-2 gap-6 pt-4 max-w-xl border-t border-gray-100">
+        <div class="flex items-start gap-3">
+          <div class="w-9 h-9 rounded-xl bg-emerald-50 flex items-center justify-center text-[#24963f] border border-emerald-100 flex-shrink-0">
+            <i class="fa-solid fa-bolt text-xs"></i>
           </div>
           <div>
-            <h5 class="text-xs font-black text-gray-900 uppercase tracking-wide">Superfast</h5>
-            <p class="text-[11px] text-gray-500 mt-1 leading-relaxed">Delivery in minutes, right from your local Apna Mart.</p>
+            <h5 class="text-xs font-black text-gray-900 uppercase tracking-wide">Superfast Delivery</h5>
+            <p class="text-[11px] text-gray-500 mt-0.5 leading-relaxed">Directly shipped via local Kush Mart hub nearest to you.</p>
           </div>
         </div>
-        <div class="flex items-start gap-4">
-          <div class="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center text-[#24963f] border border-gray-100">
-            <i class="fa-solid fa-shield-heart text-sm"></i>
+        <div class="flex items-start gap-3">
+          <div class="w-9 h-9 rounded-xl bg-emerald-50 flex items-center justify-center text-[#24963f] border border-emerald-100 flex-shrink-0">
+            <i class="fa-solid fa-shield-heart text-xs"></i>
           </div>
           <div>
-            <h5 class="text-xs font-black text-gray-900 uppercase tracking-wide">Best Prices</h5>
-            <p class="text-[11px] text-gray-500 mt-1 leading-relaxed">Sourced directly to ensure you get the best deals.</p>
+            <h5 class="text-xs font-black text-gray-900 uppercase tracking-wide">Premium Quality</h5>
+            <p class="text-[11px] text-gray-500 mt-0.5 leading-relaxed">100% fresh and hygienic items sourced daily.</p>
           </div>
         </div>
       </div>
 
-  </div>
+    </div>
   </main>
+  
+  <div id="stockAlertPopup" class="fixed bottom-6 right-6 z-50 transform translate-y-10 opacity-0 hidden transition-all duration-500 ease-out max-w-sm w-full">
+    <div class="bg-zinc-950/95 border border-red-500/30 backdrop-blur-xl p-4 rounded-2xl shadow-[0_10px_40px_rgba(220,38,38,0.15)] flex items-start gap-3.5 relative overflow-hidden">
+      
+      <div class="absolute top-0 left-0 h-1 w-full bg-gradient-to-r from-red-500 via-amber-500 to-red-500"></div>
+
+      <div class="w-9 h-9 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-500 flex-shrink-0 shadow-inner">
+        <i class="fa-solid fa-triangle-exclamation text-sm animate-pulse"></i>
+      </div>
+
+      <div class="flex-1 pr-4">
+        <h4 class="text-xs font-black text-white uppercase tracking-wider">Stock Limit Reached!</h4>
+        <p id="stockPopupMessage" class="text-[11px] text-zinc-400 font-medium mt-1 leading-relaxed">
+          Sorry, only X units are available in our hub.
+        </p>
+      </div>
+
+      <button onclick="closeStockPopup()" class="text-zinc-500 hover:text-white p-1 rounded-lg hover:bg-zinc-900 transition-colors flex-shrink-0 absolute top-3.5 right-3.5">
+        <i class="fa-solid fa-xmark text-xs"></i>
+      </button>
+    </div>
+  </div>
 
   <script>
-    async function addToCart (productId){
-      let res = await fetch(`/users/cart/add-to-cart/${productId}`, {
-          method: "POST"
-      });
-      let data = await res.json();
-      alert(data.message); 
-      if(data.success){
-        location.reload() 
+    const maxAvailableStock = Number("<%= product.stock %>");
+    function showStockPopup(message) {
+      const popup = document.getElementById('stockAlertPopup');
+      const msgContainer = document.getElementById('stockPopupMessage');
+      
+      msgContainer.innerText = message;
+      
+      popup.classList.remove('hidden');
+      setTimeout(() => {
+          popup.classList.remove('translate-y-10', 'opacity-0');
+          popup.classList.add('translate-y-0', 'opacity-100');
+      }, 10);
+
+      setTimeout(() => {
+          closeStockPopup();
+      }, 4000);
+    }
+    function closeStockPopup() {
+      const popup = document.getElementById('stockAlertPopup');
+      if(popup) {
+          popup.classList.remove('translate-y-0', 'opacity-100');
+          popup.classList.add('translate-y-10', 'opacity-0');
+          
+          // एनिमेशन खत्म होने के बाद पूरी तरह हाइड करो
+          setTimeout(() => {
+              popup.classList.add('hidden');
+          }, 500);
       }
     }
   </script>

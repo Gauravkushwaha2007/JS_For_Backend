@@ -218,13 +218,11 @@
 
   <script>
     function filterOrders(status) {
-      // सारे बटन्स से एक्टिव क्लास हटाओ
       document.querySelectorAll('.tab-btn').forEach(btn => {
         btn.classList.remove('border-red-600', 'text-red-600', 'bg-red-50/50');
         btn.classList.add('border-transparent', 'text-gray-400');
       });
 
-      // क्लिक हुए बटन को एक्टिव करो
       const activeBtn = event.currentTarget;
       activeBtn.classList.remove('border-transparent', 'text-gray-400');
       activeBtn.classList.add('border-red-600', 'text-red-600', 'bg-red-50/50');

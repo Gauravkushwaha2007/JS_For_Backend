@@ -49,7 +49,6 @@ productRouter.get('/allProducts', attachUser, async(req, res)=>{
 
 productRouter.get('/view/:id', attachUser, viewProduct);
 
-
 productRouter.get('/create', attachUser, isAdmin, (req, res)=>{
     res.render('createProduct',{ product: null, activePage: 'createProduct'});
 })

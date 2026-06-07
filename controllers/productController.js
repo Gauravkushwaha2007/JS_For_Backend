@@ -102,6 +102,7 @@ const viewProduct = async (req, res)=>{
 
         let user = req.user || null;
         let totalCartPrice = 0;
+        let stock = product.stock
 
         if (!user && req.cookies && req.cookies.token) {
             try {
@@ -123,13 +124,14 @@ const viewProduct = async (req, res)=>{
                         totalCartPrice += (Number(item.product.price) * Number(item.quantity || 1));
                     }
                 });
-            }
+            } 
         }
         
         res.render('productDetail', { 
             product: product, 
             user: user,
-            totalCartPrice: totalCartPrice 
+            totalCartPrice: totalCartPrice,
+            stock: stock
         });
     }
 

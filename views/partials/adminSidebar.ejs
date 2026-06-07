@@ -47,7 +47,6 @@
           </a>
         </nav>
       </div>
-
       <div>
         <p class="font-bold text-[10px] uppercase text-zinc-500 mb-2.5 tracking-wider">Quick Management</p>
         <nav class="space-y-1.5 text-xs font-semibold">
@@ -61,6 +60,11 @@
               <span class="animate-ping absolute inline-flex h-full w-full rounded-full <%= typeof activePage !== 'undefined' && activePage === 'liveOrders' ? 'bg-white' : 'bg-red-500' %> opacity-75"></span>
               <span class="relative inline-flex rounded-full h-2 w-2 <%= typeof activePage !== 'undefined' && activePage === 'liveOrders' ? 'bg-white' : 'bg-red-500' %>"></span>
             </span>
+          </a>
+
+          <a href="/admin/analytics" class="py-2.5 px-3 rounded-xl flex items-center gap-3 shadow-md transition-all group <%= typeof activePage !== 'undefined' && activePage === 'analytics' ? 'bg-red-600 text-white shadow-red-900/20' : 'text-zinc-400 hover:bg-zinc-900 hover:text-white' %>">
+            <i class="fa-solid fa-chart-line text-xs"></i>
+            <span>Business Analytics</span>
           </a>
           
         </nav>

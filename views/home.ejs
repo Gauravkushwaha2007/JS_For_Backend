@@ -125,7 +125,7 @@
                 <% } %>
               </div>
 
-              <div class="product-action-container">
+              <div class="product-action-container" id="action-box-<%= item._id %>">
                 <% 
                   let foundInCart = user && user.cart ? user.cart.find(c => c.product && c.product._id.toString() === item._id.toString()) : null; 
                 %>
@@ -133,7 +133,7 @@
                 <% if (foundInCart) { %>
                   <div class="flex items-center bg-emerald-500/[0.09] text-black rounded-lg overflow-hidden shadow-sm font-black text-xs">
                     <button onclick="descreaseQty('<%= item._id %>', 'decrease')" class="px-3 py-2 hover:bg-emerald-400 transition-colors text-xs font-black">-</button>
-                    <span class="px-1.5 min-w-[18px] text-center font-black text-xs"><%= foundInCart.quantity %></span>
+                    <span id="quantityNumber-<%= item._id %>" class="px-1.5 min-w-[18px] text-center font-black text-xs"><%= foundInCart.quantity %></span>
                     <button onclick="increaseQty('<%= item._id %>', 'increase')" class="px-3 py-2 hover:bg-emerald-400 transition-colors text-xs font-black">+</button>
                   </div>
                 <% } else { %>
