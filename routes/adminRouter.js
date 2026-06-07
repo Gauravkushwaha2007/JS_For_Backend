@@ -11,7 +11,7 @@ adminRouter.get('/orders', isAdmin, async (req, res) => {
             .populate('user')                    
             .populate('products.product'); 
 
-        res.render('adminOrders', { orders, user: req.user });
+        res.render('adminOrders', { orders, user: req.user, activePage: 'liveOrders' });
     } catch (err) {
         console.error("Admin Orders Error:", err);
         res.status(500).send("Server Error");

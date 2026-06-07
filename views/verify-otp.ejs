@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Verify OTP | Kush Mart</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config = { darkMode: 'class' }</script>
+</head>
+<body class="bg-[#fafdfb] text-zinc-900 antialiased dark:bg-[#050906] dark:text-white flex flex-col min-h-screen [background:radial-gradient(circle_at_50%_-20%,#e2f5e7_0%,#f7fbf8_60%,#ffffff_100%)] dark:[background:radial-gradient(circle_at_50%_-20%,#0d2111_0%,#060c08_60%,#020403_100%)]">
+
+  <div class="flex-grow flex items-center justify-center px-4 py-24">
+    <div class="w-full max-w-md bg-white dark:bg-[#0d110e]/80 border border-zinc-200 dark:border-zinc-900 rounded-3xl p-8 shadow-xl backdrop-blur-md">
+      
+      <div class="text-center mb-8">
+        <span class="text-3xl font-black tracking-tighter text-zinc-900 dark:text-white">KUSH<span class="text-[#24963f]">MART</span></span>
+        <h2 class="text-xl font-extrabold text-zinc-800 dark:text-zinc-100 mt-4 tracking-tight">Enter Verification Code</h2>
+        <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-1.5 font-medium">We've sent a 6-digit OTP to <span class="text-zinc-800 dark:text-white font-bold"><%= email %></span></p>
+      </div>
+
+      <% if (error) { %>
+        <div id="otpErrorPopup" class="mb-6 p-4 rounded-xl text-xs font-bold flex items-center justify-between border bg-rose-50 border-rose-200 text-rose-700 dark:bg-rose-950/40 dark:border-rose-900/50 dark:text-rose-400 animate-pulse">
+          <div class="flex items-center gap-2.5">
+            <i class="fa-solid fa-circle-exclamation text-sm text-rose-500"></i>
+            <span><%= error %></span>
+          </div>
+          <button type="button" onclick="document.getElementById('otpErrorPopup').remove()" class="text-rose-400 hover:text-rose-700">
+            <i class="fa-solid fa-xmark text-sm"></i>
+          </button>
+        </div>
+      <% } %>
+
+      <form action="/users/verify-otp" method="POST" onsubmit="showLoader(event)" class="space-y-6">
+        <input type="hidden" name="email" value="<%= email %>">
+        
+        <div>
+          <label class="block text-[10px] font-black uppercase tracking-widest text-[#24963f] mb-2 text-center">Enter 6-Digit OTP</label>
+          <input 
+            type="text" 
+            name="otp" 
+            maxLength="6"
+            required 
+            placeholder="000000"
+            style="letter-spacing: 0.75rem;"
+            class="w-full bg-zinc-50/50 border border-zinc-200 rounded-xl py-3.5 text-center text-lg font-black text-zinc-900 outline-none transition-all focus:border-[#24963f] focus:ring-2 focus:ring-emerald-500/10 dark:bg-zinc-900/40 dark:border-zinc-800 dark:text-white dark:focus:border-[#24963f]"
+          />
+        </div>
+
+        <button type="submit" class="w-full py-3.5 bg-[#24963f] hover:bg-[#1e7e34] text-white text-xs font-bold rounded-xl shadow-md transition-all flex items-center justify-center gap-2">
+          Verify & Activate Account
+          <i class="fa-solid fa-circle-check text-[10px]"></i>
+        </button>
+      </form>
+
+    </div>
+  </div>
+  <%- include('partials/loader') %>
+</body>
+</html>

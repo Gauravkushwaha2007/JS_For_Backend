@@ -40,6 +40,15 @@ const userSchema = mongoose.Schema({
         isDefault: { type: Boolean, default: false }
     }],
 
+    resetPasswordToken: String,
+    resetPasswordExpires: Date,
+    isVerified: {
+        type: Boolean,
+        default: false
+    },
+    otp: String,
+    otpExpires: Date
+
 });
 
 module.exports = mongoose.model('user', userSchema);

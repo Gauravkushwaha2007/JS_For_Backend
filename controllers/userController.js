@@ -1,3 +1,4 @@
+const crypto = require('crypto'); 
 const userModel = require('../models/userModel');
 const productModel = require('../models/productModel');
 const bcrypt = require('bcrypt');
@@ -5,60 +6,79 @@ const jwt = require('jsonwebtoken');
 const generateToken = require('../utils/generateToken');
 const sendmail = require('../utils/mailer');
 const orderModel = require('../models/orderModel');
+const ejs = require('ejs');
+const path = require('path');
 
-// 1. REGISTER USER
-const registerUser = async (req, res)=>{
-    try{
-        let {name, email, password, contact} = req.body;
+
+// 1. REGISTER USER WITH OTP
+const registerUser = async (req, res) => {
+    try {
+        let { name, email, password, contact } = req.body;
     
-        let registeredUser = await userModel.findOne({email});
-        if(registeredUser){
-            return res.send('Already registered with this email');
+        let registeredUser = await userModel.findOne({ email });
+        if (registeredUser) {
+            return res.render('register', { error: 'This email is already registered!' });
         }
+        
         let salt = await bcrypt.genSalt(10);
         let hash = await bcrypt.hash(password, salt);
         
+        // 🚀 6-Digit का रैंडम OTP जनरेट करना
+        const generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
+        const otpExpires = Date.now() + 600000; // OTP सिर्फ 10 मिनट के लिए वैलिड रहेगा
+
         let user = await userModel.create({
             name,
             email, 
             password: hash,
-            contact
+            contact,
+            otp: generatedOtp,
+            otpExpires
         });
         
-        let token = generateToken(user);
-        res.cookie('token', token,{
-            httpOnly: true,
-            secure: false
-        });
-        
-        await sendmail(user.email,
-            "Welcome Dost",
-            `<h2> Hellow ${user.name} </h2>
-            <h3> kaise ho dost Ye mega fist trial hai </h3>`
-        );
-        
-        return res.redirect('/products/allProducts');
-        
+        try {
+            const templatePath = path.join(__dirname, '../views/emails/welcome.ejs');
+            const welcomeHtml = await ejs.renderFile(templatePath, { 
+                userName: user.name, 
+                hostUrl: `http://${req.headers.host}`,
+                otp: generatedOtp 
+            });
+
+            await sendmail(
+                user.email,
+                `KUSH MART - Verify Your Account (OTP: ${generatedOtp}) 🛒`,
+                welcomeHtml
+            );
+        } catch (mailError) {
+            console.error("Mail Sending Failed:", mailError.message);
+        }
+        return res.redirect(`/users/verify-otp?email=${user.email}`);
     }
-    catch(error){
-        return res.status(500).send('Something went wrong');
+    catch (error) {
+        console.error(error.message);
+        return res.render('register', { error: 'Something went wrong. Please try again.' });
     }
 };
 
-// 2. LOGIN USER (Fixed 🌟)
+// 2. LOGIN USER
 const loginUser = async (req, res)=>{
     try{
         let {email, password} = req.body;
         let user = await userModel.findOne({email});
+        
         if(!user) {
-            return res.send('User not found');
+            return res.render('login', { error: 'User not found! Please check your email.' });
         }
         
         let isMatch = await bcrypt.compare(password, user.password);
-        if(!isMatch){
-            return res.send('Email or password is wrong');
+        if (!user.isVerified) {
+            return res.render('login', { error: 'Your account is not verified! Please check your email for OTP.' });
         }
-        //create token and set cookie
+        
+        if(!isMatch){
+            return res.render('login', { error: 'Wrong password! Please try again.' });
+        }
+
         let token = generateToken(user);
         res.cookie('token', token,{
             secure: false,
@@ -69,12 +89,162 @@ const loginUser = async (req, res)=>{
     }
     catch(error){
         console.log(error.message);
-        return res.send('Some wrong');
+        return res.render('login', { error: 'Something went wrong. Please try again.' });
+    }
+};
+
+// 7. GET VERIFY OTP PAGE
+const getVerifyOtpPage = async (req, res) => {
+    res.render('verify-otp', { email: req.query.email, error: null });
+};
+
+// 8. POST VERIFY OTP LOGIC
+const verifyOtp = async (req, res) => {
+    try {
+        const { email, otp } = req.body;
+        const user = await userModel.findOne({ email });
+
+        if (!user) {
+            return res.render('verify-otp', { email, error: 'User not found!' });
+        }
+
+        // चेक करो कि कहीं OTP एक्सपायर तो नहीं हुआ
+        if (user.otpExpires <= Date.now()) {
+            return res.render('verify-otp', { email, error: 'OTP has expired! Please register again.' });
+        }
+
+        // OTP मैच करो
+        if (user.otp !== otp) {
+            return res.render('verify-otp', { email, error: 'Invalid OTP! Please try again.' });
+        }
+
+        // अगर सब सही है, तो यूजर को वेरीफाई करो और OTP डिलीट मारो डेटाबेस से
+        user.isVerified = true;
+        user.otp = undefined;
+        user.otpExpires = undefined;
+        await user.save();
+
+        // अब टोकन और कुकी दो ताकि वो सीधे अंदर जा सके
+        let token = generateToken(user);
+        res.cookie('token', token, {
+            httpOnly: true,
+            secure: false
+        });
+
+        return res.redirect('/products/allProducts');
+    } catch (error) {
+        console.error(error.message);
+        return res.status(500).send('Server Error');
     }
 };
 
 
-// 3. ADD TO CART
+// 4. FORGOT PASSWORD
+const forgotPassword = async (req, res) => {
+    try {
+        const { email } = req.body;
+        const user = await userModel.findOne({ email });
+
+        if (!user) {
+            return res.render('forgot-password', { 
+                message: 'This email is not registered with us.', 
+                type: 'error' 
+            });
+        }
+
+        // 1 घंटे के लिए एक सिक्योर रैंडम टोकन जनरेट करें
+        const token = crypto.randomBytes(20).toString('hex');
+        user.resetPasswordToken = token;
+        user.resetPasswordExpires = Date.now() + 3600000; // 1 Hour from now
+        await user.save();
+
+        const resetUrl = `http://${req.headers.host}/users/reset-password/${token}`;
+
+        await sendmail(
+            user.email,
+            "KUSH MART - Password Reset Request",
+            `<h2>Password Reset Request</h2>
+             <p>Aapne KUSH MART अकाउंट का पासवर्ड रिसेट करने की रिक्वेस्ट की है।</p>
+             <p>नीचे दिए गए लिंक पर क्लिक करके अपना नया पासवर्ड सेट करें (यह लिंक 1 घंटे तक वैलिड है):</p>
+             <a href="${resetUrl}" style="background:#24963f; color:white; padding:10px 20px; text-decoration:none; border-radius:8px; display:inline-block; margin-top:10px;">Reset Password</a>
+             <p>अगर आपने यह रिक्वेस्ट नहीं की है, तो इस ईमेल को इग्नोर करें।</p>`
+        );
+
+        return res.render('forgot-password', { 
+            message: 'A secure reset link has been sent to your email!', 
+            type: 'success' 
+            });
+
+    } catch (error) {
+        console.error(error.message);
+        return res.render('forgot-password', { message: 'Something went wrong. Try again.', type: 'error' });
+    }
+};
+
+// 5. GET RESET PASSWORD 
+const getResetPassword = async (req, res) => {
+    try {
+        const user = await userModel.findOne({
+            resetPasswordToken: req.params.token,
+            resetPasswordExpires: { $gt: Date.now() } // टोकन एक्सपायर न हुआ हो
+        });
+
+        if (!user) {
+            return res.send('Password reset token is invalid or has expired. Request a new one.');
+        }
+
+        res.render('reset-password', { token: req.params.token, message: null, type: null });
+    } catch (error) {
+        return res.status(500).send('Server Error');
+    }
+};
+
+// 6. POST RESET PASSWORD - 
+const postResetPassword = async (req, res) => {
+    try {
+        const { password, confirmPassword } = req.body;
+
+        if (password !== confirmPassword) {
+            return res.render('reset-password', { 
+                token: req.params.token, 
+                message: 'Passwords do not match.', 
+                type: 'error' 
+            });
+        }
+
+        const user = await userModel.findOne({
+            resetPasswordToken: req.params.token,
+            resetPasswordExpires: { $gt: Date.now() }
+        });
+
+        if (!user) {
+            return res.send('Token invalid or expired.');
+        }
+
+        let salt = await bcrypt.genSalt(10);
+        let hash = await bcrypt.hash(password, salt);
+
+        user.password = hash;
+        user.resetPasswordToken = undefined;  
+        user.resetPasswordExpires = undefined; 
+        await user.save();
+        return res.redirect('/users/login');
+
+    } catch (error) {
+        console.error(error.message);
+        return res.status(500).send('Something went wrong');
+    }
+};
+
+
+//  LOGOUT user 
+const logoutUser = async (req, res) => {
+    res.clearCookie('token');
+    req.flash('Success', "Logged out Successfully ")
+    res.redirect('/users/login')
+}
+
+// ADD TO CART
 const addToCart = async (req, res)=>{
     try{
         const userEmail = req.user ? req.user.email : jwt.verify(req.cookies.token, process.env.JWT_SECRET).email;
@@ -113,7 +283,7 @@ const addToCart = async (req, res)=>{
     }
 };
 
-// 4. REMOVE FROM CART
+//  REMOVE FROM CART
 const removeToCart = async (req, res)=>{
     try{
         const userEmail = req.user ? req.user.email : jwt.verify(req.cookies.token, process.env.JWT_SECRET).email;
@@ -178,7 +348,6 @@ const cartProducts = async (req, res)=>{
     }
 };
 
-
 // 6. DECREASE QUANTITY
 const descreaseQty = async (req, res)=>{
     try{
@@ -234,12 +403,7 @@ const increaseQty = async (req, res)=>{
     }
 };
 
-const logoutUser = async (req, res) => {
-    res.clearCookie('token');
-    req.flash('Success', "Logged out Successfully ")
-    res.redirect('/users/login')
-}
-
+// 1. CART CHECKOUT 
 const cartCheckout = async (req, res) => {
     try {
         const user = await userModel.findById(req.user._id).populate('cart.product');
@@ -248,29 +412,45 @@ const cartCheckout = async (req, res) => {
             return res.status(400).send("Your cart is empty!");
         }
 
-        // कार्ट का टोटल प्राइस कैलकुलेट करें
         let totalCartPrice = user.cart.reduce((acc, item) => acc + (item.product.price * item.quantity), 0);
         
-        // ऑर्डर के लिए प्रोडक्ट्स का एरे तैयार करें
         const orderProducts = user.cart.map(item => ({
             product: item.product._id, 
             quantity: item.quantity,
         }));
 
-        // नया ऑर्डर बनाएं
+        const deliveryAddress = req.body.address || "Main Address";
+
         let newOrder = await orderModel.create({
             user: user._id,
             products: orderProducts,   
             totalPrice: totalCartPrice,
-            address: req.body.address || "Main Address", // अगर एड्रेस न आए तो फॉलबैक
+            address: deliveryAddress,
         });
     
-        // ऑर्डर बनने के बाद कार्ट को खाली करें
         user.cart = [];
         await user.save();
     
-        // सीधे ऑर्डर्स पेज पर भेजें
-        res.redirect('/users/orders');
+        try {
+            const templatePath = path.join(__dirname, '../views/emails/orderSuccess.ejs');
+            const orderHtml = await ejs.renderFile(templatePath, {
+                userName: user.name,
+                orderId: newOrder._id,
+                totalPrice: totalCartPrice,
+                address: deliveryAddress,
+                hostUrl: `http://${req.headers.host}`
+            });
+
+            await sendmail(
+                user.email,
+                `🛒 KUSH MART - Order Confirmed! (ID: ${newOrder._id.toString().slice(-6).toUpperCase()})`,
+                orderHtml
+            );
+        } catch (mailError) {
+            console.error("Order Mail Failed:", mailError.message);
+        }
+
+        res.redirect('/users/orders?success=true');
     }
     catch (error) {
         console.error("Critical Checkout Error:", error.message, error);
@@ -278,6 +458,7 @@ const cartCheckout = async (req, res) => {
     }
 };
 
+// 2. GET ORDERS (With Success Flash Notification Support)
 const getOrders = async (req, res) => {
     try {
         const currentUser = await userModel.findById(req.user._id).populate('cart.product');
@@ -296,10 +477,13 @@ const getOrders = async (req, res) => {
                                      .populate('products.product')
                                      .sort({ createdAt: -1 }); 
 
+        const isOrderSuccess = req.query.success === 'true';
+
         res.render('orders', { 
             orders, 
             user: currentUser,
-            totalCartPrice 
+            totalCartPrice,
+            orderSuccessMessage: isOrderSuccess ? "Your order has been placed successfully! Track your order below." : null
         });
 
     } catch (error) {
@@ -442,7 +626,8 @@ const editAddress = async (req, res) => {
 };
 
 module.exports = {
-    registerUser, loginUser, addToCart, cartProducts, removeToCart,
+    registerUser, loginUser, postResetPassword, getResetPassword, forgotPassword,getVerifyOtpPage, verifyOtp,
+    addToCart, cartProducts, removeToCart,
     increaseQty, descreaseQty, logoutUser, cartCheckout, getOrders, getBill, getProfile,
     addAddress, deleteAddress, makeAddressPrimary, editAddress
 };

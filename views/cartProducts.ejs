@@ -117,7 +117,7 @@
           </div>
         </div>
 
-        <form action="/users/cart/checkout" method="POST" class="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
+        <form action="/users/cart/checkout" method="POST" onsubmit="showLoader(event)" class="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
           <div class="flex justify-between items-center mb-4">
             <h3 class="text-xs font-black uppercase tracking-wider text-gray-400">Delivery Address</h3>
             <a href="/users/profile" class="text-[#24963f] hover:text-[#1e7e34] text-xs font-bold transition-colors">
@@ -128,7 +128,6 @@
           <div class="space-y-3">
             <% if (user && user.addresses && user.addresses.length > 0) { %>
               <% 
-                // डिफ़ॉल्ट एड्रेस ढूंढो, नहीं तो पहला वाला ले लो
                 let defaultAddr = user.addresses.find(a => a.isDefault) || user.addresses[0]; 
                 let otherAddresses = user.addresses.filter(a => a._id.toString() !== defaultAddr._id.toString());
               %>
@@ -202,8 +201,8 @@
           <div class="my-5 border-t border-gray-100"></div>
           
           <% if (user && user.addresses && user.addresses.length > 0) { %>
-            <button type="submit" class="w-full bg-[#24963f] hover:bg-[#1e7e34] text-white py-3.5 rounded-xl font-black text-sm tracking-wide transition-all shadow-md shadow-emerald-700/10 active:scale-[0.99] flex items-center justify-center gap-2">
-              <i class="fa-solid fa-bolt text-xs"></i> Confirm & Place Order
+            <button type="button" onclick="openOrderModal()" class="w-full bg-[#24963f] hover:bg-[#1e7e34] text-white py-3.5 rounded-xl font-black text-sm tracking-wide transition-all shadow-md shadow-emerald-700/10 active:scale-[0.99] flex items-center justify-center gap-2">
+              <i class="fa-solid fa-arrow-right-to-bracket text-xs"></i> Proceed to Checkout
             </button>
           <% } else { %>
             <button type="button" disabled class="w-full bg-gray-200 text-gray-400 py-3.5 rounded-xl font-black text-sm cursor-not-allowed text-center">
@@ -307,9 +306,86 @@
     });
   </script>
 
-
   <%- include('partials/header-scripts') %>
   <%- include('partials/updateQty') %>
 
+  <div id="orderConfirmModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4">
+  <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="closeOrderModal()"></div>
+  
+  <div class="bg-white dark:bg-zinc-900 rounded-3xl border border-gray-100 max-w-md w-full p-6 shadow-2xl relative z-10 animate-[fadeIn_0.2s_ease-out]">
+    
+    <div class="w-12 h-12 bg-emerald-50 rounded-2xl flex items-center justify-center mb-4 border border-emerald-100">
+      <i class="fa-solid fa-cart-shopping text-xl text-[#24963f]"></i>
+    </div>
+    
+    <h3 class="text-xl font-black text-gray-900 tracking-tight">Confirm Your Order</h3>
+    <p class="text-xs text-gray-500 mt-1">Please review your order details before final placement.</p>
+    
+    <div class="my-4 border-t border-gray-100"></div>
+    
+    <div class="space-y-3 bg-gray-50 p-4 rounded-xl text-xs font-medium text-gray-600 mb-6">
+      <div class="flex justify-between items-center">
+        <span>Total Payable Amount:</span>
+        <span id="modalTotalAmount" class="font-black text-base text-gray-900"></span>
+      </div>
+      <div class="border-t border-dashed border-gray-200 my-2"></div>
+      <div>
+        <span class="block text-[10px] uppercase font-bold text-gray-400 tracking-wider mb-1">Delivering To:</span>
+        <p id="modalAddressText" class="text-gray-800 font-bold leading-relaxed line-clamp-2"></p>
+      </div>
+    </div>
+    
+    <div class="grid grid-cols-2 gap-3">
+      <button type="button" onclick="closeOrderModal()" class="py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-xs rounded-xl transition-all text-center">
+        Cancel
+      </button>
+      <button type="button" onclick="submitFinalOrder()" class="py-3 bg-[#24963f] hover:bg-[#1e7e34] text-white font-black text-xs rounded-xl shadow-md shadow-emerald-700/10 transition-all text-center flex items-center justify-center gap-1.5">
+        <i class="fa-solid fa-circle-check text-[10px]"></i> Place Order
+      </button>
+    </div>
+    
+  </div>
+</div>
+
+<script>
+  function openOrderModal() {
+    const modal = document.getElementById('orderConfirmModal');
+    const finalTotalText = document.getElementById('finalTotal').innerText;
+    
+    const selectedAddressInput = document.querySelector('input[name="address"]:checked');
+    
+    if (!selectedAddressInput) {
+      alert("Please select a delivery address first!");
+      return;
+    }
+    
+    document.getElementById('modalTotalAmount').innerText = finalTotalText;
+    document.getElementById('modalAddressText').innerText = selectedAddressInput.value;
+    
+    if (modal) modal.classList.remove('hidden');
+  }
+
+  function closeOrderModal() {
+    const modal = document.getElementById('orderConfirmModal');
+    if (modal) modal.classList.add('hidden');
+  }
+
+  function submitFinalOrder() {
+    const checkoutForm = document.querySelector('form[action="/users/cart/checkout"]');
+    if (checkoutForm) {
+      event.target.disabled = true;
+      event.target.innerHTML = `<i class="fa-solid fa-spinner animate-spin mr-1"></i> Placing...`;
+      checkoutForm.submit();
+    }
+  }
+</script>
+
+<style>
+  @keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+  }
+</style>
+<%- include('partials/loader') %>
 </body>
 </html>

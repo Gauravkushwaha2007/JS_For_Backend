@@ -51,7 +51,7 @@ productRouter.get('/view/:id', attachUser, viewProduct);
 
 
 productRouter.get('/create', attachUser, isAdmin, (req, res)=>{
-    res.render('createProduct',{ product: null });
+    res.render('createProduct',{ product: null, activePage: 'createProduct'});
 })
 
 productRouter.post('/create', attachUser, isAdmin, upload.single('image'), createProduct);

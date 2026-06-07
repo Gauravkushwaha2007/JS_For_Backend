@@ -2,8 +2,10 @@ const express = require('express');
 const isLoggedIn = require('../middlewares/authMiddleware');
 const isAdmin = require('../middlewares/isAdmin');
 const {
-    registerUser, loginUser, addToCart, cartProducts, removeToCart, increaseQty, descreaseQty, 
-    logoutUser, cartCheckout, getOrders, getBill,
+    registerUser, loginUser, logoutUser, verifyOtp, getVerifyOtpPage,
+    forgotPassword, getResetPassword, postResetPassword,
+    addToCart, cartProducts, removeToCart, increaseQty, descreaseQty, 
+    cartCheckout, getOrders, getBill,
     getProfile, addAddress, deleteAddress, editAddress, makeAddressPrimary
 } = require('../controllers/userController');
 const userModel = require('../models/userModel');
@@ -12,18 +14,29 @@ const productModel = require('../models/productModel');
 const userRouter = express.Router();
 
 
-userRouter.get('/register', (req,res)=>{
-    res.render('register');
+userRouter.get('/register', (req, res)=>{
+    res.render('register', { error: null });
 });
 userRouter.post('/register', registerUser);
 
-
+userRouter.get('/verify-otp', getVerifyOtpPage);
+userRouter.post('/verify-otp', verifyOtp);
 
 userRouter.get('/login', (req, res)=>{
-    res.render('login');
+    res.render('login', { error: null });
 });
 userRouter.post('/login', loginUser);
 userRouter.get('/logout', logoutUser);
+
+
+
+userRouter.get('/forgot-password', (req, res) => {
+    res.render('forgot-password', { message: null, type: null });
+});
+userRouter.post('/forgot-password', forgotPassword);
+userRouter.get('/reset-password/:token', getResetPassword);
+userRouter.post('/reset-password/:token', postResetPassword);
+
 
 
 userRouter.get('/cart/products', isLoggedIn, cartProducts)

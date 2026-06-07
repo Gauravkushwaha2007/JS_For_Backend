@@ -1,0 +1,30 @@
+<div id="globalLoader" class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm hidden">
+  <div class="bg-white dark:bg-zinc-900 p-6 rounded-2xl shadow-xl flex flex-col items-center gap-4 border border-zinc-100 dark:border-zinc-800">
+    <div class="w-12 h-12 border-4 border-zinc-200 border-t-[#24963f] rounded-full animate-spin"></div>
+    <p class="text-xs font-bold text-zinc-600 dark:text-zinc-300 tracking-wide text-center">
+      Processing... <br>
+      <span class="text-[10px] text-zinc-400 font-medium mt-1 inline-block">Please wait, do not refresh.</span>
+    </p>
+  </div>
+</div>
+
+
+<script>
+  function showLoader(event) {
+    // 1. लोडर वाले डिव को ढूंढो और उसकी 'hidden' क्लास हटाकर उसे दिखाओ
+    const loader = document.getElementById('globalLoader');
+    if (loader) {
+      loader.classList.remove('hidden');
+    }
+
+    // 2. फॉर्म के सबमिट बटन को ढूंढकर डिसेबल कर दो ताकि यूजर दोबारा क्लिक न कर सके
+    const submitBtn = event.target.querySelector('button[type="submit"]');
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.style.opacity = '0.7';
+      submitBtn.innerHTML = `<i class="fa-solid fa-spinner animate-spin mr-1"></i> Processing...`;
+    }
+    
+    // इसके बाद फॉर्म अपने आप बैकएंड पर सबमिट हो जाएगा और जब तक नया पेज लोड नहीं होता, लोडर घूमता रहेगा!
+  }
+</script>

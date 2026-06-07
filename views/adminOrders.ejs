@@ -18,10 +18,16 @@
 
 <body class="bg-[#fafafa] text-gray-950 antialiased">
 
-  <div class="flex min-h-screen flex-col md:flex-row">
+  <!-- MASTER FLEX FRAMEWORK -->
+  <div class="min-h-screen flex flex-col">
+    
+    <!-- Include Admin Sidebar -->
     <%- include('partials/adminSidebar')%>
-    <main class="flex-1 p-5 sm:p-8 lg:p-12 overflow-x-hidden">
+    
+    <!-- FIXED MAIN ROUTER: md:ml-64 keeps content clear of the desktop sidebar, min-w-0 prevents data blowouts -->
+    <main class="flex-1 w-full min-w-0 p-5 sm:p-8 lg:p-12 md:ml-64 transition-all duration-300">
       
+      <!-- HEADER ZONE -->
       <div class="mb-8 pb-5 border-b border-zinc-200/60 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <div class="flex items-center gap-2 mb-1.5 text-[11px] font-medium text-gray-400">
@@ -42,6 +48,7 @@
         </div>
       </div>
 
+      <!-- KPI METRIC GRID -->
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         <div class="bg-white border border-zinc-100 p-5 rounded-2xl flex items-center justify-between shadow-sm hover:shadow-md transition-shadow">
           <div>
@@ -77,6 +84,7 @@
         </div>
       </div>
 
+      <!-- FILTER PIPELINES -->
       <div class="flex items-center gap-2 border-b border-zinc-200/60 pb-3 mb-6 overflow-x-auto scrollbar-none select-none">
         <button onclick="filterOrders('All')" class="tab-btn px-4 py-2 text-xs font-black uppercase tracking-wider border-b-2 border-red-600 text-red-600 bg-red-50/50 rounded-t-xl transition-all">All Inbound</button>
         <button onclick="filterOrders('Pending')" class="tab-btn px-4 py-2 text-xs font-bold uppercase tracking-wider border-b-2 border-transparent text-gray-400 hover:text-gray-900 transition-all">Pending Pipeline</button>
@@ -84,6 +92,7 @@
         <button onclick="filterOrders('Delivered')" class="tab-btn px-4 py-2 text-xs font-bold uppercase tracking-wider border-b-2 border-transparent text-gray-400 hover:text-gray-900 transition-all">Completed Orders</button>
       </div>
 
+      <!-- SYSTEM LOG WORKSPACE -->
       <% if(orders.length === 0) { %>
         <div class="text-center py-24 border border-dashed rounded-[32px] border-zinc-200 bg-white shadow-sm">
           <i class="fa-solid fa-circle-nodes text-3xl text-zinc-300 mb-4 block"></i>
@@ -194,7 +203,6 @@
 
                       </div>
                     </td>
-
                   </tr>
                 <% }) %>
               </tbody>
@@ -221,7 +229,6 @@
       activeBtn.classList.remove('border-transparent', 'text-gray-400');
       activeBtn.classList.add('border-red-600', 'text-red-600', 'bg-red-50/50');
 
-      // रोज़ फ़िल्टर करो
       document.querySelectorAll('.order-row').forEach(row => {
         if(status === 'All' || row.getAttribute('data-status') === status) {
           row.style.display = 'table-row';

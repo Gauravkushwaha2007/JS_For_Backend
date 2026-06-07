@@ -1,0 +1,48 @@
+<div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 550px; margin: 0 auto; background-color: #fafdfb; border: 1px solid #e2f5e7; border-radius: 24px; overflow: hidden; box-shadow: 0 4px 20px rgba(36,150,63,0.05);">
+    
+    <div style="background: linear-gradient(135deg, #24963f 0%, #1e7e34 100%); padding: 35px 20px; text-align: center;">
+        <h1 style="color: #ffffff; margin: 0; font-size: 28px; font-weight: 800; letter-spacing: -1px;">
+            KUSH<span style="color: #a7f3d0;">MART</span>
+        </h1>
+        <p style="color: #e2f5e7; margin: 8px 0 0 0; font-size: 13px; font-weight: 500; text-transform: uppercase; tracking-spacing: 1px;">Order Confirmed! 🎉</p>
+    </div>
+
+    <div style="padding: 40px 30px; background-color: #ffffff;">
+        <h2 style="color: #18181b; margin: 0 0 12px 0; font-size: 20px; font-weight: 700;">
+            Thank you for your order, <%= userName %>!
+        </h2>
+        <p style="color: #52525b; font-size: 14px; line-height: 1.6; margin: 0 0 24px 0;">
+            आपका ऑर्डर सफलतापूर्वक प्लेस हो गया है। हमारे स्टोर पार्टनर्स आपके ताज़ा सामान को पैक कर रहे हैं, जो जल्द ही आपके पास पहुँचेगा।
+        </p>
+
+        <div style="background-color: #f4fbf6; border: 1px solid #e2f5e7; padding: 20px; border-radius: 16px; margin-bottom: 25px;">
+            <p style="margin: 0 0 8px 0; color: #52525b; font-size: 13px;">
+                <strong>Order ID:</strong> <span style="color: #18181b; font-family: monospace;"><%= orderId %></span>
+            </p>
+            <p style="margin: 0 0 8px 0; color: #52525b; font-size: 13px;">
+                <strong>Total Amount:</strong> <span style="color: #24963f; font-weight: 700;">₹<%= totalPrice %></span>
+            </p>
+            <p style="margin: 0; color: #52525b; font-size: 13px;">
+                <strong>Delivery Address:</strong> <span style="color: #18181b;"><%= address %></span>
+            </p>
+        </div>
+
+        <div style="text-align: center; margin: 30px 0;">
+            <a href="<%= hostUrl %>/users/orders" 
+               style="background-color: #24963f; color: #ffffff; padding: 14px 32px; text-decoration: none; border-radius: 12px; font-size: 14px; font-weight: 700; display: inline-block; box-shadow: 0 4px 12px rgba(36,150,63,0.2);">
+               Track Your Order 🚚
+            </a>
+        </div>
+
+        <p style="color: #71717a; font-size: 12px; text-align: center; margin-top: 20px;">
+            KUSH MART को चुनने के लिए धन्यवाद। <br>
+            Aapka Apna Grocery Store!
+        </p>
+    </div>
+
+    <div style="background-color: #f4f4f5; padding: 15px; text-align: center; border-top: 1px solid #e4e4e7;">
+        <p style="color: #a1a1aa; font-size: 11px; margin: 0;">
+            &copy; 2026 KUSH MART. All rights reserved.
+        </p>
+    </div>
+</div>

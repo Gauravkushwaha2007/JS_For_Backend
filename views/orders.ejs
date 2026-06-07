@@ -14,7 +14,17 @@
     <%- include('partials/sidebar') %>
 
     <main class="flex-1 p-4 sm:p-6 lg:p-8 select-none">
-      
+      <% if (typeof orderSuccessMessage !== 'undefined' && orderSuccessMessage) { %>
+        <div id="orderSuccessPopup" class="mb-6 p-4 rounded-xl text-xs font-bold flex items-center justify-between border bg-emerald-50 border-emerald-200 text-emerald-700 dark:bg-emerald-950/40 dark:border-emerald-900/50 dark:text-emerald-400 animate-bounce">
+          <div class="flex items-center gap-2.5">
+            <i class="fa-solid fa-circle-check text-sm text-emerald-500"></i>
+            <span><%= orderSuccessMessage %></span>
+          </div>
+          <button type="button" onclick="document.getElementById('orderSuccessPopup').remove()" class="text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-200 transition-colors pl-2">
+            <i class="fa-solid fa-xmark text-sm"></i>
+          </button>
+        </div>
+      <% } %>
       <div class="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-white dark:bg-zinc-900 p-5 rounded-2xl border border-gray-100 dark:border-zinc-800 shadow-sm">
         <div>
           <div class="flex items-center gap-2 mb-1 text-[11px] font-medium text-zinc-400">

@@ -1,161 +1,144 @@
-<!-- <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap');
-    body { font-family: 'Inter', sans-serif; }
-  </style>
-</head>
-
-<body class="bg-[#0a0a0a] flex items-center justify-center h-screen px-4">
-
-  <div class="relative bg-[#111] border border-zinc-800 shadow-2xl p-8 rounded-2xl w-full max-w-sm">
-    
-    <a href="/" class="absolute top-4 right-4 text-zinc-500 hover:text-white transition-colors p-2 rounded-full hover:bg-zinc-800/50">
-      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <line x1="18" y1="6" x2="6" y2="18"></line>
-        <line x1="6" y1="6" x2="18" y2="18"></line>
-      </svg>
-    </a>
-    
-    <div class="text-center mb-8">
-      <h2 class="text-white text-3xl font-semibold mb-1">Welcome Back</h2>
-      <p class="text-zinc-500 text-xs">Login to continue</p>
-    </div>
-
-    <form action="/users/login" method="POST" class="space-y-4">
-      
-      <input type="email" name="email" placeholder="Email"
-        class="w-full px-4 py-3 rounded-xl bg-zinc-900 border border-zinc-800 text-white text-sm focus:border-white focus:ring-1 focus:ring-white outline-none placeholder-zinc-600 transition">
-
-      <input type="password" name="password" placeholder="Password"
-        class="w-full px-4 py-3 rounded-xl bg-zinc-900 border border-zinc-800 text-white text-sm focus:border-white focus:ring-1 focus:ring-white outline-none placeholder-zinc-600 transition">
-
-      <div class="flex justify-between items-center text-xs text-zinc-500">
-        <label class="flex items-center gap-2 cursor-pointer">
-          <input type="checkbox" class="accent-white scale-90">
-          Remember
-        </label>
-        <a href="#" class="hover:text-white">Forgot?</a>
-      </div>
-
-      <button class="w-full bg-white text-black hover:bg-zinc-200 transition py-3 rounded-xl font-medium text-sm active:scale-95">
-        Sign In
-      </button>
-      
-    </form>
-
-    <p class="text-center text-xs text-zinc-500 mt-6">
-      Don't have an account? 
-      <a href="/users/register" class="text-white hover:underline">Sign up</a>
-    </p>
-
-  </div>
-
-</body>
-</html> -->
-
-
-
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login | Apna Mart Supermart</title>
-  <!-- Google Fonts for Premium Digital Mart Look -->
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Archivo+Black&display=swap" rel="stylesheet">
-  <!-- FontAwesome for Grocery Icons -->
+  <title>Login | Kush Mart</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
 
   <style>
     body { 
       font-family: 'Plus Jakarta Sans', sans-serif; 
     }
-    /* Premium dark forest green glow suitable for high-end organic/grocery mart */
-    .bg-glow {
-      background: radial-gradient(circle at 50% 30%, #0d2111 0%, #060c08 65%, #020403 100%);
+    /* प्रीमियम लाइट डॉटेड ग्रिड बैकग्राउंड फॉर मॉडर्न UI फील */
+    .bg-pattern {
+      background-color: #fcfdfc;
+      background-image: radial-gradient(#24963f0a 1.5px, transparent 1.5px), radial-gradient(#24963f0a 1.5px, #fcfdfc 1.5px);
+      background-size: 24px 24px;
+      background-position: 0 0, 12px 12px;
+    }
+    /* सॉफ्ट नेचुरल शैडो */
+    .premium-shadow {
+      box-shadow: 0 20px 50px -12px rgba(36, 150, 63, 0.08), 0 0 1px 1px rgba(0, 0, 0, 0.02);
     }
   </style>
 </head>
 
-<body class="bg-[#050906] text-white bg-glow antialiased flex items-center justify-center h-screen px-4">
+<body class="bg-pattern text-gray-900 antialiased flex items-center justify-center min-h-screen px-4">
 
-  <!-- Main Login Card Container -->
-  <div class="relative bg-[#0d110e]/70 border border-emerald-950/40 backdrop-blur-xl shadow-[0_4px_30px_rgba(0,0,0,0.5)] p-8 rounded-2xl w-full max-w-sm transition-all duration-300">
+  <div class="relative bg-white border border-gray-100/80 premium-shadow p-8 sm:p-10 rounded-3xl w-full max-w-md transition-all duration-300">
     
-    <!-- Close / Back to Home Button -->
-    <a href="/" class="absolute top-4 right-4 text-zinc-500 hover:text-emerald-400 transition-colors p-2 rounded-xl hover:bg-emerald-950/20 border border-transparent hover:border-emerald-950/40">
+    <a href="/" class="absolute top-5 right-5 text-gray-400 hover:text-gray-900 transition-all p-2 rounded-xl hover:bg-gray-50 border border-transparent hover:border-gray-100">
       <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
         <line x1="18" y1="6" x2="6" y2="18"></line>
         <line x1="6" y1="6" x2="18" y2="18"></line>
       </svg>
     </a>
     
-    <!-- Branding Logo & Welcome Header -->
     <div class="text-center mb-8">
-      <div class="inline-flex items-center gap-2 mb-4 group cursor-pointer">
-        <div class="w-8 h-8 bg-emerald-500 rounded-xl flex items-center justify-center group-hover:rotate-6 transition-transform duration-300 shadow-[0_0_15px_rgba(16,185,129,0.3)]">
-          <i class="fa-solid fa-basket-shopping text-black text-sm"></i>
+      <div class="inline-flex items-center gap-2 mb-5 group cursor-pointer">
+        <div class="w-9 h-9 bg-[#24963f] rounded-xl flex items-center justify-center group-hover:rotate-6 transition-transform duration-300 shadow-md shadow-emerald-700/20">
+          <i class="fa-solid fa-basket-shopping text-white text-sm"></i>
         </div>
         <div class="text-left">
-          <h1 class="text-base font-black tracking-tight text-white leading-none">Apna Mart</h1>
-          <span class="text-[8px] uppercase font-bold tracking-widest text-emerald-400">Supermart</span>
+          <h1 class="text-xl font-black tracking-tighter text-[#24963f] leading-none">KUSH<span class="text-black">MART</span></h1>
+          <span class="text-[9px] uppercase font-black tracking-widest text-gray-400 block mt-0.5">Supermart & Grocery</span>
         </div>
       </div>
       
-      <h2 class="text-white text-2xl font-extrabold tracking-tight mb-1">Welcome Back</h2>
-      <p class="text-zinc-500 text-xs font-medium">Login to access your fresh basket</p>
+      <h2 class="text-gray-900 text-2xl font-black tracking-tight mb-1.5">Welcome Back!</h2>
+      <p class="text-gray-400 text-xs font-semibold">Login to access your fresh basket</p>
     </div>
 
-    <!-- Login Form -->
-    <form action="/users/login" method="POST" class="space-y-4">
-      
-      <!-- Email Input Field with Icon -->
-      <div class="relative group">
-        <i class="fa-solid fa-envelope absolute left-4 top-1/2 -translate-y-1/2 text-zinc-600 group-focus-within:text-emerald-400 transition-colors text-xs"></i>
-        <input type="email" name="email" placeholder="Email Address" required
-          class="w-full bg-zinc-900/50 border border-zinc-800/80 rounded-xl py-3 pl-11 pr-4 text-xs font-medium text-white placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:bg-zinc-900 focus:border-emerald-500 transition-all">
+    <form action="/users/login" method="POST" onsubmit="showLoader(event)" class="space-y-4">
+      <% if (typeof error !== 'undefined' && error) { %>
+        <div id="errorPopup" class="mb-6 p-4 rounded-xl text-xs font-bold flex items-center justify-between border bg-rose-50 border-rose-200 text-rose-700 dark:bg-rose-950/40 dark:border-rose-900/50 dark:text-rose-400 animate-pulse">
+          <div class="flex items-center gap-2.5">
+            <i class="fa-solid fa-circle-exclamation text-sm text-rose-500"></i>
+            <span><%= error %></span>
+          </div>
+          <button type="button" onclick="closePopup()" class="text-rose-400 hover:text-rose-700 dark:hover:text-rose-200 transition-colors pl-2">
+            <i class="fa-solid fa-xmark text-sm"></i>
+          </button>
+        </div>
+      <% } %>
+      <div class="space-y-1.5">
+        <label class="text-[10px] font-black uppercase tracking-wider text-gray-400 pl-1">Email Address</label>
+        <div class="relative group">
+          <i class="fa-solid fa-envelope absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#24963f] transition-colors text-xs"></i>
+          <input 
+            type="email" 
+            name="email" 
+            placeholder="Enter your email" 
+            required
+            class="w-full bg-gray-50/50 border border-gray-200 rounded-xl py-3.5 pl-11 pr-4 text-xs font-bold text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-emerald-500/10 focus:bg-white focus:border-[#24963f] transition-all"
+          >
+        </div>
       </div>
 
-      <!-- Password Input Field with Icon -->
-      <div class="relative group">
-        <i class="fa-solid fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-zinc-600 group-focus-within:text-emerald-400 transition-colors text-xs"></i>
-        <input type="password" name="password" placeholder="Password" required
-          class="w-full bg-zinc-900/50 border border-zinc-800/80 rounded-xl py-3 pl-11 pr-4 text-xs font-medium text-white placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:bg-zinc-900 focus:border-emerald-500 transition-all">
+      <div class="space-y-1.5">
+        <div class="flex justify-between items-center pl-1">
+          <label class="text-[10px] font-black uppercase tracking-wider text-gray-400">Password</label>
+          <a href="/users/forgot-password" class="text-xs font-bold text-[#24963f] hover:text-[#1e7e34] dark:text-emerald-400 dark:hover:text-emerald-300 transition-colors duration-200">
+            Forgot Password?
+          </a>
+        </div>
+        <div class="relative group">
+          <i class="fa-solid fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#24963f] transition-colors text-xs"></i>
+          <input 
+            type="password" 
+            name="password" 
+            placeholder="••••••••" 
+            required
+            class="w-full bg-gray-50/50 border border-gray-200 rounded-xl py-3.5 pl-11 pr-4 text-xs font-bold text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-emerald-500/10 focus:bg-white focus:border-[#24963f] transition-all"
+          >
+        </div>
       </div>
 
-      <!-- Remember me & Forgot Password -->
-      <div class="flex justify-between items-center text-[11px] font-bold tracking-wide uppercase text-zinc-500">
-        <label class="flex items-center gap-2 cursor-pointer hover:text-zinc-300 transition-colors">
-          <input type="checkbox" class="accent-emerald-500 rounded border-zinc-800 bg-zinc-900 scale-95">
-          Remember Me
+      <div class="flex items-center text-[11px] font-extrabold tracking-wide text-gray-500 pt-1">
+        <label class="flex items-center gap-2 cursor-pointer hover:text-gray-800 transition-colors select-none">
+          <input type="checkbox" class="accent-[#24963f] h-4 w-4 rounded-md border-gray-200 bg-gray-50 focus:ring-0">
+          Remember me on this device
         </label>
-        <a href="#" class="hover:text-emerald-400 transition-colors">Forgot Password?</a>
       </div>
 
-      <!-- Premium Emerald Sign In Button -->
-      <button class="w-full bg-emerald-500 text-black hover:bg-emerald-400 transition py-3.5 rounded-xl font-bold text-xs uppercase tracking-wider shadow-lg shadow-emerald-500/10 active:scale-[0.98]">
-        Sign In Securely <i class="fa-solid fa-arrow-right-to-bracket ml-1 text-[10px]"></i>
-      </button>
+      <div class="pt-2">
+        <button type="submit" class="w-full bg-[#24963f] text-white hover:bg-[#1e7e34] transition-all py-3.5 rounded-xl font-extrabold text-xs uppercase tracking-wider shadow-lg shadow-emerald-700/10 active:scale-[0.99] flex items-center justify-center gap-2">
+          <span>Sign In Securely</span>
+          <i class="fa-solid fa-arrow-right text-[10px]"></i>
+        </button>
+      </div>
       
     </form>
 
-    <!-- Sign Up Redirect Link -->
-    <p class="text-center text-xs font-medium text-zinc-500 mt-6">
-      Don't have an account? 
-      <a href="/users/register" class="text-emerald-400 font-bold hover:underline ml-1">Sign up free</a>
+    <div class="relative flex py-3 items-center my-2">
+      <div class="flex-grow border-t border-gray-100"></div>
+      <span class="flex-shrink mx-4 text-[9px] font-black text-gray-300 uppercase tracking-widest">Fresh Grocery Store</span>
+      <div class="flex-grow border-t border-gray-100"></div>
+    </div>
+
+    <p class="text-center text-xs font-bold text-gray-400">
+      New to Kush Mart? 
+      <a href="/users/register" class="text-[#24963f] font-black hover:text-[#1e7e34] transition-colors ml-1">Create an account</a>
     </p>
 
   </div>
+  <script>
+    function closePopup() {
+      const popup = document.getElementById('errorPopup');
+      if (popup) {
+        popup.style.opacity = '0';
+        popup.style.transition = 'opacity 0.3s ease';
+        setTimeout(() => {
+          popup.remove();
+        }, 300);
+      }
+    }
+  </script>
+
+  <%- include('partials/loader') %>
 
 </body>
 </html>
