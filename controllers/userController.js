@@ -554,6 +554,29 @@ const getProfile = async(req, res)=>{
       }
 }
 
+// Update profile
+const updateProfile = async (req, res) => {
+    try {
+        const userId = req.user._id;
+        const { name, phone } = req.body;
+
+        if (!name || !phone) {
+            return res.status(400).send("Name and Phone number are required");
+        }
+
+        // यूजर का नाम और फोन नंबर अपडेट करो
+        await userModel.findByIdAndUpdate(userId, {
+            $set: { name: name, phone: phone }
+        });
+
+        // अपडेट होने के बाद वापस प्रोफाइल पेज पर भेज दो
+        res.redirect('/users/profile');
+    } catch (error) {
+        console.error("Profile Update Error:", error.message);
+        res.status(500).send("Profile update karne me dikkat aayi");
+    }
+};
+
 const addAddress = async (req, res)=>{
       try {
         const { title, flatNo, area, landmark, city, state, pincode } = req.body;
@@ -575,7 +598,7 @@ const addAddress = async (req, res)=>{
       }
 }
 
-// 1. DELETE ADDRESS
+// DELETE ADDRESS
 const deleteAddress = async (req, res) => {
     try {
         const userId = req.user._id; 
@@ -593,7 +616,7 @@ const deleteAddress = async (req, res) => {
     }
 };
 
-// 2. SET PRIMARY/DEFAULT ADDRESS
+// SET PRIMARY/DEFAULT ADDRESS
 const makeAddressPrimary = async (req, res) => {
     try {
         const userId = req.user._id;
@@ -618,7 +641,7 @@ const makeAddressPrimary = async (req, res) => {
     }
 };
 
-// 3. EDIT ADDRESS
+// EDIT ADDRESS
 const editAddress = async (req, res) => {
     try {
         const userId = req.user._id;
@@ -647,9 +670,87 @@ const editAddress = async (req, res) => {
     }
 };
 
+// AUTOMATIC Locate Location
+const fetchAddressFromGoogle = async (req, res) => {
+    try {
+        const { lat, lng } = req.query;
+        if (!lat || !lng) {
+            return res.status(400).json({ success: false, message: "Coordinates are missing" });
+        }
+
+        // 🗺️ OpenStreetMap Reverse Geocoding API
+        const osmUrl = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&addressdetails=1`;
+
+        const response = await fetch(osmUrl, {
+            headers: {
+                'User-Agent': 'ApnaMartStore/1.0'
+            }
+        });
+        const osmData = await response.json();
+
+        if (!osmData || !osmData.address) {
+            return res.json({ success: false, message: "Location details not found" });
+        }
+
+        const addr = osmData.address;
+
+        // 🎯 1. एरिया (Area) के लिए मजबूत फॉलबैक सिस्टम
+        let calculatedArea = addr.road || addr.neighbourhood || addr.sublocality_level_1 || addr.sublocality || '';
+        if (!calculatedArea) {
+            calculatedArea = addr.suburb || addr.residential || addr.village || addr.city_district || addr.county || '';
+        }
+
+        // 🎯 2. लैंडमार्क (Landmark) के लिए सटीक चेकिंग
+        let calculatedLandmark = osmData.display_name ? osmData.display_name.split(',')[0] : '';
+        // अगर पहला शब्द रोड या शहर का नाम ही है, तो उसे लैंडमार्क नहीं मानेंगे, पास की कोई दुकान/इमारत ढूंढेंगे
+        if (calculatedLandmark === addr.road || calculatedLandmark === addr.city || calculatedLandmark === addr.town) {
+            calculatedLandmark = addr.amenity || addr.shop || addr.industrial || addr.commercial || '';
+        }
+
+        // 🎯 3. पिनकोड (Pincode) का परमानेंट इलाज (Regex Magic)
+        let calculatedPincode = addr.postcode || '';
+        
+        // अगर OSM ने पिनकोड गलत दिया या नहीं दिया, तो पूरे एड्रेस (display_name) में से 6 डिजिट का नंबर ढूंढो
+        if (!calculatedPincode || calculatedPincode.length !== 6 || isNaN(calculatedPincode)) {
+            const fullAddress = osmData.display_name || '';
+            // भारतीय पिनकोड 6 डिजिट का होता है और 1 से 9 के बीच शुरू होता है
+            const pincodeMatch = fullAddress.match(/\b[1-9][0-9]{5}\mathrm{\b}/); 
+            if (pincodeMatch) {
+                calculatedPincode = pincodeMatch[0];
+            }
+        }
+
+        // फाइनल ऑब्जेक्ट तैयार
+        let addressInfo = {
+            flatNo: addr.building || addr.house_number || 'Near Location',
+            area: calculatedArea.trim(),
+            landmark: calculatedLandmark ? calculatedLandmark.trim() : '',
+            city: addr.city || addr.town || addr.village || addr.county || 'Local City',
+            state: addr.state || '',
+            pincode: calculatedPincode.trim()
+        };
+
+        // अगर एरिया फिर भी खाली रह जाए
+        if (!addressInfo.area) {
+            addressInfo.area = addr.state_district || 'Local Area';
+        }
+
+        // फ्रंटएंड को रिस्पॉन्स रवाना करो
+        return res.json({
+            success: true,
+            data: addressInfo
+        });
+
+    } catch (error) {
+        console.error("Geocoding Error:", error.message);
+        return res.status(500).json({ success: false, message: "Server error during geocoding" });
+    }
+};
+
+
 module.exports = {
     registerUser, loginUser, postResetPassword, getResetPassword, forgotPassword,getVerifyOtpPage, verifyOtp,
     addToCart, cartProducts, removeToCart,
-    increaseQty, descreaseQty, logoutUser, cartCheckout, getOrders, getBill, getProfile,
-    addAddress, deleteAddress, makeAddressPrimary, editAddress
+    increaseQty, descreaseQty, logoutUser, cartCheckout, getOrders, getBill, getProfile,updateProfile,
+    addAddress, deleteAddress, makeAddressPrimary, editAddress, fetchAddressFromGoogle
 };

@@ -79,18 +79,23 @@
 
       <div class="flex-1 p-6 sm:p-8 bg-zinc-50/30 dark:bg-transparent flex flex-col gap-8">
         
-        <div class="bg-white dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800/60 rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row justify-between sm:items-center gap-4 shadow-sm">
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-2 text-xs w-full max-w-xl">
-            <div>
-              <span class="text-[10px] font-bold text-zinc-400 uppercase tracking-wide block">Account Holder</span>
-              <span class="font-extrabold text-zinc-800 dark:text-zinc-200"><%= user.name %></span>
-            </div>
-            <div>
-              <span class="text-[10px] font-bold text-zinc-400 uppercase tracking-wide block">Email ID</span>
-              <span class="font-extrabold text-zinc-800 dark:text-zinc-200 truncate block"><%= user.email %></span>
-            </div>
+      <div class="bg-white dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800/60 rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row justify-between sm:items-center gap-4 shadow-sm">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-2 text-xs w-full max-w-xl">
+          <div>
+            <span class="text-[10px] font-bold text-zinc-400 uppercase tracking-wide block">Account Holder</span>
+            <span class="font-extrabold text-zinc-800 dark:text-zinc-200"><%= user.name %></span>
+          </div>
+          <div>
+            <span class="text-[10px] font-bold text-zinc-400 uppercase tracking-wide block">Email ID / Phone</span>
+            <span class="font-extrabold text-zinc-800 dark:text-zinc-200 truncate block"><%= user.phone || user.email %></span>
           </div>
         </div>
+        
+        <button onclick="toggleProfileModal(true, '<%= user.name %>', '<%= user.phone || '' %>')" class="flex items-center gap-1.5 px-3 py-2 bg-zinc-50 hover:bg-zinc-100 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-200 text-[11px] font-black rounded-xl transition-all border border-zinc-200/50 dark:border-zinc-700 shadow-sm shrink-0">
+          <i class="fa-solid fa-user-pen"></i>
+          EDIT PROFILE
+        </button>
+      </div>
 
         <div class="space-y-4">
           <div class="flex justify-between items-center">
@@ -128,7 +133,9 @@
                             <i class="fa-solid fa-star text-[10px]"></i>
                           </button>
                         <% } %>
-
+                        <button type="button" onclick="copyToClipboard('<%= addr.flatNo %>, <%= addr.area %>, <%= addr.city %> - <%= addr.pincode %>')" title="Copy Address" class="w-6 h-6 rounded-lg text-zinc-400 hover:text-[#24963f] hover:bg-emerald-50 dark:hover:bg-zinc-800 flex items-center justify-center transition-colors">
+                          <i class="fa-regular fa-copy text-[10px]"></i>
+                        </button>
                         <button onclick="openEditAddressModal('<%= addr._id %>', '<%= addr.title %>', '<%= addr.flatNo %>', '<%= addr.area %>', '<%= addr.landmark %>', '<%= addr.city %>', '<%= addr.state %>', '<%= addr.pincode %>')" title="Edit Address" class="w-6 h-6 rounded-lg text-zinc-400 hover:text-[#24963f] hover:bg-emerald-50 dark:hover:bg-zinc-800 flex items-center justify-center transition-colors">
                           <i class="fa-solid fa-pencil text-[10px]"></i>
                         </button>
@@ -176,14 +183,41 @@
         <button onclick="toggleModal(false)" class="w-7 h-7 bg-zinc-50 dark:bg-zinc-800 hover:bg-zinc-100 rounded-full text-zinc-400 hover:text-zinc-600 flex items-center justify-center transition-colors"><i class="fa-solid fa-xmark text-xs"></i></button>
       </div>
 
+      <div class="mb-4">
+        <button type="button" onclick="getCurrentLocation()" id="locationBtn" class="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-emerald-50 dark:bg-emerald-950/40 text-[#24963f] border border-emerald-200/50 hover:bg-[#24963f] hover:text-white text-xs font-black rounded-xl transition-all active:scale-95 shadow-sm uppercase tracking-wider">
+          <i class="fa-solid fa-location-crosshairs text-sm"></i>
+          <span id="locationBtnText">Use Current Location</span>
+        </button>
+      </div>
+
       <form id="addressForm" action="/users/profile/address/add" method="POST" class="space-y-4 text-xs">
         <div>
-          <label class="block text-zinc-400 font-bold mb-1">Address Type</label>
-          <select id="input-title" name="title" class="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl p-3 font-bold text-zinc-800 dark:text-zinc-200 outline-none focus:border-[#24963f] transition-colors">
-            <option value="Home">Home (All day delivery)</option>
-            <option value="Office">Office (Delivery 9 AM - 6 PM)</option>
-            <option value="Other">Other</option>
-          </select>
+          <label class="block text-zinc-400 font-bold mb-1.5">Address Type</label>
+          <div class="flex gap-2 mb-4">
+            <button type="button" onclick="setAddressType('Home')" id="type-Home" class="flex-1 py-2.5 border-2 border-[#24963f] bg-emerald-50 text-[#24963f] font-black rounded-xl text-center transition-all">
+              <i class="fa-solid fa-house mr-1"></i> Home
+            </button>
+            <button type="button" onclick="setAddressType('Office')" id="type-Office" class="flex-1 py-2.5 border border-zinc-200 dark:border-zinc-800 font-bold rounded-xl text-center text-zinc-600 dark:text-zinc-400 transition-all">
+              <i class="fa-solid fa-briefcase mr-1"></i> Office
+            </button>
+            <button type="button" onclick="setAddressType('Other')" id="type-Other" class="flex-1 py-2.5 border border-zinc-200 dark:border-zinc-800 font-bold rounded-xl text-center text-zinc-600 dark:text-zinc-400 transition-all">
+              <i class="fa-solid fa-location-dot mr-1"></i> Other
+            </button>
+          </div>
+          <input type="hidden" id="input-title" name="title" value="Home">
+          <script>
+          function setAddressType(type) {
+            document.getElementById('input-title').value = type;
+            ['Home', 'Office', 'Other'].forEach(t => {
+              const btn = document.getElementById(`type-${t}`);
+              if(t === type) {
+                btn.className = "flex-1 py-2.5 border-2 border-[#24963f] bg-emerald-50 text-[#24963f] font-black rounded-xl text-center transition-all";
+              } else {
+                btn.className = "flex-1 py-2.5 border border-zinc-200 dark:border-zinc-800 font-bold rounded-xl text-center text-zinc-600 dark:text-zinc-400 transition-all";
+              }
+            });
+          }
+          </script>
         </div>
         <div>
           <label class="block text-zinc-400 font-bold mb-1">Flat / House No. / Building</label>
@@ -215,6 +249,30 @@
 
         <button type="submit" id="submitBtn" class="w-full bg-[#24963f] hover:bg-[#1e7e34] text-white font-black py-3.5 rounded-xl transition-all shadow-md shadow-emerald-700/20 mt-2 text-xs uppercase tracking-wider">
           Save Address
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <div id="profileModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white dark:bg-zinc-900 w-full max-w-md rounded-3xl p-6 border border-zinc-200/60 dark:border-zinc-800 shadow-xl transition-all scale-95 opacity-0 duration-300" id="profileModalBox">
+      <div class="flex justify-between items-center mb-5">
+        <h3 class="text-xs font-black uppercase tracking-wider text-zinc-400">Update Profile Details</h3>
+        <button onclick="toggleProfileModal(false)" class="w-7 h-7 bg-zinc-50 dark:bg-zinc-800 hover:bg-zinc-100 rounded-full text-zinc-400 hover:text-zinc-600 flex items-center justify-center transition-colors"><i class="fa-solid fa-xmark text-xs"></i></button>
+      </div>
+
+      <form action="/users/profile/update" method="POST" class="space-y-4 text-xs">
+        <div>
+          <label class="block text-zinc-400 font-bold mb-1">Full Name</label>
+          <input type="text" id="edit-profile-name" name="name" required placeholder="Your Name" class="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl p-3 font-semibold text-zinc-800 dark:text-zinc-200 outline-none focus:border-[#24963f] transition-colors">
+        </div>
+        <div>
+          <label class="block text-zinc-400 font-bold mb-1">Phone Number</label>
+          <input type="text" id="edit-profile-phone" name="phone" required placeholder="10 Digit Mobile Number" class="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl p-3 font-semibold text-zinc-800 dark:text-zinc-200 outline-none focus:border-[#24963f] transition-colors">
+        </div>
+
+        <button type="submit" class="w-full bg-[#24963f] hover:bg-[#1e7e34] text-white font-black py-3.5 rounded-xl transition-all shadow-md shadow-emerald-700/20 mt-2 text-xs uppercase tracking-wider">
+          Save Changes
         </button>
       </form>
     </div>
@@ -294,6 +352,84 @@
       document.getElementById('input-pincode').value = pincode;
       
       toggleModal(true);
+    }
+
+    // 📍 USER की CURRENT LOCATION निकालने का फंक्शन
+    function getCurrentLocation() {
+      const btn = document.getElementById('locationBtn');
+      const btnText = document.getElementById('locationBtnText');
+      
+      if (!navigator.geolocation) {
+        alert("Your browser does not support location detection.");
+        return;
+      }
+
+      btn.disabled = true;
+      btnText.innerText = "Fetching your location...";
+      
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const lat = position.coords.latitude;
+          const lng = position.coords.longitude;
+
+          try {
+            // 2. अपने ही बैकएंड के एक रूट पर लेटिट्यूड और लोंगिट्यूड भेज रहे हैं (ताकि API Key चोरी न हो)
+            let res = await fetch(`/users/profile/address/fetch-address?lat=${lat}&lng=${lng}`);
+            let data = await res.json();
+
+            if (data.success) {
+              // 3. जादुई ऑटो-फिल: फॉर्म के इनपुट्स में डेटा डालो
+              document.getElementById('input-flatNo').value = data.data.flatNo || '';
+              document.getElementById('input-area').value = data.data.area || '';
+              document.getElementById('input-city').value = data.data.city || '';
+              document.getElementById('input-state').value = data.data.state || '';
+              document.getElementById('input-pincode').value = data.data.pincode || '';
+              
+              btnText.innerText = "Location Detected Successfully!";
+            } else {
+              alert(data.message || "Could not fetch address details.");
+              btnText.innerText = "Use Current Location";
+            }
+          } catch (err) {
+            console.error(err);
+            alert("Error connecting to location server.");
+            btnText.innerText = "Use Current Location";
+          } finally {
+            btn.disabled = false;
+          }
+        },
+        (error) => {
+          // अगर यूजर ने लोकेशन परमिशन 'Deny' कर दी
+          console.error(error);
+          alert("Please allow location permission to use this feature.");
+          btnText.innerText = "Use Current Location";
+          btn.disabled = false;
+        },
+        { enableHighAccuracy: true, timeout: 10000 }
+      );
+    }
+
+
+    function copyToClipboard(text) {
+      navigator.clipboard.writeText(text);
+      alert("Address copied to clipboard! 📋");
+    }
+
+    function toggleProfileModal(show, name = '', phone = '') {
+      const modal = document.getElementById('profileModal');
+      const box = document.getElementById('profileModalBox');
+      
+      if (show) {
+        document.getElementById('edit-profile-name').value = name;
+        document.getElementById('edit-profile-phone').value = phone;
+        modal.classList.remove('hidden');
+        setTimeout(() => box.classList.remove('scale-95', 'opacity-0'), 10);
+      } else {
+        box.classList.add('scale-95', 'opacity-0');
+        setTimeout(() => {
+          modal.classList.add('hidden');
+        }, 300);
+      }
     }
   </script>
 </body>

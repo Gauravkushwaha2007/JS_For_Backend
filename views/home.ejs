@@ -59,7 +59,7 @@
       Skip the queue. Get farm-fresh vegetables, pure dairy, household staples, and premium groceries delivered to your doorstep instantly.
     </p>
 
-    <div class="mt-8 flex flex-col sm:flex-row gap-4 items-center">
+  <div class="mt-8 flex flex-col sm:flex-row gap-4 items-center">
       <a href="/products/allProducts" class="px-7 py-3.5 bg-emerald-500 text-black text-sm font-bold rounded-xl hover:bg-emerald-400 shadow-xl shadow-emerald-500/10 transition-all duration-200 flex items-center gap-2 group">
         Order Groceries Now
         <i class="fa-solid fa-arrow-right text-xs group-hover:translate-x-0.5 transition-transform"></i>
@@ -72,11 +72,27 @@
 
   <section id="categories" class="max-w-6xl mx-auto px-6 mb-12 scroll-mt-24">
     <div class="flex items-center gap-3 overflow-x-auto pb-4 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden text-xs font-bold tracking-wide uppercase text-zinc-500">
-      <a href="/?category=atta" class="bg-zinc-900 border border-zinc-800 px-4 py-2.5 rounded-xl whitespace-nowrap text-zinc-300 hover:text-white cursor-pointer transition-colors">Atta, Rice & Dal</a>
-      <a href="/?category=fruits" class="bg-zinc-900 border border-zinc-800 px-4 py-2.5 rounded-xl whitespace-nowrap text-zinc-300 hover:text-white cursor-pointer transition-colors">Fruits & Veggies</a>
-      <a href="/?category=dairy" class="bg-zinc-900 border border-zinc-800 px-4 py-2.5 rounded-xl whitespace-nowrap text-zinc-300 hover:text-white cursor-pointer transition-colors">Dairy, Bread & Eggs</a>
-      <a href="/?category=snacks" class="bg-zinc-900 border border-zinc-800 px-4 py-2.5 rounded-xl whitespace-nowrap text-zinc-300 hover:text-white cursor-pointer transition-colors">Snacks & Munchies</a>
-      <a href="/" class="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 px-4 py-2.5 rounded-xl whitespace-nowrap cursor-pointer">Show All</a>
+      
+      <a href="#" onclick="filterByCategory('atta', this)" class="category-nav-link bg-zinc-900 border border-zinc-800 px-4 py-2.5 rounded-xl whitespace-nowrap text-zinc-300 hover:text-white cursor-pointer transition-colors">
+        Atta, Rice & Dal
+      </a>
+      
+      <a href="#" onclick="filterByCategory('fruits', this)" class="category-nav-link bg-zinc-900 border border-zinc-800 px-4 py-2.5 rounded-xl whitespace-nowrap text-zinc-300 hover:text-white cursor-pointer transition-colors">
+        Fruits & Veggies
+      </a>
+      
+      <a href="#" onclick="filterByCategory('dairy', this)" class="category-nav-link bg-zinc-900 border border-zinc-800 px-4 py-2.5 rounded-xl whitespace-nowrap text-zinc-300 hover:text-white cursor-pointer transition-colors">
+        Dairy, Bread & Eggs
+      </a>
+      
+      <a href="#" onclick="filterByCategory('snacks', this)" class="category-nav-link bg-zinc-900 border border-zinc-800 px-4 py-2.5 rounded-xl whitespace-nowrap text-zinc-300 hover:text-white cursor-pointer transition-colors">
+        Snacks & Munchies
+      </a>
+      
+      <a href="#" onclick="filterByCategory('all', this)" class="category-nav-link bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 px-4 py-2.5 rounded-xl whitespace-nowrap cursor-pointer">
+        Show All
+      </a>
+      
     </div>
   </section>
 
@@ -88,10 +104,41 @@
       <a href="/products/allProducts" class="text-xs font-bold text-zinc-500 dark:text-zinc-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">View All Catalogue <i class="fa-solid fa-chevron-right text-[9px] ml-0.5"></i></a>
     </div>
 
+    <!-- Skeleton Loader Container (Shuru me dikhega, JS se hide hoga) -->
+    <div id="skeleton-grid" class="grid grid-cols-2 md:grid-cols-4 gap-6 w-full">
+      <% for(let i=0; i<4; i++) { %>
+        <div class="animate-pulse bg-white border border-zinc-100 rounded-2xl p-4 dark:bg-[#0d110e]/60 dark:border-zinc-900 h-[300px] flex flex-col justify-between">
+          <div>
+            <div class="h-40 bg-zinc-200 dark:bg-zinc-800 rounded-xl mb-4"></div>
+            <div class="h-3 bg-zinc-200 dark:bg-zinc-800 rounded w-1/3 mb-3"></div>
+            <div class="h-4 bg-zinc-200 dark:bg-zinc-800 rounded w-3/4 mb-2"></div>
+            <div class="h-3 bg-zinc-200 dark:bg-zinc-800 rounded w-1/2"></div>
+          </div>
+          <div class="flex justify-between items-center mt-4 pt-2 border-t border-zinc-100 dark:border-zinc-900/80">
+            <div class="space-y-2 w-1/3">
+              <div class="h-4 bg-zinc-200 dark:bg-zinc-800 rounded"></div>
+              <div class="h-3 bg-zinc-200 dark:bg-zinc-800 rounded w-1/2"></div>
+            </div>
+            <div class="h-8 bg-zinc-200 dark:bg-zinc-800 rounded-xl w-16"></div>
+          </div>
+        </div>
+      <% } %>
+    </div>
+    <!-- Aapka main products grid (Isme shuru me 'hidden' class laga di hai) -->
+    <div id="real-products-grid" class="grid grid-cols-2 md:grid-cols-4 gap-6 hidden">
+      <!-- Aapka purana products loop yahan rahega -->
+      <% if(products && products.length > 0) { %>
+        <!-- ... aapka purana loop code ... -->
+      <% } %>
+    </div>
+    
     <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
       <% if(products && products.length > 0) { %>
         <% products.forEach(function(item) { %>
-          <div class="product-card group bg-white border border-zinc-200 rounded-2xl p-4 hover:border-emerald-200 hover:shadow-xl hover:shadow-zinc-200/30 transition-all duration-300 flex flex-col justify-between dark:bg-[#0d110e]/60 dark:border-zinc-900 dark:hover:border-emerald-950 dark:hover:shadow-emerald-500/[0.01]">
+          <!-- 🌟 EDIT 1: Yahan maine 'data-category' attribute add kar diya hai -->
+          <div class="product-card group bg-white border border-zinc-200 rounded-2xl p-4 hover:border-emerald-200 hover:shadow-xl hover:shadow-zinc-200/30 transition-all duration-300 flex flex-col justify-between dark:bg-[#0d110e]/60 dark:border-zinc-900 dark:hover:border-emerald-950 dark:hover:shadow-emerald-500/[0.01]" 
+              data-category="<%= item.category || 'Fresh Produce' %>">
+            
             <div>
               <div class="h-40 bg-zinc-50 border border-zinc-100 rounded-xl mb-4 overflow-hidden relative flex items-center justify-center dark:bg-zinc-900/40 dark:border-zinc-900">
                 <a href="/products/view/<%= item._id %>" class="w-full h-full block">
@@ -132,12 +179,12 @@
 
                 <% if (foundInCart) { %>
                   <div class="flex items-center bg-emerald-500/[0.09] text-black rounded-lg overflow-hidden shadow-sm font-black text-xs">
-                    <button onclick="descreaseQty('<%= item._id %>', 'decrease')" class="px-3 py-2 hover:bg-emerald-400 transition-colors text-xs font-black">-</button>
+                    <button onclick="descreaseQty('<%= item._id %>')" class="px-3 py-2 hover:bg-emerald-400 transition-colors text-xs font-black">-</button>
                     <span id="quantityNumber-<%= item._id %>" class="px-1.5 min-w-[18px] text-center font-black text-xs"><%= foundInCart.quantity %></span>
-                    <button onclick="increaseQty('<%= item._id %>', 'increase')" class="px-3 py-2 hover:bg-emerald-400 transition-colors text-xs font-black">+</button>
+                    <button onclick="increaseQty('<%= item._id %>')" class="px-3 py-2 hover:bg-emerald-400 transition-colors text-xs font-black">+</button>
                   </div>
                 <% } else { %>
-                  <button onclick="addToCart('<%= item._id %>')" class="text-center text-xs font-extrabold px-4 py-2 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-xl hover:bg-emerald-500 hover:text-black transition-all duration-200 shadow-sm dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/20 dark:hover:bg-emerald-500 dark:hover:text-black">
+                  <button onclick="addToCart('<%= item._id %>', '<%= item.price %>')" class="text-center text-xs font-extrabold px-4 py-2 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-xl hover:bg-emerald-500 hover:text-black transition-all duration-200 shadow-sm dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/20 dark:hover:bg-emerald-500 dark:hover:text-black">
                     + ADD
                   </button>
                 <% } %>
@@ -258,6 +305,7 @@
     </div>
   </footer>
 
+  <!-- TOGGLE THEME -->
   <script>
     function toggleTheme() {
       const html = document.documentElement;
@@ -315,25 +363,103 @@
 
     function hidePlaceholder(){ if(placeholderContainer) placeholderContainer.style.display = 'none'; }
 
-    function searchProducts(){
-      if(!searchInput) return;
-      const value = searchInput.value.toLowerCase().trim();
-      document.querySelectorAll('.product-card').forEach(card => {
-        const nameTag = card.querySelector('.product-name');
-        if (nameTag) {
-          const name = nameTag.innerText.toLowerCase();
-          card.style.display = name.includes(value) ? '' : 'none';
-        }
-      });
-    }
+  function liveSearchDropdown() {
+  const input = document.getElementById('searchInput');
+  const dropdown = document.getElementById('search-suggestions');
+  const list = document.getElementById('suggestions-list');
+  
+  if (!input || !dropdown || !list) return;
 
+  const value = input.value.toLowerCase().trim();
+  
+  // Agar input empty hai to dropdown band karo
+  if (value === "") {
+    dropdown.classList.add('hidden');
+    return;
+  }
+
+  list.innerHTML = ""; // Purani list clear karo
+  let matchCount = 0;
+
+  // DOM ke real product cards se fast metadata read karna
+  document.querySelectorAll('.product-card').forEach(card => {
+    const nameTag = card.querySelector('.product-name');
+    const imgTag = card.querySelector('img');
+    const priceTag = card.querySelector('.font-black');
+    
+    if (nameTag) {
+      const name = nameTag.innerText;
+      const price = priceTag ? priceTag.innerText : '';
+      const imgSrc = imgTag ? imgTag.src : '';
+
+      if (name.toLowerCase().includes(value) && matchCount < 5) {
+        matchCount++;
+        
+        // Element banana dropdown list ke liye
+        const row = document.createElement('div');
+        row.className = "flex items-center gap-3 p-2 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 rounded-xl cursor-pointer transition-colors";
+        row.innerHTML = `
+          <img src="${imgSrc}" class="w-8 h-8 rounded-lg object-cover bg-zinc-100">
+          <div class="flex-1 min-w-0">
+            <p class="text-xs font-bold text-zinc-800 dark:text-zinc-200 truncate">${name}</p>
+            <p class="text-[10px] text-emerald-600 font-extrabold">${price}</p>
+          </div>
+          <i class="fa-solid fa-chevron-right text-[9px] text-zinc-400 pr-2"></i>
+        `;
+        
+        // Click karne par directly use card ke view par scroll karwaye ya filter set kare
+        row.onclick = () => {
+          input.value = name;
+          dropdown.classList.add('hidden');
+          // Purana grid filter trigger karna
+          document.querySelectorAll('.product-card').forEach(c => {
+            const n = c.querySelector('.product-name').innerText.toLowerCase();
+            c.style.display = n.includes(name.toLowerCase()) ? '' : 'none';
+          });
+        };
+        list.appendChild(row);
+      }
+    }
+  });
+
+  if (matchCount > 0) {
+    dropdown.classList.remove('hidden');
+  } else {
+    list.innerHTML = `<p class="text-center py-4 text-xs font-medium text-zinc-400"><i class="fa-solid fa-face-frown mr-1"></i> No matching products found</p>`;
+    dropdown.classList.remove('hidden');
+  }
+}
+
+// Dropdown ko bahar click karne par close karne ka tareeka
+document.addEventListener('click', (e) => {
+  const dropdown = document.getElementById('search-suggestions');
+  const input = document.getElementById('searchInput');
+  if (dropdown && !dropdown.contains(e.target) && e.target !== input) {
+    dropdown.classList.add('hidden');
+  }
+});
     window.addEventListener('DOMContentLoaded', () => {
       if(searchInput) searchInput.value = ""; 
       startAnimation();
     });
   </script>
 
-   <%- include('partials/updateQty') %>
+  <!-- SCELETON SCRIPT  -->
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      // Skeleton ko hide karo aur real grid ko show karo
+      const skeletonGrid = document.getElementById('skeleton-grid');
+      const realGrid = document.getElementById('real-products-grid');
+      
+      if(skeletonGrid && realGrid) {
+        setTimeout(() => { // 400ms ka visual smooth delay
+          skeletonGrid.classList.add('hidden');
+          realGrid.classList.remove('hidden');
+        }, 400);
+      }
+    });
+  </script>
+  <%- include('partials/updateQty') %>
 
 </body>
 </html>

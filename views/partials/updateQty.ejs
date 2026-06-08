@@ -1,6 +1,5 @@
 <div id="cart-toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 pointer-events-none opacity-0 translate-y-4 transition-all duration-300 ease-out w-[calc(100%-2rem)] max-w-md select-none">
   <div id="toast-bg" class="bg-white text-gray-900 px-4 py-3.5 rounded-2xl shadow-[0_10px_30px_rgba(0,0,0,0.08)] border border-gray-100 flex items-center justify-between gap-3 pointer-events-auto">
-    
     <div class="flex items-center gap-3 min-w-0 flex-1">
       <div id="toast-icon-box" class="w-9 h-9 rounded-xl bg-emerald-50 text-[#24963f] flex items-center justify-center border border-emerald-100/50 shrink-0">
         <i id="toast-icon" class="fa-solid fa-basket-shopping text-sm"></i>
@@ -10,17 +9,14 @@
         <p id="toast-message" class="text-xs font-bold text-gray-800 truncate mt-0.5">Item added successfully!</p>
       </div>
     </div>
-
     <div class="flex items-center gap-2 shrink-0">
       <a id="toast-view-cart-btn" href="/users/cart/products" class="flex items-center gap-1.5 bg-[#24963f] hover:bg-[#1e7e34] text-white text-[11px] font-black px-3 py-2 rounded-xl transition-all uppercase tracking-wider shadow-sm shadow-emerald-700/10 active:scale-95">
-        View Basket
-        <i class="fa-solid fa-arrow-right text-[10px]"></i>
+        View Basket <i class="fa-solid fa-arrow-right text-[10px]"></i>
       </a>
-      <button onclick="closeToastWithoutReload()" class="w-8 h-8 rounded-xl hover:bg-gray-50 text-gray-400 hover:text-gray-900 flex items-center justify-center transition-colors border border-transparent hover:border-gray-100" title="Close">
+      <button onclick="closeToastWithoutReload()" class="w-8 h-8 rounded-xl hover:bg-gray-50 text-gray-400 hover:text-gray-900 flex items-center justify-center transition-colors border border-transparent hover:border-gray-100">
         <i class="fa-solid fa-xmark text-xs"></i>
       </button>
     </div>
-
   </div>
 </div>
 
@@ -37,7 +33,6 @@
     const viewCartBtn = document.getElementById('toast-view-cart-btn');
     
     if (!toast || !toastMsg) return;
-
     toastMsg.textContent = message;
 
     if (isError) {
@@ -48,7 +43,6 @@
       toastBadge.textContent = "Stock Limit Reached!";
       toastMsg.className = "text-xs font-bold text-zinc-300 truncate mt-0.5";
       if(viewCartBtn) viewCartBtn.classList.add('hidden');
-      
       if (reloadTimeout) clearTimeout(reloadTimeout);
       reloadTimeout = setTimeout(() => { closeToastWithoutReload(); }, 3500);
     } else {
@@ -59,7 +53,6 @@
       toastBadge.textContent = "Added To Basket";
       toastMsg.className = "text-xs font-bold text-gray-800 truncate mt-0.5";
       if(viewCartBtn) viewCartBtn.className = "flex items-center gap-1.5 bg-[#24963f] hover:bg-[#1e7e34] text-white text-[11px] font-black px-3 py-2 rounded-xl transition-all uppercase tracking-wider shadow-sm shadow-emerald-700/10 active:scale-95";
-
       if (reloadTimeout) clearTimeout(reloadTimeout);
       reloadTimeout = setTimeout(() => { closeToastWithoutReload(); }, 2000);
     }
@@ -86,12 +79,13 @@
     const elements = document.querySelectorAll(selectors.join(', '));
     elements.forEach(el => { if(el) el.innerText = newQty; });
     
-    // अगर क्वांटिटी 0 हो जाए (कार्ट से प्रोडक्ट बाहर), तो वापस 'Add' बटन दिखाओ
     if(newQty === 0) {
       const actionBox = document.getElementById(`action-box-${productId}`);
       if(actionBox) {
-        actionBox.innerHTML = `<button onclick="addToCart('${productId}', '0')" class="text-center text-xs font-extrabold px-4 py-1.5 bg-white text-[#24963f] border border-gray-200 rounded-xl hover:border-[#24963f] active:scale-95 transition-all duration-200 shadow-sm uppercase">Add</button>`;
+        actionBox.innerHTML = `<button onclick="addToCart('${productId}', '0')" class="bg-[#24963f] hover:bg-[#1e7e34] text-white font-black text-xs px-7 py-3.5 rounded-xl transition-all active:scale-95 shadow-lg shadow-emerald-900/10 flex items-center gap-2 group tracking-wider uppercase"><i class="fa-solid fa-basket-shopping text-xs"></i> <span>ADD TO BASKET</span></button>`;
       }
+      const productCard = document.getElementById(`product-${productId}`);
+      if (productCard) productCard.remove();
     }
   }
 
@@ -102,8 +96,12 @@
       let data = await res.json();
       
       if(data.success) { 
+        const qtyEl = document.getElementById(`quantityNumber-${productId}`) || document.getElementById(`qty-text-${productId}`);
+        let oldQty = qtyEl ? parseInt(qtyEl.innerText) || 1 : 1;
+        let diff = data.quantity - oldQty;
+
         findAndUpdateQtyElements(productId, data.quantity);
-        updateCartPageTotals(productId, data.quantity);
+        updateCartPageTotals(productId, data.quantity, diff);
       } else {
         showCartToast(data.message || "No more stock available.", true);
       }
@@ -117,13 +115,17 @@
       let data = await res.json();
       
       if(data.success) { 
+        const qtyEl = document.getElementById(`quantityNumber-${productId}`) || document.getElementById(`qty-text-${productId}`);
+        let oldQty = qtyEl ? parseInt(qtyEl.innerText) || 1 : 1;
+        let diff = data.quantity - oldQty;
+
         findAndUpdateQtyElements(productId, data.quantity);
-        updateCartPageTotals(productId, data.quantity);
+        updateCartPageTotals(productId, data.quantity, diff);
       } 
     } catch (err) { console.error(err); }
   }
 
-  // 🛒 ADD TO CART (🔥 100% लाइव काउंटर स्विचर - नो रीलोड)
+  // 🛒 ADD TO CART
   async function addToCart(productId, productPrice = 0) {
     try {
       let res = await fetch(`/users/cart/add-to-cart/${productId}`, { method: "POST" });
@@ -133,34 +135,49 @@
       if(data.success) {
         showCartToast(data.message || "Product added to your basket!", false);
         
-        // 1. 🔥 जादुई DOM ट्रांसफॉर्मेशन: 'Add' बटन को तुरंत हटाकर '+ 1 -' काउंटर बॉक्स बना दो
         const actionBox = document.getElementById(`action-box-${productId}`);
         if(actionBox) {
           actionBox.innerHTML = `
-            <div class="flex items-center bg-white border border-[#24963f] text-[#24963f] rounded-xl overflow-hidden shadow-sm font-black text-xs">
-              <button onclick="descreaseQty('${productId}')" class="px-2.5 py-1.5 hover:bg-[#24963f] hover:text-white transition-colors text-xs font-black">-</button>
-              <span id="quantityNumber-${productId}" class="px-2 min-w-[22px] text-center font-black text-xs text-gray-900">1</span>
-              <button onclick="increaseQty('${productId}')" class="px-2.5 py-1.5 hover:bg-[#24963f] hover:text-white transition-colors text-xs font-black">+</button>
+            <div class="flex items-center bg-[#24963f] text-white rounded-xl overflow-hidden shadow-lg shadow-emerald-900/10 font-black text-sm h-[48px]">
+              <button onclick="descreaseQty('${productId}')" class="px-5 h-full hover:bg-[#1e7e34] transition-colors font-black text-base active:scale-95">-</button>
+              <span id="quantityNumber-${productId}" class="px-2 min-w-[28px] text-center font-black text-sm bg-[#1e7e34]/20 h-full flex items-center justify-center">1</span>
+              <button onclick="increaseQty('${productId}')" class="px-5 h-full hover:bg-[#1e7e34] transition-colors font-black text-base active:scale-95">+</button>
             </div>
           `;
         }
 
-        // 2. 👑 हेडर बास्केट को तुरंत लाइव अपडेट करो
-        const headerTotalEl = document.getElementById('header-cart-total');
-        const headerCountEl = document.getElementById('header-cart-count');
-        
-        if (headerTotalEl && headerCountEl) {
-          let currentTotal = Number(headerTotalEl.innerText.replace('₹', '').trim()) || 0;
-          let currentCount = parseInt(headerCountEl.innerText) || 0;
-          
-          let newTotal = currentTotal + Number(productPrice);
-          
-          headerCountEl.innerText = `${currentCount + 1} Items`;
-          headerTotalEl.innerText = `₹${newTotal}`;
-        } else {
-          // अगर यूजर का कार्ट पहले बिल्कुल खाली था, तो हेडर बटन को रेंडर करने के लिए छोटा सा रिफ्रेश बैकअप ले सकते हो, 
-          // लेकिन अगर पहले से 1 भी आइटम है, तो यह बिना रीलोड के ही अपडेट हो जाएगा!
+        // 🌟 CUSTOM ENGINE EVENT SIGNAL FOR GLOBAL UPDATE
+        // Agar page par direct changes fail hotey hain, toh custom event trigger hoga navbar sync ke liye.
+        if (data.totalCartPrice || data.cartLength) {
+           triggerGlobalNavbarSync(data.totalCartPrice, data.cartLength);
+           return;
         }
+
+        // Fallback pricing scraper logic
+        const totalElements = document.querySelectorAll('#header-cart-total, [id*="cart-total"], [id*="total-price"]');
+        const countElements = document.querySelectorAll('#header-cart-count, [id*="cart-count"], [id*="cart-qty"]');
+        
+        if(Number(productPrice) === 0) {
+          const mainPriceHeading = document.querySelector('.text-3xl.font-black.text-black');
+          if(mainPriceHeading) {
+            productPrice = Number(mainPriceHeading.innerText.replace(/[^\d]/g, '').trim());
+          }
+        }
+
+        countElements.forEach(el => {
+          if (el) {
+            let currentCount = parseInt(el.innerText.replace(/[^\d]/g, '')) || 0;
+            // Agar navbar badge simple number hai, to text replace nahi hoga layout crash se bachane ke liye
+            el.innerText = el.id === 'header-cart-count' ? currentCount + 1 : `${currentCount + 1} Items`;
+          }
+        });
+
+        totalElements.forEach(el => {
+          if (el) {
+            let currentTotal = Number(el.innerText.replace(/[^\d]/g, '')) || 0;
+            el.innerText = `₹${currentTotal + Number(productPrice)}`;
+          }
+        });
         
       } else {
         if(data.isStockError || data.message?.toLowerCase().includes('stock')) {
@@ -170,63 +187,74 @@
     } catch (err) { console.error("Cart Error:", err); }
   }
 
-  // 🧮 टोटल्स कैलकुलेटर
-  function updateCartPageTotals(productId, newQty) {
+  // 🧮 ALL-PAGE GLOBAL TOTALS ENGINE
+  function updateCartPageTotals(productId, newQty, qtyDiff = 0) {
     const subtotalEl = document.getElementById(`subtotal-${productId}`);
+    let targetProductPrice = 0;
     
     if (subtotalEl) {
       const parentCard = subtotalEl.closest('.flex-wrap, .flex, [class*="bg-white"]');
       if (parentCard) {
         const priceElements = parentCard.querySelectorAll('span');
-        let productPrice = 0;
-        
         priceElements.forEach(span => {
           if (span.innerText.includes('₹') && span !== subtotalEl) {
-            productPrice = Number(span.innerText.replace('₹', '').trim());
+            targetProductPrice = Number(span.innerText.replace(/[^\d]/g, '').trim());
           }
         });
-
-        if (productPrice > 0) {
-          subtotalEl.innerText = `₹${productPrice * newQty}`;
-        }
+        if (targetProductPrice > 0) subtotalEl.innerText = `₹${targetProductPrice * newQty}`;
       }
     }
 
-    let grandTotal = 0;
+    const totalElements = document.querySelectorAll('#header-cart-total, [id*="cart-total"], [id*="total-price"]');
+    const countElements = document.querySelectorAll('#header-cart-count, [id*="cart-count"], [id*="cart-qty"]');
+    const grandTotalEl = document.getElementById('grand-total');
+
+    if (targetProductPrice === 0) {
+      const mainPriceHeading = document.querySelector('.text-3xl.font-black.text-black');
+      if (mainPriceHeading) {
+        targetProductPrice = Number(mainPriceHeading.innerText.replace(/[^\d]/g, '').trim());
+      }
+    }
+
     const allSubtotals = document.querySelectorAll('[id^="subtotal-"]');
     
-    if (allSubtotals.length > 0) {
-      allSubtotals.forEach(sub => {
-        grandTotal += Number(sub.innerText.replace('₹', '').trim());
-      });
-    } else {
-      const currentHeaderTotal = document.getElementById('header-cart-total');
-      if (currentHeaderTotal) {
-        grandTotal = Number(currentHeaderTotal.innerText.replace('₹', '').trim());
+    totalElements.forEach(headerTotalEl => {
+      if (headerTotalEl) {
+        let currentHeaderTotal = Number(headerTotalEl.innerText.replace(/[^\d]/g, '')) || 0;
+        
+        if (allSubtotals.length > 0) {
+          let freshGrandTotal = 0;
+          allSubtotals.forEach(sub => { freshGrandTotal += Number(sub.innerText.replace(/[^\d]/g, '')); });
+          headerTotalEl.innerText = `₹${freshGrandTotal}`;
+          if (grandTotalEl) grandTotalEl.innerText = `₹${freshGrandTotal}`;
+        } else {
+          let calculatedNewTotal = currentHeaderTotal + (targetProductPrice * qtyDiff);
+          if(calculatedNewTotal < 0) calculatedNewTotal = 0;
+          headerTotalEl.innerText = `₹${calculatedNewTotal}`;
+        }
       }
-    }
+    });
 
-    const grandTotalEl = document.getElementById('grand-total');
-    if (grandTotalEl && grandTotal > 0) {
-      grandTotalEl.innerText = `₹${grandTotal}`;
-    }
-
-    updateGlobalHeader(grandTotal);
+    // Count updates matching layout badge rules
+    countElements.forEach(headerCountEl => {
+      if (headerCountEl) {
+        if (allSubtotals.length > 0) {
+          headerCountEl.innerText = `${allSubtotals.length} Items`;
+        } else {
+          let currentCount = parseInt(headerCountEl.innerText.replace(/[^\d]/g, '')) || 0;
+          if(newQty === 0) {
+            headerCountEl.innerText = headerCountEl.id === 'header-cart-count' ? Math.max(0, currentCount - 1) : `${Math.max(0, currentCount - 1)} Items`;
+          }
+        }
+      }
+    });
   }
 
-  function updateGlobalHeader(computedTotal) {
-    const headerTotalEl = document.getElementById('header-cart-total');
-    const headerCountEl = document.getElementById('header-cart-count');
-
-    if (headerTotalEl && computedTotal > 0) {
-      headerTotalEl.innerText = `₹${computedTotal}`;
-    }
-
-    if (headerCountEl) {
-      const uniqueItems = document.querySelectorAll('[id^="product-"]').length || document.querySelectorAll('[id^="subtotal-"]').length;
-      if (uniqueItems > 0) {
-        headerCountEl.innerText = `${uniqueItems} Items`;
-      }
-    }
+  // 📡 Trigger Event Dispatch for Global Fallback Navbar Engine sync
+  function triggerGlobalNavbarSync(price, itemsCount) {
+     const syncEvent = new CustomEvent('cartUpdated', {
+         detail: { newTotal: price, newCount: itemsCount }
+     });
+     window.dispatchEvent(syncEvent);
   }
 </script>

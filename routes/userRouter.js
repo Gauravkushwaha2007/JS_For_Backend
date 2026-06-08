@@ -6,7 +6,8 @@ const {
     forgotPassword, getResetPassword, postResetPassword,
     addToCart, cartProducts, removeToCart, increaseQty, descreaseQty, 
     cartCheckout, getOrders, getBill,
-    getProfile, addAddress, deleteAddress, editAddress, makeAddressPrimary
+    fetchAddressFromGoogle,
+    updateProfile, getProfile, addAddress, deleteAddress, editAddress, makeAddressPrimary
 } = require('../controllers/userController');
 const userModel = require('../models/userModel');
 const productModel = require('../models/productModel');
@@ -48,7 +49,9 @@ userRouter.get('/orders', isLoggedIn, getOrders);
 userRouter.get('/orders/bill/:orderId', isLoggedIn, getBill);
 
 userRouter.get('/profile', isLoggedIn, getProfile);
+userRouter.post('/profile/update', isLoggedIn, updateProfile);
 userRouter.post('/profile/address/add', isLoggedIn, addAddress);
+userRouter.get('/profile/address/fetch-address', isLoggedIn, fetchAddressFromGoogle);
 userRouter.post('/profile/address/delete/:addressId', isLoggedIn, deleteAddress);
 userRouter.post('/profile/address/edit/:addressId', isLoggedIn, editAddress);
 userRouter.post('/profile/address/default/:addressId', isLoggedIn, makeAddressPrimary);
