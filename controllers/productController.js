@@ -54,7 +54,7 @@ const deleteProduct = async (req, res)=>{
 
 const getEditProduct = async (req, res)=>{
     let product = await productModel.findById(req.params.id)
-    res.render('createProduct', {product})
+    res.render('admin/createProduct', {product})
 }
 
 const postEditProduct = async (req, res) => {

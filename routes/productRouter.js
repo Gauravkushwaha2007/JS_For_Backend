@@ -4,7 +4,7 @@ const isAdmin = require('../middlewares/isAdmin');
 const attachUser = require('../middlewares/attachUser');
 
 const productModel = require('../models/productModel');
-const userModel = require('../models/userModel'); // 🌟 कार्ट कैलकुलेशन के लिए यूजर मॉडल इम्पोर्ट किया
+const userModel = require('../models/userModel');
 
 const {createProduct, deleteProduct, getEditProduct, postEditProduct, viewProduct} = require('../controllers/productController')
 const upload = require('../config/multer');
@@ -12,7 +12,6 @@ const upload = require('../config/multer');
 const productRouter = express.Router();
 
 
-// 🌟 UPDATED: This is for everyOne, with live cart price calculation
 productRouter.get('/allProducts', attachUser, async(req, res)=>{
     try {
         let products = await productModel.find();
@@ -50,7 +49,7 @@ productRouter.get('/allProducts', attachUser, async(req, res)=>{
 productRouter.get('/view/:id', attachUser, viewProduct);
 
 productRouter.get('/create', attachUser, isAdmin, (req, res)=>{
-    res.render('createProduct',{ product: null, activePage: 'createProduct'});
+    res.render('admin/createProduct',{ product: null, activePage: 'createProduct'});
 })
 
 productRouter.post('/create', attachUser, isAdmin, upload.single('image'), createProduct);
