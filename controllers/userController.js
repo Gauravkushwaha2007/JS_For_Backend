@@ -17,7 +17,7 @@ const registerUser = async (req, res) => {
     
         let registeredUser = await userModel.findOne({ email });
         if (registeredUser) {
-            return res.render('register', { error: 'This email is already registered!' });
+            return res.render('auth/register', { error: 'This email is already registered!' });
         }
         
         let salt = await bcrypt.genSalt(10);
@@ -55,7 +55,7 @@ const registerUser = async (req, res) => {
     }
     catch (error) {
         console.error(error.message);
-        return res.render('register', { error: 'Something went wrong. Please try again.' });
+        return res.render('auth/register', { error: 'Something went wrong. Please try again.' });
     }
 };
 
@@ -66,16 +66,16 @@ const loginUser = async (req, res)=>{
         let user = await userModel.findOne({email});
         
         if(!user) {
-            return res.render('login', { error: 'User not found! Please check your email.' });
+            return res.render('auth/login', { error: 'User not found! Please check your email.' });
         }
         
         let isMatch = await bcrypt.compare(password, user.password);
         if(!isMatch){
-            return res.render('login', { error: 'Wrong password! Please try again.' });
+            return res.render('auth/login', { error: 'Wrong password! Please try again.' });
         }
 
         if (!user.isVerified) {
-            return res.render('login', { error: 'Your account is not verified! Please check your email for OTP.' });
+            return res.render('auth/login', { error: 'Your account is not verified! Please check your email for OTP.' });
         }
 
         let token = generateToken(user);
@@ -88,13 +88,13 @@ const loginUser = async (req, res)=>{
     }
     catch(error){
         console.log(error.message);
-        return res.render('login', { error: 'Something went wrong. Please try again.' });
+        return res.render('auth/login', { error: 'Something went wrong. Please try again.' });
     }
 };
 
 // 7. GET VERIFY OTP PAGE
 const getVerifyOtpPage = async (req, res) => {
-    res.render('verify-otp', { email: req.query.email, error: null });
+    res.render('auth/verify-otp', { email: req.query.email, error: null });
 };
 
 // 8. POST VERIFY OTP LOGIC
@@ -104,21 +104,20 @@ const verifyOtp = async (req, res) => {
         const user = await userModel.findOne({ email });
 
         if (!user) {
-            return res.render('verify-otp', { email, error: 'User not found!' });
+            return res.render('auth/verify-otp', { email, error: 'User not found!' });
         }
 
         if (user.otpExpires <= Date.now()) {
-            return res.render('verify-otp', { email, error: 'OTP has expired! Please register again.' });
+            return res.render('auth/verify-otp', { email, error: 'OTP has expired! Please register again.' });
         }
 
         if (user.otp !== otp) {
-            return res.render('verify-otp', { email, error: 'Invalid OTP! Please try again.' });
+            return res.render('auth/verify-otp', { email, error: 'Invalid OTP! Please try again.' });
         }
 
-        // 🎯 पुराना user.save() वाला हिस्सा हटाकर ये लिखो
         await userModel.findByIdAndUpdate(user._id, {
             $set: { isVerified: true },
-            $unset: { otp: 1, otpExpires: 1 } // इससे डेटाबेस से ये दोनों फील्ड्स हमेशा के लिए गायब हो जाएंगी
+            $unset: { otp: 1, otpExpires: 1 }
         });
 
         let token = generateToken(user);
@@ -134,7 +133,6 @@ const verifyOtp = async (req, res) => {
     }
 };
 
-
 // 4. FORGOT PASSWORD
 const forgotPassword = async (req, res) => {
     try {
@@ -142,7 +140,7 @@ const forgotPassword = async (req, res) => {
         const user = await userModel.findOne({ email });
 
         if (!user) {
-            return res.render('forgot-password', { 
+            return res.render('auth/forgot-password', { 
                 message: 'This email is not registered with us.', 
                 type: 'error' 
             });
@@ -166,14 +164,14 @@ const forgotPassword = async (req, res) => {
              <p>अगर आपने यह रिक्वेस्ट नहीं की है, तो इस ईमेल को इग्नोर करें।</p>`
         );
 
-        return res.render('forgot-password', { 
+        return res.render('auth/forgot-password', { 
             message: 'A secure reset link has been sent to your email!', 
             type: 'success' 
             });
 
     } catch (error) {
         console.error(error.message);
-        return res.render('forgot-password', { message: 'Something went wrong. Try again.', type: 'error' });
+        return res.render('auth/forgot-password', { message: 'Something went wrong. Try again.', type: 'error' });
     }
 };
 
@@ -189,7 +187,7 @@ const getResetPassword = async (req, res) => {
             return res.send('Password reset token is invalid or has expired. Request a new one.');
         }
 
-        res.render('reset-password', { token: req.params.token, message: null, type: null });
+        res.render('auth/reset-password', { token: req.params.token, message: null, type: null });
     } catch (error) {
         return res.status(500).send('Server Error');
     }
@@ -201,7 +199,7 @@ const postResetPassword = async (req, res) => {
         const { password, confirmPassword } = req.body;
 
         if (password !== confirmPassword) {
-            return res.render('reset-password', { 
+            return res.render('auth/reset-password', { 
                 token: req.params.token, 
                 message: 'Passwords do not match.', 
                 type: 'error' 
@@ -231,7 +229,6 @@ const postResetPassword = async (req, res) => {
         return res.status(500).send('Something went wrong');
     }
 };
-
 
 //  LOGOUT user 
 const logoutUser = async (req, res) => {

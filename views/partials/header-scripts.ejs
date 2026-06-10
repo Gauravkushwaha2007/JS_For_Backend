@@ -23,14 +23,12 @@
       textEl.title = `${flatNo}, ${area}, ${city}`;
     }
     
-    // ड्रॉपडाउन बंद करो
     const menu = document.getElementById('addressDropdownMenu');
     if (menu) menu.classList.add('hidden');
     
-    // (ऑप्शनल) तुम यहाँ बैकएंड पर सिलेक्टेड एड्रेस को सेव करने के लिए भी Fetch API डाल सकते हो
   }
 
-  // === 2. BLINKIT PLACEHOLDER ANIMATION LOGIC ===
+  // === 2. PLACEHOLDER ANIMATION LOGIC ===
   const cartTrack = document.getElementById('cartPlaceholderTrack');
   const cartSearchInput = document.getElementById('cartSearchInput');
   const cartPlaceholderContainer = document.querySelector('.placeholder-container');
@@ -136,7 +134,6 @@
   }
 
   window.addEventListener('click', (e) => {
-    // सर्च बंद करने के लिए
     if (cartSearchInput && cartResultsContainer && !cartSearchInput.contains(e.target) && !cartResultsContainer.contains(e.target)) {
       cartResultsContainer.classList.add('hidden');
     }
