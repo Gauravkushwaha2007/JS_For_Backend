@@ -146,8 +146,6 @@
           `;
         }
 
-        // 🌟 CUSTOM ENGINE EVENT SIGNAL FOR GLOBAL UPDATE
-        // Agar page par direct changes fail hotey hain, toh custom event trigger hoga navbar sync ke liye.
         if (data.totalCartPrice || data.cartLength) {
            triggerGlobalNavbarSync(data.totalCartPrice, data.cartLength);
            return;

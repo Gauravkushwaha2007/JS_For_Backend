@@ -160,7 +160,7 @@
             <div class="bg-zinc-950/60 border border-zinc-900 p-3.5 rounded-xl flex items-center justify-between hover:border-amber-500/30 transition-all duration-300 group">
               <div class="flex items-center gap-3">
                 <% if (product.picture) { %>
-                  <img src="<%= product.picture %>" alt="<%= product.name %>" class="w-10 h-10 rounded-lg object-cover bg-zinc-900 border border-zinc-800">
+                  <img src="../uploads/<%= item.product.image %>" alt="<%= product.name %>" class="w-10 h-10 rounded-lg object-cover bg-zinc-900 border border-zinc-800">
                 <% } else { %>
                   <div class="w-10 h-10 rounded-lg bg-zinc-900 border border-zinc-800 flex items-center justify-center text-zinc-600">
                     <i class="fa-solid fa-box text-sm"></i>

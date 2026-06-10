@@ -1,35 +1,36 @@
+const fs = require('fs');
 const productModel = require('../models/productModel');
-const userModel = require('../models/userModel'); 
-const jwt = require('jsonwebtoken'); 
+const userModel = require('../models/userModel');
+const jwt = require('jsonwebtoken');
 const upload = require('../config/multer');
 const path = require('path');
-const fs = require('fs');
 
 const createProduct = async (req, res) => {
     try {
-        let { name, price, stock, quantity, category, bgColor, textColor, panelColor, discount, description} = req.body;
-        let imagePath = req.file? req.file.filename: null;
+        let { name, price, stock, quantity, category, bgColor, textColor, panelColor, discount, description } = req.body;
+        
+        let imagePath = req.file ? req.file.filename : 'default-product.png';
 
         await productModel.create({
             name,
-            price,
-            stock, 
+            price: Number(price),
+            stock: Number(stock),
+            discount: Number(discount) || 0,
             quantity,
             category,
-            bgColor,
-            textColor,
-            panelColor,
-            discount,
+            bgColor: bgColor || '#ffffff',
+            textColor: textColor || '#111827',
+            panelColor: panelColor || '#f3f4f6',
             description,
             image: imagePath,
         });
 
         res.redirect('/products/allProducts');
     } catch (error) {
-        console.error('error from productController (createProduct)' , error);
+        console.error('Error from productController (createProduct)', error);
         res.status(500).send("Couldn't create product");
     }
-}
+};
 
 const deleteProduct = async (req, res)=>{
     try{
@@ -56,41 +57,36 @@ const getEditProduct = async (req, res)=>{
     res.render('createProduct', {product})
 }
 
-const postEditProduct = async (req, res)=>{
-    try{
-        let { name, price, stock, quantity, category, bgColor, textColor, panelColor, discount, description} = req.body;
-        let product = await productModel.findById(req.params.id);
+const postEditProduct = async (req, res) => {
+    try {
+        const productId = req.params.id;
+        let { name, price, stock, quantity, category, bgColor, textColor, panelColor, discount, description } = req.body;
+        
+        const oldProduct = await productModel.findById(productId);
+        if (!oldProduct) return res.status(404).send("Product not found");
 
-        let updatedData = {
+        let imagePath = req.file ? req.file.filename : oldProduct.image;
+
+        await productModel.findByIdAndUpdate(productId, {
             name,
-            price,
-            stock, 
+            price: Number(price),
+            stock: Number(stock),
+            discount: Number(discount) || 0,
             quantity,
             category,
-            discount,
             bgColor,
-            panelColor,
             textColor,
-            description
-        };
+            panelColor,
+            description,
+            image: imagePath
+        });
 
-        if(req.file){
-            if(product.image){
-                let imgPath = path.join(__dirname, '../public/uploads', product.image)
-                if(fs.existsSync(imgPath)){
-                    fs.unlinkSync(imgPath)
-                }
-            }
-            updatedData.image = req.file.filename;
-        }
-
-        await productModel.findByIdAndUpdate(req.params.id, updatedData)
-        res.redirect('/products/allProducts')
+        res.redirect('/products/allProducts');
+    } catch (error) {
+        console.error('Error from productController (postEditProduct)', error);
+        res.status(500).send("Couldn't update product");
     }
-    catch(error){
-        console.error(error.message)
-    }
-}
+};
 
 const viewProduct = async (req, res)=>{
     try{

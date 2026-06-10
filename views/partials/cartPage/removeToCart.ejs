@@ -1,0 +1,33 @@
+<script>
+
+    async function removeToCart(productId) {
+    
+      try {
+        // 🎯 फिक्स: यहाँ बिल्कुल वही रूट डाला है जो तुम्हारे बैकएंड में है
+        let res = await fetch(`/users/cart/remove-product/${productId}`, { method: 'POST' });
+        let data = await res.json();
+    
+        if (data.success) {
+          const productCard = document.getElementById(`product-${productId}`);
+          if (productCard) {
+            productCard.style.opacity = '0';
+            productCard.style.transform = 'scale(0.95)';
+            productCard.style.transition = 'all 0.3s ease';
+            
+            setTimeout(() => {
+              productCard.remove();
+              updateCartPageTotals(productId, 0, 0);
+              const remainingCards = document.querySelectorAll('[id^="product-"]');
+              if (remainingCards.length === 0) {
+                window.location.reload();
+              }
+            }, 300);
+          }
+        } else {
+          alert(data.message || "हटाने में कोई दिक्कत आई!");
+        }
+      } catch (err) {
+        console.error("Remove Cart Front-end Error:", err);
+      }
+    }
+</script>

@@ -23,7 +23,6 @@ const registerUser = async (req, res) => {
         let salt = await bcrypt.genSalt(10);
         let hash = await bcrypt.hash(password, salt);
         
-        // 🚀 6-Digit का रैंडम OTP जनरेट करना
         const generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
         const otpExpires = Date.now() + 600000; // OTP सिर्फ 10 मिनट के लिए वैलिड रहेगा
 
@@ -71,12 +70,12 @@ const loginUser = async (req, res)=>{
         }
         
         let isMatch = await bcrypt.compare(password, user.password);
-        if (!user.isVerified) {
-            return res.render('login', { error: 'Your account is not verified! Please check your email for OTP.' });
-        }
-        
         if(!isMatch){
             return res.render('login', { error: 'Wrong password! Please try again.' });
+        }
+
+        if (!user.isVerified) {
+            return res.render('login', { error: 'Your account is not verified! Please check your email for OTP.' });
         }
 
         let token = generateToken(user);
@@ -108,23 +107,20 @@ const verifyOtp = async (req, res) => {
             return res.render('verify-otp', { email, error: 'User not found!' });
         }
 
-        // चेक करो कि कहीं OTP एक्सपायर तो नहीं हुआ
         if (user.otpExpires <= Date.now()) {
             return res.render('verify-otp', { email, error: 'OTP has expired! Please register again.' });
         }
 
-        // OTP मैच करो
         if (user.otp !== otp) {
             return res.render('verify-otp', { email, error: 'Invalid OTP! Please try again.' });
         }
 
-        // अगर सब सही है, तो यूजर को वेरीफाई करो और OTP डिलीट मारो डेटाबेस से
-        user.isVerified = true;
-        user.otp = undefined;
-        user.otpExpires = undefined;
-        await user.save();
+        // 🎯 पुराना user.save() वाला हिस्सा हटाकर ये लिखो
+        await userModel.findByIdAndUpdate(user._id, {
+            $set: { isVerified: true },
+            $unset: { otp: 1, otpExpires: 1 } // इससे डेटाबेस से ये दोनों फील्ड्स हमेशा के लिए गायब हो जाएंगी
+        });
 
-        // अब टोकन और कुकी दो ताकि वो सीधे अंदर जा सके
         let token = generateToken(user);
         res.cookie('token', token, {
             httpOnly: true,

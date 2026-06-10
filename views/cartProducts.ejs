@@ -10,6 +10,10 @@
 
   <style>
     body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
   </style>
 </head>
 
@@ -235,7 +239,44 @@
 
   </div>
 
+  <div id="orderConfirmModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="closeOrderModal()"></div>
+    
+    <div class="bg-white rounded-3xl border border-gray-100 max-w-md w-full p-6 shadow-2xl relative z-10 animate-[fadeIn_0.2s_ease-out]">
+      <div class="w-12 h-12 bg-emerald-50 rounded-2xl flex items-center justify-center mb-4 border border-emerald-100">
+        <i class="fa-solid fa-cart-shopping text-xl text-[#24963f]"></i>
+      </div>
+      
+      <h3 class="text-xl font-black text-gray-900 tracking-tight">Confirm Your Order</h3>
+      <p class="text-xs text-gray-500 mt-1">Please review your order details before final placement.</p>
+      
+      <div class="my-4 border-t border-gray-100"></div>
+      
+      <div class="space-y-3 bg-gray-50 p-4 rounded-xl text-xs font-medium text-gray-600 mb-6">
+        <div class="flex justify-between items-center">
+          <span>Total Payable Amount:</span>
+          <span id="modalTotalAmount" class="font-black text-base text-gray-900"></span>
+        </div>
+        <div class="border-t border-dashed border-gray-200 my-2"></div>
+        <div>
+          <span class="block text-[10px] uppercase font-bold text-gray-400 tracking-wider mb-1">Delivering To:</span>
+          <p id="modalAddressText" class="text-gray-800 font-bold leading-relaxed line-clamp-2"></p>
+        </div>
+      </div>
+      
+      <div class="grid grid-cols-2 gap-3">
+        <button type="button" onclick="closeOrderModal()" class="py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-xs rounded-xl transition-all text-center">
+          Cancel
+        </button>
+        <button type="button" onclick="submitFinalOrder(event)" class="py-3 bg-[#24963f] hover:bg-[#1e7e34] text-white font-black text-xs rounded-xl shadow-md shadow-emerald-700/10 transition-all text-center flex items-center justify-center gap-1.5">
+          <i class="fa-solid fa-circle-check text-[10px]"></i> Place Order
+        </button>
+      </div>
+    </div>
+  </div>
+
   <script>
+    // 🏠 ADDRESS SELECTION HIGHLIGHTER
     function highlightAddress(selectedId) {
       document.querySelectorAll('form label').forEach(lbl => {
         lbl.classList.remove('border-[#24963f]', 'bg-[#24963f]/[0.02]');
@@ -251,6 +292,7 @@
       }
     }
 
+    // 🗺️ TOGGLE ACCORDION ADDRESSES
     function toggleCheckoutAddresses(event) {
       event.preventDefault();
       const list = document.getElementById('otherAddressesList');
@@ -261,131 +303,46 @@
       }
     }
 
-    // 🗑️ 3. कार्ट से प्रोडक्ट डिलीट करना
-    async function removeToCart(productId) {
-      try {
-        let res = await fetch(`/users/cart/remove-product/${productId}`, { method: 'POST' });
-        let data = await res.json();
-        if(data.success) { location.reload(); }
-      } catch(error) { console.log(error); }
-    }
-
-    // 📍 4. हेडर लोकेशन का ड्रॉपडाउन खोलना/बंद करना
-    function toggleAddressDropdown(event) {
-      event.stopPropagation(); 
-      const menu = document.getElementById('addressDropdownMenu');
-      if (menu) {
-        menu.classList.toggle('hidden');
-      }
-    }
-
-    // 📌 5. हेडर ड्रॉपडाउन से एड्रेस चुनने पर UI अपडेट करना
-    function selectHeaderAddress(title, flatNo, area, city, addrId) {
-      const titleContainer = document.getElementById('header-addr-title');
-      const textContainer = document.getElementById('header-addr-text');
+    // 🎯 OPEN ORDER OVERLAY MODAL
+    function openOrderModal() {
+      const modal = document.getElementById('orderConfirmModal');
+      const grandTotalEl = document.getElementById('grand-total');
+      const finalTotalText = grandTotalEl ? grandTotalEl.innerText : '₹0';
       
-      if (titleContainer && textContainer) {
-        titleContainer.innerHTML = `<i class="fa-solid ${title === 'Home' ? 'fa-house' : title === 'Office' ? 'fa-briefcase' : 'fa-location-dot'} mr-1"></i> Delivering to ${title}`;
-        const fullAddressString = `${flatNo}, ${area}, ${city}`;
-        textContainer.innerText = fullAddressString;
-        textContainer.setAttribute('title', fullAddressString); 
+      const selectedAddressInput = document.querySelector('input[name="address"]:checked');
+      
+      if (!selectedAddressInput) {
+        alert("Please select a delivery address first!");
+        return;
       }
       
-      const menu = document.getElementById('addressDropdownMenu');
-      if (menu) menu.classList.add('hidden');
-
-      if (typeof highlightAddress === "function") {
-        highlightAddress(addrId);
-      }
+      document.getElementById('modalTotalAmount').innerText = finalTotalText;
+      document.getElementById('modalAddressText').innerText = selectedAddressInput.value;
+      
+      if (modal) modal.classList.remove('hidden');
     }
 
-    // 🌍 6. पेज पर कहीं भी क्लिक होने पर हेडर लोकेशन मेनू क्लोज करना
-    window.addEventListener('click', () => {
-      const menu = document.getElementById('addressDropdownMenu');
-      if (menu) menu.classList.add('hidden');
-    });
+    // ❌ CLOSE OVERLAY MODAL
+    function closeOrderModal() {
+      const modal = document.getElementById('orderConfirmModal');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    // 🚀 SUBMIT FINAL ORDER ACTION
+    function submitFinalOrder(event) {
+      const checkoutForm = document.querySelector('form[action="/users/cart/checkout"]');
+      if (checkoutForm) {
+        event.target.disabled = true;
+        event.target.innerHTML = `<i class="fa-solid fa-spinner animate-spin mr-1"></i> Placing...`;
+        checkoutForm.submit();
+      }
+    }
   </script>
 
   <%- include('partials/header-scripts') %>
   <%- include('partials/updateQty') %>
+  <%- include('partials/cartPage/removeToCart') %>
+  <%- include('partials/loader') %>
 
-  <div id="orderConfirmModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4">
-  <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="closeOrderModal()"></div>
-  
-  <div class="bg-white dark:bg-zinc-900 rounded-3xl border border-gray-100 max-w-md w-full p-6 shadow-2xl relative z-10 animate-[fadeIn_0.2s_ease-out]">
-    
-    <div class="w-12 h-12 bg-emerald-50 rounded-2xl flex items-center justify-center mb-4 border border-emerald-100">
-      <i class="fa-solid fa-cart-shopping text-xl text-[#24963f]"></i>
-    </div>
-    
-    <h3 class="text-xl font-black text-gray-900 tracking-tight">Confirm Your Order</h3>
-    <p class="text-xs text-gray-500 mt-1">Please review your order details before final placement.</p>
-    
-    <div class="my-4 border-t border-gray-100"></div>
-    
-    <div class="space-y-3 bg-gray-50 p-4 rounded-xl text-xs font-medium text-gray-600 mb-6">
-      <div class="flex justify-between items-center">
-        <span>Total Payable Amount:</span>
-        <span id="modalTotalAmount" class="font-black text-base text-gray-900"></span>
-      </div>
-      <div class="border-t border-dashed border-gray-200 my-2"></div>
-      <div>
-        <span class="block text-[10px] uppercase font-bold text-gray-400 tracking-wider mb-1">Delivering To:</span>
-        <p id="modalAddressText" class="text-gray-800 font-bold leading-relaxed line-clamp-2"></p>
-      </div>
-    </div>
-    
-    <div class="grid grid-cols-2 gap-3">
-      <button type="button" onclick="closeOrderModal()" class="py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-xs rounded-xl transition-all text-center">
-        Cancel
-      </button>
-      <button type="button" onclick="submitFinalOrder()" class="py-3 bg-[#24963f] hover:bg-[#1e7e34] text-white font-black text-xs rounded-xl shadow-md shadow-emerald-700/10 transition-all text-center flex items-center justify-center gap-1.5">
-        <i class="fa-solid fa-circle-check text-[10px]"></i> Place Order
-      </button>
-    </div>
-    
-  </div>
-</div>
-
-<script>
-  function openOrderModal() {
-    const modal = document.getElementById('orderConfirmModal');
-    const finalTotalText = document.getElementById('finalTotal').innerText;
-    
-    const selectedAddressInput = document.querySelector('input[name="address"]:checked');
-    
-    if (!selectedAddressInput) {
-      alert("Please select a delivery address first!");
-      return;
-    }
-    
-    document.getElementById('modalTotalAmount').innerText = finalTotalText;
-    document.getElementById('modalAddressText').innerText = selectedAddressInput.value;
-    
-    if (modal) modal.classList.remove('hidden');
-  }
-
-  function closeOrderModal() {
-    const modal = document.getElementById('orderConfirmModal');
-    if (modal) modal.classList.add('hidden');
-  }
-
-  function submitFinalOrder() {
-    const checkoutForm = document.querySelector('form[action="/users/cart/checkout"]');
-    if (checkoutForm) {
-      event.target.disabled = true;
-      event.target.innerHTML = `<i class="fa-solid fa-spinner animate-spin mr-1"></i> Placing...`;
-      checkoutForm.submit();
-    }
-  }
-</script>
-
-<style>
-  @keyframes fadeIn {
-    from { opacity: 0; transform: scale(0.95); }
-    to { opacity: 1; transform: scale(1); }
-  }
-</style>
-<%- include('partials/loader') %>
 </body>
 </html>

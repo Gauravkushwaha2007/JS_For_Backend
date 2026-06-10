@@ -58,7 +58,7 @@ adminRouter.get('/analytics', isAdmin, async (req, res) =>{
 
         const lowStockProducts = await productModel.find({
             stock: { $lte: 5 } // $lte मतलब Less Than or Equal to 5
-        }).select('name stock price picture'); 
+        }).select('name stock price image'); 
 
         res.render('admin/analytics', {
             totalOrders,

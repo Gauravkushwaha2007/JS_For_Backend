@@ -4,7 +4,7 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const flash = require('connect-flash');
-const MongoStore = require('connect-mongo'); 
+const { MongoStore } = require('connect-mongo');
 
 const db = require('./config/dbConnection');
 const userRouter = require('./routes/userRouter');
@@ -16,15 +16,15 @@ const attachUser = require('./middlewares/attachUser');
 const app = express();
 
 app.use(session({
-    secret: process.env.SESSION_SECRET || 'secretkey', 
+    secret: process.env.SESSION_SECRET || 'secretkey',
     resave: false,
     saveUninitialized: false,
     store: MongoStore.create({
         mongoUrl: process.env.MONGODB_URI ? `${process.env.MONGODB_URI}/Scatch` : 'mongodb://127.0.0.1:27017/Scatch',
-        ttl: 14 * 24 * 60 * 60
+        ttl: 14 * 24 * 60 * 60 // 14 दिन
     }),
     cookie: {
-        maxAge: 1000 * 60 * 60 * 24 * 14 // Valid cookie for 14 days
+        maxAge: 1000 * 60 * 60 * 24 * 14
     }
 }));
 
