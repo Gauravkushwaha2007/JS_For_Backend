@@ -1,25 +1,20 @@
-const jwt = require('jsonwebtoken');
 const userModel = require('../models/userModel');
 
 const attachUser = async (req, res, next) => {
     try {
-        let token = req.cookies.token;
-
-        if (!token) {
+        if (!req.session || !req.session.userId) {
             res.locals.user = null;
             req.user = null;
             return next();
         }
         
-        // verify token
-        let decoded = jwt.verify(token, process.env.JWT_SECRET);
-        
-        let user = await userModel.findOne({ email: decoded.email }).select('-password');
+        let user = await userModel.findById(req.session.userId).select('-password');
         
         if (user) {
             req.user = user;
             res.locals.user = user;
         } else {
+            delete req.session.userId;
             res.locals.user = null;
             req.user = null;
         }

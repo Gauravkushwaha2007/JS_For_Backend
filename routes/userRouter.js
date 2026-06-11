@@ -10,9 +10,6 @@ const {
     updateProfile, getProfile, addAddress, deleteAddress, editAddress, makeAddressPrimary
 } = require('../controllers/userController');
 
-const userModel = require('../models/userModel');
-const productModel = require('../models/productModel');
-
 const userRouter = express.Router();
 
 

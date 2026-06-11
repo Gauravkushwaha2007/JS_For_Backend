@@ -1,32 +1,40 @@
-const bcrypt = require('bcrypt');
-const cookieParser = require('cookie-parser')
-let jwt = require('jsonwebtoken');
 const userModel = require('../models/userModel');
 
+const wantsJsonResponse = (req) => {
+    return req.xhr || req.headers.accept?.includes('application/json') || req.headers['content-type']?.includes('application/json');
+};
+
+const handleUnauthenticated = (req, res, message = 'Please login to continue') => {
+    if (wantsJsonResponse(req)) {
+        return res.status(401).json({
+            success: false,
+            loginRequired: true,
+            message
+        });
+    }
+
+    req.flash('error', message);
+    return res.redirect('/users/login');
+};
 
 const isLoggedIn = (async (req,res,next)=>{
     try{
-        let token = req.cookies.token;
-        if(!token) {
-            req.flash('error', 'Invalid or session expired');
-            return res.redirect('/users/login');
+        if(!req.session || !req.session.userId) {
+            return handleUnauthenticated(req, res);
         }
 
-        let decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-        const user = await userModel.findOne({email: decoded.email}).select('-password');
+        const user = await userModel.findById(req.session.userId).select('-password');
         if(!user) {
-            req.flash('error','User not found');
-            res.clearCookie('token');
-            return res.redirect('/users/login');
+            delete req.session.userId;
+            return handleUnauthenticated(req, res, 'User not found');
         }
-        req.user = user ;
-        next()
+        req.user = user;
+        res.locals.user = user;
+        next();
     }
     catch(error){
-        res.clearCookie('token');
-        req.flash('error', 'Invalid or session expired');
-        return res.redirect('/users/login');
+        console.error('Auth middleware error:', error.message);
+        return handleUnauthenticated(req, res);
     }
 
 })

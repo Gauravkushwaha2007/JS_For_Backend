@@ -1,7 +1,6 @@
 const express = require('express');
 const isLoggedIn = require('../middlewares/authMiddleware');
 const isAdmin = require('../middlewares/isAdmin');
-const attachUser = require('../middlewares/attachUser');
 
 const productModel = require('../models/productModel');
 const userModel = require('../models/userModel');
@@ -12,7 +11,7 @@ const upload = require('../config/multer');
 const productRouter = express.Router();
 
 
-productRouter.get('/allProducts', attachUser, async(req, res)=>{
+productRouter.get('/allProducts', async(req, res)=>{
     try {
         let products = await productModel.find();
         
@@ -46,18 +45,18 @@ productRouter.get('/allProducts', attachUser, async(req, res)=>{
 });
 
 
-productRouter.get('/view/:id', attachUser, viewProduct);
+productRouter.get('/view/:id', viewProduct);
 
-productRouter.get('/create', attachUser, isAdmin, (req, res)=>{
+productRouter.get('/create', isLoggedIn, isAdmin, (req, res)=>{
     res.render('admin/createProduct',{ product: null, activePage: 'createProduct'});
 })
 
-productRouter.post('/create', attachUser, isAdmin, upload.single('image'), createProduct);
+productRouter.post('/create', isLoggedIn, isAdmin, upload.single('image'), createProduct);
 
-productRouter.post('/delete/:id', attachUser, isAdmin, deleteProduct)
+productRouter.post('/delete/:id', isLoggedIn, isAdmin, deleteProduct)
 
-productRouter.get('/edit/:id', attachUser, isAdmin, getEditProduct)
-productRouter.post('/edit/:id', attachUser, isAdmin, upload.single('image'), postEditProduct)
+productRouter.get('/edit/:id', isLoggedIn, isAdmin, getEditProduct)
+productRouter.post('/edit/:id', isLoggedIn, isAdmin, upload.single('image'), postEditProduct)
 
 
 

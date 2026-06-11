@@ -1,7 +1,6 @@
 const fs = require('fs');
 const productModel = require('../models/productModel');
 const userModel = require('../models/userModel');
-const jwt = require('jsonwebtoken');
 const upload = require('../config/multer');
 const path = require('path');
 
@@ -99,15 +98,6 @@ const viewProduct = async (req, res)=>{
         let user = req.user || null;
         let totalCartPrice = 0;
         let stock = product.stock
-
-        if (!user && req.cookies && req.cookies.token) {
-            try {
-                const decoded = jwt.verify(req.cookies.token, process.env.JWT_SECRET);
-                user = await userModel.findOne({ email: decoded.email });
-            } catch(jwtErr) {
-                console.log("JWT Verification failed in product detail:", jwtErr.message);
-            }
-        }
 
         if (user) {
             const populatedUser = await userModel.findById(user._id).populate('cart.product');

@@ -1,13 +1,12 @@
 const express = require('express');
 const router = express.Router();
 
-const attachUser = require('../middlewares/attachUser');
 const userModel = require('../models/userModel');
 const productModel = require('../models/productModel');
 
 
 
-router.get('/', attachUser, async(req, res)=>{
+router.get('/', async(req, res)=>{
     
     try{
 

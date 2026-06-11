@@ -5,7 +5,7 @@ const productModel = require('../models/productModel');
 const isLoggedIn = require('../middlewares/authMiddleware');
 const isAdmin = require('../middlewares/isAdmin');
 
-adminRouter.get('/orders', isAdmin, async (req, res) => {
+adminRouter.get('/orders', isLoggedIn, isAdmin, async (req, res) => {
     try {
         const orders = await orderModel.find()
             .populate('user')                    
@@ -26,7 +26,7 @@ adminRouter.post('/orders/update/:id', isLoggedIn, isAdmin, async (req, res) => 
 
 
 // getAnalytics Dashboard 
-adminRouter.get('/analytics', isAdmin, async (req, res) =>{
+adminRouter.get('/analytics', isLoggedIn, isAdmin, async (req, res) =>{
     try {
         const allOrders = await orderModel.find().populate('products.product');
         const totalOrders = allOrders.length;

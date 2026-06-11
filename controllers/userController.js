@@ -2,18 +2,23 @@ const crypto = require('crypto');
 const userModel = require('../models/userModel');
 const productModel = require('../models/productModel');
 const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-const generateToken = require('../utils/generateToken');
 const sendmail = require('../utils/mailer');
 const orderModel = require('../models/orderModel');
 const ejs = require('ejs');
 const path = require('path');
 
-const AUTH_COOKIE_OPTIONS = {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax',
-    maxAge: 1000 * 60 * 60 * 24 * 30
+const establishUserSession = (req, userId) => {
+    return new Promise((resolve, reject) => {
+        req.session.regenerate((regenerateError) => {
+            if (regenerateError) return reject(regenerateError);
+
+            req.session.userId = userId;
+            req.session.save((saveError) => {
+                if (saveError) return reject(saveError);
+                resolve();
+            });
+        });
+    });
 };
 
 const getCartSummary = (user) => {
@@ -106,8 +111,7 @@ const loginUser = async (req, res)=>{
             return res.render('auth/login', { error: 'Your account is not verified! Please check your email for OTP.' });
         }
 
-        let token = generateToken(user);
-        res.cookie('token', token, AUTH_COOKIE_OPTIONS);
+        await establishUserSession(req, user._id);
 
         return res.redirect('/products/allProducts');
     }
@@ -145,8 +149,7 @@ const verifyOtp = async (req, res) => {
             $unset: { otp: 1, otpExpires: 1 }
         });
 
-        let token = generateToken(user);
-        res.cookie('token', token, AUTH_COOKIE_OPTIONS);
+        await establishUserSession(req, user._id);
 
         return res.redirect('/products/allProducts');
     } catch (error) {
@@ -254,17 +257,21 @@ const postResetPassword = async (req, res) => {
 
 //  LOGOUT user 
 const logoutUser = async (req, res) => {
-    res.clearCookie('token');
-    req.flash('Success', "Logged out Successfully ")
-    res.redirect('/users/login')
+    req.session.destroy((error) => {
+        if (error) {
+            console.error('Logout error:', error.message);
+        }
+
+        res.clearCookie('connect.sid');
+        res.clearCookie('token');
+        return res.redirect('/users/login');
+    });
 }
 
 // ADD TO CART
 const addToCart = async (req, res)=>{
     try{
-        const userEmail = req.user ? req.user.email : jwt.verify(req.cookies.token, process.env.JWT_SECRET).email;
-        
-        let user = await userModel.findOne({email: userEmail});
+        let user = await userModel.findById(req.user._id);
         let product = await productModel.findById(req.params.productId);
         
         if(!product) {
@@ -304,8 +311,7 @@ const addToCart = async (req, res)=>{
 //  REMOVE FROM CART
 const removeToCart = async (req, res)=>{
     try{
-        const userEmail = req.user ? req.user.email : jwt.verify(req.cookies.token, process.env.JWT_SECRET).email;
-        const user = await userModel.findOne({email: userEmail});
+        const user = await userModel.findById(req.user._id);
         
         if(!user){
             return res.status(401).json({ success: false, message: 'User not found' });
@@ -328,9 +334,7 @@ const removeToCart = async (req, res)=>{
 // 5. CART PRODUCTS PAGE
 const cartProducts = async (req, res)=>{
     try{
-        
-        const userEmail = req.user ? req.user.email : jwt.verify(req.cookies.token, process.env.JWT_SECRET).email;
-        let user = await userModel.findOne({email: userEmail}).populate('cart.product');
+        let user = await userModel.findById(req.user._id).populate('cart.product');
 
         if(!user){
             return res.redirect('/users/login');
@@ -369,8 +373,7 @@ const cartProducts = async (req, res)=>{
 // 6. DECREASE QUANTITY
 const descreaseQty = async (req, res)=>{
     try{
-        const userEmail = req.user ? req.user.email : jwt.verify(req.cookies.token, process.env.JWT_SECRET).email;
-        let user = await userModel.findOne({email: userEmail}).populate('cart.product');
+        let user = await userModel.findById(req.user._id).populate('cart.product');
         let productId = req.params.productId;
         
         let cartItem = user.cart.find(item => item.product._id.toString() === productId);
@@ -401,8 +404,7 @@ const descreaseQty = async (req, res)=>{
 // 7. INCREASE QUANTITY (Updated with minimal edits)
 const increaseQty = async (req, res)=>{
     try{
-        const userEmail = req.user ? req.user.email : jwt.verify(req.cookies.token, process.env.JWT_SECRET).email;
-        let user = await userModel.findOne({email: userEmail}).populate('cart.product');
+        let user = await userModel.findById(req.user._id).populate('cart.product');
         let productId = req.params.productId;
     
         let cartItem = user.cart.find(item => item.product._id.toString() === productId);
