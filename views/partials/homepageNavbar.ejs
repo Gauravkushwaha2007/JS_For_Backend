@@ -100,12 +100,13 @@
       <i id="theme-icon-moon" class="fa-solid fa-moon text-sm dark:hidden"></i>
     </button>
 
-    <% if(user && user.cart && user.cart.length > 0) { %>
-      <a href="/users/cart/products" class="flex items-center gap-2 sm:gap-3 bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-900/60 px-3 py-1.5 rounded-xl transition-all duration-300 shadow-[0_4px_15px_rgba(16,185,129,0.08)] group">
+    <% const homepageCartItems = (user && user.cart) ? user.cart.filter(item => item && item.product).length : 0; %>
+    <% if(user && user.cart && homepageCartItems > 0) { %>
+      <a id="header-cart-link" href="/users/cart/products" class="flex items-center gap-2 sm:gap-3 bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-900/60 px-3 py-1.5 rounded-xl transition-all duration-300 shadow-[0_4px_15px_rgba(16,185,129,0.08)] group">
         <div class="relative flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 bg-emerald-500/15 rounded-lg text-[#24963f] dark:text-emerald-400">
           <i class="fa-solid fa-basket-shopping text-sm sm:text-base group-hover:scale-110 transition-transform duration-200"></i>
           <span id="header-cart-count" class="absolute -top-1.5 -right-1.5 bg-red-600 text-white font-black text-[9px] sm:text-[10px] w-4 h-4 sm:w-5 sm:h-5 rounded-full flex items-center justify-center shadow-md border-2 border-white dark:border-zinc-950">
-            <%= user.cart.length %>
+            <%= homepageCartItems %>
           </span>
         </div>
         <span id="header-cart-total" class="text-xs font-black text-zinc-900 dark:text-white tracking-tight">
@@ -113,7 +114,7 @@
         </span>
       </a>
     <% } else { %>
-      <a href="/users/cart/products" class="flex items-center gap-2 border border-zinc-200 bg-zinc-100 text-zinc-600 px-3.5 py-2 rounded-xl transition-all font-bold text-xs uppercase tracking-wider hover:bg-zinc-200 dark:text-zinc-300 dark:bg-zinc-900/30 dark:border-zinc-800">
+      <a id="header-cart-link" href="/users/cart/products" class="flex items-center gap-2 border border-zinc-200 bg-zinc-100 text-zinc-600 px-3.5 py-2 rounded-xl transition-all font-bold text-xs uppercase tracking-wider hover:bg-zinc-200 dark:text-zinc-300 dark:bg-zinc-900/30 dark:border-zinc-800">
         <i class="fa-solid fa-basket-shopping text-xs text-zinc-400 dark:text-zinc-500"></i>
         <span class="hidden sm:inline">Cart</span>
       </a>
@@ -335,4 +336,35 @@
       icon.classList.add('fa-bars');
     }
   }
+
+  function renderHomepageCart(summary) {
+    const totalItems = Number(summary?.totalItems || 0);
+    const totalCartPrice = Number(summary?.totalCartPrice || 0);
+
+    if (totalItems > 0) {
+      return `
+        <a id="header-cart-link" href="/users/cart/products" class="flex items-center gap-2 sm:gap-3 bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-900/60 px-3 py-1.5 rounded-xl transition-all duration-300 shadow-[0_4px_15px_rgba(16,185,129,0.08)] group">
+          <div class="relative flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 bg-emerald-500/15 rounded-lg text-[#24963f] dark:text-emerald-400">
+            <i class="fa-solid fa-basket-shopping text-sm sm:text-base group-hover:scale-110 transition-transform duration-200"></i>
+            <span id="header-cart-count" class="absolute -top-1.5 -right-1.5 bg-red-600 text-white font-black text-[9px] sm:text-[10px] w-4 h-4 sm:w-5 sm:h-5 rounded-full flex items-center justify-center shadow-md border-2 border-white dark:border-zinc-950">${totalItems}</span>
+          </div>
+          <span id="header-cart-total" class="text-xs font-black text-zinc-900 dark:text-white tracking-tight">&#8377;${totalCartPrice}</span>
+        </a>
+      `;
+    }
+
+    return `
+      <a id="header-cart-link" href="/users/cart/products" class="flex items-center gap-2 border border-zinc-200 bg-zinc-100 text-zinc-600 px-3.5 py-2 rounded-xl transition-all font-bold text-xs uppercase tracking-wider hover:bg-zinc-200 dark:text-zinc-300 dark:bg-zinc-900/30 dark:border-zinc-800">
+        <i class="fa-solid fa-basket-shopping text-xs text-zinc-400 dark:text-zinc-500"></i>
+        <span class="hidden sm:inline">Cart</span>
+      </a>
+    `;
+  }
+
+  window.syncHeaderCart = function(summary) {
+    const headerCartLink = document.getElementById('header-cart-link');
+    if (!headerCartLink || !summary) return;
+
+    headerCartLink.outerHTML = renderHomepageCart(summary);
+  };
 </script>

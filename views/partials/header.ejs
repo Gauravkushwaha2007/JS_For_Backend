@@ -126,10 +126,11 @@
         <a href="/users/login" class="text-xs font-bold text-gray-600 hover:text-[#24963f] transition-colors mr-1 hidden sm:block">Login</a>
       <% } %>
 
-      <% if(typeof user !== 'undefined' && user && user.cart && user.cart.length > 0) { %>
-        <a href="/users/cart/products" class="flex items-center gap-2 sm:gap-3 bg-[#24963f] hover:bg-[#1e7e34] text-white px-3 sm:px-4 py-2.5 rounded-xl transition-all shadow-md shadow-emerald-700/20">
+      <% const headerCartItems = (typeof user !== 'undefined' && user && user.cart) ? user.cart.filter(item => item && item.product).length : 0; %>
+      <% if(typeof user !== 'undefined' && user && user.cart && headerCartItems > 0) { %>
+        <a id="header-cart-link" href="/users/cart/products" class="flex items-center gap-2 sm:gap-3 bg-[#24963f] hover:bg-[#1e7e34] text-white px-3 sm:px-4 py-2.5 rounded-xl transition-all shadow-md shadow-emerald-700/20">
           <div class="flex flex-col text-left">
-            <span id="header-cart-count" class="text-[9px] sm:text-[10px] font-black uppercase tracking-wider text-emerald-200 leading-none"><%= user.cart.length %> Items</span>
+            <span id="header-cart-count" class="text-[9px] sm:text-[10px] font-black uppercase tracking-wider text-emerald-200 leading-none"><%= headerCartItems %> Items</span>
             
             <span id="header-cart-total" class="text-xs font-black mt-0.5">₹<%= typeof totalCartPrice !== 'undefined' ? totalCartPrice : 0 %></span>
           </div>
@@ -140,7 +141,7 @@
           </div>
         </a>
       <% } else { %>
-        <a href="/users/cart/products" class="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 px-3.5 sm:px-4 py-2.5 rounded-xl transition-all font-extrabold text-xs uppercase tracking-wider">
+        <a id="header-cart-link" href="/users/cart/products" class="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 px-3.5 sm:px-4 py-2.5 rounded-xl transition-all font-extrabold text-xs uppercase tracking-wider">
           <i class="fa-solid fa-basket-shopping text-gray-400"></i>
           <span class="hidden sm:inline">Cart</span>
         </a>
@@ -323,4 +324,39 @@
       menu.classList.add('hidden');
     }
   });
+
+  function renderHeaderCart(summary) {
+    const totalItems = Number(summary?.totalItems || 0);
+    const totalCartPrice = Number(summary?.totalCartPrice || 0);
+
+    if (totalItems > 0) {
+      return `
+        <a id="header-cart-link" href="/users/cart/products" class="flex items-center gap-2 sm:gap-3 bg-[#24963f] hover:bg-[#1e7e34] text-white px-3 sm:px-4 py-2.5 rounded-xl transition-all shadow-md shadow-emerald-700/20">
+          <div class="flex flex-col text-left">
+            <span id="header-cart-count" class="text-[9px] sm:text-[10px] font-black uppercase tracking-wider text-emerald-200 leading-none">${totalItems} Items</span>
+            <span id="header-cart-total" class="text-xs font-black mt-0.5">&#8377;${totalCartPrice}</span>
+          </div>
+          <div class="h-6 w-[1px] bg-white/20"></div>
+          <div class="flex items-center gap-1.5 font-extrabold text-xs tracking-tight">
+            <i class="fa-solid fa-basket-shopping"></i>
+            <span class="hidden sm:inline">Basket</span>
+          </div>
+        </a>
+      `;
+    }
+
+    return `
+      <a id="header-cart-link" href="/users/cart/products" class="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 px-3.5 sm:px-4 py-2.5 rounded-xl transition-all font-extrabold text-xs uppercase tracking-wider">
+        <i class="fa-solid fa-basket-shopping text-gray-400"></i>
+        <span class="hidden sm:inline">Cart</span>
+      </a>
+    `;
+  }
+
+  window.syncHeaderCart = function(summary) {
+    const headerCartLink = document.getElementById('header-cart-link');
+    if (!headerCartLink || !summary) return;
+
+    headerCartLink.outerHTML = renderHeaderCart(summary);
+  };
 </script>

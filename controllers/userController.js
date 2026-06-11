@@ -9,6 +9,34 @@ const orderModel = require('../models/orderModel');
 const ejs = require('ejs');
 const path = require('path');
 
+const AUTH_COOKIE_OPTIONS = {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+    maxAge: 1000 * 60 * 60 * 24 * 30
+};
+
+const getCartSummary = (user) => {
+    let totalItems = 0;
+    let totalCartPrice = 0;
+
+    if (!user || !user.cart) {
+        return { totalItems, totalCartPrice };
+    }
+
+    user.cart.forEach((item) => {
+        if (!item.product) return;
+
+        const quantity = Number(item.quantity || 1);
+        const price = Number(item.product.price || 0);
+
+        totalItems += 1;
+        totalCartPrice += price * quantity;
+    });
+
+    return { totalItems, totalCartPrice };
+};
+
 
 // 1. REGISTER USER WITH OTP
 const registerUser = async (req, res) => {
@@ -79,10 +107,7 @@ const loginUser = async (req, res)=>{
         }
 
         let token = generateToken(user);
-        res.cookie('token', token,{
-            secure: false,
-            httpOnly: true
-        });
+        res.cookie('token', token, AUTH_COOKIE_OPTIONS);
 
         return res.redirect('/products/allProducts');
     }
@@ -121,10 +146,7 @@ const verifyOtp = async (req, res) => {
         });
 
         let token = generateToken(user);
-        res.cookie('token', token, {
-            httpOnly: true,
-            secure: false
-        });
+        res.cookie('token', token, AUTH_COOKIE_OPTIONS);
 
         return res.redirect('/products/allProducts');
     } catch (error) {
@@ -264,10 +286,13 @@ const addToCart = async (req, res)=>{
             quantity: 1
         });
         await user.save();
+
+        user = await userModel.findById(user._id).populate('cart.product');
         
         res.json({
             success: true,
-            message: "Added to Cart"
+            message: "Added to Cart",
+            cartSummary: getCartSummary(user)
         });
     }
     catch(error){
@@ -359,9 +384,12 @@ const descreaseQty = async (req, res)=>{
             await user.save();
         }
 
+        user = await userModel.findById(user._id).populate('cart.product');
+
         return res.json({
             success: true,
-            quantity: cartItem.quantity
+            quantity: cartItem.quantity,
+            cartSummary: getCartSummary(user)
         });  
     }
     catch(error){
@@ -380,17 +408,19 @@ const increaseQty = async (req, res)=>{
         let cartItem = user.cart.find(item => item.product._id.toString() === productId);
         
         if(cartItem){
-            // 🔥 सिर्फ ये 3 लाइन का छोटा सा जादुई एडिट 👇
             if (cartItem.quantity >= cartItem.product.stock) {
                 return res.json({ success: false, isStockError: true, message: `Sorry, only ${cartItem.product.stock} units available.` });
             }
 
             cartItem.quantity += 1;
             await user.save();
+
+            user = await userModel.findById(user._id).populate('cart.product');
     
             return res.json({
                 success: true,
-                quantity: cartItem.quantity
+                quantity: cartItem.quantity,
+                cartSummary: getCartSummary(user)
             });
         }   
         return res.status(404).json({ success: false, message: 'Product not found' });

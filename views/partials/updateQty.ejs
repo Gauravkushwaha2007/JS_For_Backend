@@ -102,6 +102,7 @@
 
         findAndUpdateQtyElements(productId, data.quantity);
         updateCartPageTotals(productId, data.quantity, diff);
+        window.syncHeaderCart?.(data.cartSummary);
       } else {
         showCartToast(data.message || "No more stock available.", true);
       }
@@ -121,6 +122,7 @@
 
         findAndUpdateQtyElements(productId, data.quantity);
         updateCartPageTotals(productId, data.quantity, diff);
+        window.syncHeaderCart?.(data.cartSummary);
       } 
     } catch (err) { console.error(err); }
   }
@@ -133,18 +135,41 @@
       let data = await res.json();
       
       if(data.success) {
+        window.syncHeaderCart?.(data.cartSummary);
+
         showCartToast(data.message || "Product added to your basket!", false);
         
         const actionBox = document.getElementById(`action-box-${productId}`);
         if(actionBox) {
-          actionBox.innerHTML = `
-            <div class="flex items-center bg-[#24963f] text-white rounded-xl overflow-hidden shadow-lg shadow-emerald-900/10 font-black text-sm h-[48px]">
-              <button onclick="descreaseQty('${productId}')" class="px-5 h-full hover:bg-[#1e7e34] transition-colors font-black text-base active:scale-95">-</button>
-              <span id="quantityNumber-${productId}" class="px-2 min-w-[28px] text-center font-black text-sm bg-[#1e7e34]/20 h-full flex items-center justify-center">1</span>
-              <button onclick="increaseQty('${productId}')" class="px-5 h-full hover:bg-[#1e7e34] transition-colors font-black text-base active:scale-95">+</button>
-            </div>
-          `;
+          const isHomeProductCard = !!actionBox.closest('.product-card');
+          const isAllProductsPage = /All Products/i.test(document.title || "");
+
+          actionBox.innerHTML = isHomeProductCard
+            ? `
+              <div class="flex items-center bg-emerald-500/[0.09] text-black rounded-lg overflow-hidden shadow-sm font-black text-xs">
+                <button onclick="descreaseQty('${productId}')" class="px-3 py-2 hover:bg-emerald-400 transition-colors text-xs font-black">-</button>
+                <span id="quantityNumber-${productId}" class="px-1.5 min-w-[18px] text-center font-black text-xs">1</span>
+                <button onclick="increaseQty('${productId}')" class="px-3 py-2 hover:bg-emerald-400 transition-colors text-xs font-black">+</button>
+              </div>
+            `
+            : isAllProductsPage
+            ? `
+              <div class="flex items-center bg-white border border-[#24963f] text-[#24963f] rounded-xl overflow-hidden shadow-sm font-black text-xs">
+                <button onclick="descreaseQty('${productId}')" class="px-2.5 py-1.5 hover:bg-[#24963f] hover:text-white transition-colors text-xs font-black">-</button>
+                <span id="quantityNumber-${productId}" class="px-2 min-w-[22px] text-center font-black text-xs text-gray-900">1</span>
+                <button onclick="increaseQty('${productId}')" class="px-2.5 py-1.5 hover:bg-[#24963f] hover:text-white transition-colors text-xs font-black">+</button>
+              </div>
+            `
+            : `
+              <div class="flex items-center bg-[#24963f] text-white rounded-xl overflow-hidden shadow-lg shadow-emerald-900/10 font-black text-sm h-[48px]">
+                <button onclick="descreaseQty('${productId}')" class="px-5 h-full hover:bg-[#1e7e34] transition-colors font-black text-base active:scale-95">-</button>
+                <span id="quantityNumber-${productId}" class="px-2 min-w-[28px] text-center font-black text-sm bg-[#1e7e34]/20 h-full flex items-center justify-center">1</span>
+                <button onclick="increaseQty('${productId}')" class="px-5 h-full hover:bg-[#1e7e34] transition-colors font-black text-base active:scale-95">+</button>
+              </div>
+            `;
         }
+
+        if (data.cartSummary) return;
 
         if (data.totalCartPrice || data.cartLength) {
            triggerGlobalNavbarSync(data.totalCartPrice, data.cartLength);
