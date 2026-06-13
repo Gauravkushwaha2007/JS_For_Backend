@@ -36,7 +36,7 @@
               <h1 class="text-xs font-black text-zinc-800 dark:text-zinc-100 truncate tracking-tight">
                 Hi, <%= user.name ? user.name.split(' ')[0] : 'User' %>!
               </h1>
-              <p class="text-[10px] text-zinc-400 font-bold truncate mt-0.5"><%= user.phone || user.email %></p>
+              <p class="text-[10px] text-zinc-400 font-bold truncate mt-0.5"><%= user.contact || user.email %></p>
             </div>
           </div>
 
@@ -87,11 +87,11 @@
           </div>
           <div>
             <span class="text-[10px] font-bold text-zinc-400 uppercase tracking-wide block">Email ID / Phone</span>
-            <span class="font-extrabold text-zinc-800 dark:text-zinc-200 truncate block"><%= user.phone || user.email %></span>
+            <span class="font-extrabold text-zinc-800 dark:text-zinc-200 truncate block"><%= user.contact || user.email %></span>
           </div>
         </div>
         
-        <button onclick="toggleProfileModal(true, '<%= user.name %>', '<%= user.phone || '' %>')" class="flex items-center gap-1.5 px-3 py-2 bg-zinc-50 hover:bg-zinc-100 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-200 text-[11px] font-black rounded-xl transition-all border border-zinc-200/50 dark:border-zinc-700 shadow-sm shrink-0">
+        <button onclick="toggleProfileModal(true, '<%= user.name %>', '<%= user.contact || '' %>')" class="flex items-center gap-1.5 px-3 py-2 bg-zinc-50 hover:bg-zinc-100 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-200 text-[11px] font-black rounded-xl transition-all border border-zinc-200/50 dark:border-zinc-700 shadow-sm shrink-0">
           <i class="fa-solid fa-user-pen"></i>
           EDIT PROFILE
         </button>

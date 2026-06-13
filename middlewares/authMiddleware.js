@@ -19,6 +19,10 @@ const handleUnauthenticated = (req, res, message = 'Please login to continue') =
 
 const isLoggedIn = (async (req,res,next)=>{
     try{
+        if (req.user) {
+            return next();
+        }
+        
         if(!req.session || !req.session.userId) {
             return handleUnauthenticated(req, res);
         }

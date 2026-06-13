@@ -7,6 +7,10 @@ const orderModel = require('../models/orderModel');
 const ejs = require('ejs');
 const path = require('path');
 
+const getBaseUrl = (req) => {
+    return process.env.BASE_URL || `${req.protocol}://${req.get('host')}`;
+};
+
 const establishUserSession = (req, userId) => {
     return new Promise((resolve, reject) => {
         req.session.regenerate((regenerateError) => {
@@ -72,7 +76,7 @@ const registerUser = async (req, res) => {
             const templatePath = path.join(__dirname, '../views/emails/welcome.ejs');
             const welcomeHtml = await ejs.renderFile(templatePath, { 
                 userName: user.name, 
-                hostUrl: `http://${req.headers.host}`,
+                hostUrl: getBaseUrl(req),
                 otp: generatedOtp 
             });
 
@@ -136,16 +140,36 @@ const verifyOtp = async (req, res) => {
             return res.render('auth/verify-otp', { email, error: 'User not found!' });
         }
 
-        if (user.otpExpires <= Date.now()) {
-            return res.render('auth/verify-otp', { email, error: 'OTP has expired! Please register again.' });
+        if (!user.otp || user.otpExpires <= Date.now()) {
+            return res.render('auth/verify-otp', { email, error: 'OTP has expired or is invalid! Please register again.' });
+        }
+
+        if (user.otpAttempts >= 5) {
+            await userModel.findByIdAndUpdate(user._id, {
+                $unset: { otp: 1, otpExpires: 1 },
+                $set: { otpAttempts: 0 }
+            });
+            return res.render('auth/verify-otp', { email, error: 'Too many failed attempts. Please register again to get a new OTP.' });
         }
 
         if (user.otp !== otp) {
-            return res.render('auth/verify-otp', { email, error: 'Invalid OTP! Please try again.' });
+            const updatedAttempts = (user.otpAttempts || 0) + 1;
+            if (updatedAttempts >= 5) {
+                await userModel.findByIdAndUpdate(user._id, {
+                    $unset: { otp: 1, otpExpires: 1 },
+                    $set: { otpAttempts: 0 }
+                });
+                return res.render('auth/verify-otp', { email, error: 'Too many failed attempts. Your OTP has been invalidated. Please register again.' });
+            } else {
+                await userModel.findByIdAndUpdate(user._id, {
+                    $set: { otpAttempts: updatedAttempts }
+                });
+                return res.render('auth/verify-otp', { email, error: `Invalid OTP! ${5 - updatedAttempts} attempts remaining. Please try again.` });
+            }
         }
 
         await userModel.findByIdAndUpdate(user._id, {
-            $set: { isVerified: true },
+            $set: { isVerified: true, otpAttempts: 0 },
             $unset: { otp: 1, otpExpires: 1 }
         });
 
@@ -177,7 +201,7 @@ const forgotPassword = async (req, res) => {
         user.resetPasswordExpires = Date.now() + 3600000; // 1 Hour from now
         await user.save();
 
-        const resetUrl = `http://${req.headers.host}/users/reset-password/${token}`;
+        const resetUrl = `${getBaseUrl(req)}/users/reset-password/${token}`;
 
         await sendmail(
             user.email,
@@ -278,6 +302,13 @@ const addToCart = async (req, res)=>{
             return res.status(404).json({
                 success: false,
                 message: 'Product not found'
+            });
+        }
+
+        if (product.stock <= 0) {
+            return res.json({
+                success: false,
+                message: "Product is out of stock"
             });
         }
 
@@ -485,7 +516,7 @@ const cartCheckout = async (req, res) => {
                 orderId: newOrder._id,
                 totalPrice: totalCartPrice,
                 address: deliveryAddress,
-                hostUrl: `http://${req.headers.host}`
+                hostUrl: getBaseUrl(req)
             });
 
             await sendmail(
@@ -541,10 +572,14 @@ const getOrders = async (req, res) => {
 
 const getBill = async (req, res)=>{
     try {
-    const order = await orderModel.findById(req.params.orderId).populate('products.product');
+    const order = await orderModel.findById(req.params.orderId).populate('user').populate('products.product');
     
     if (!order) {
       return res.status(404).send("Order not found");
+    }
+
+    if (order.user._id.toString() !== req.user._id.toString() && req.user.role !== 'admin') {
+      return res.status(403).send("Unauthorized: You do not have permission to view this invoice.");
     }
 
     let subtotal = order.totalPrice; 
@@ -591,7 +626,7 @@ const updateProfile = async (req, res) => {
 
         // यूजर का नाम और फोन नंबर अपडेट करो
         await userModel.findByIdAndUpdate(userId, {
-            $set: { name: name, phone: phone }
+            $set: { name: name, contact: Number(phone) }
         });
 
         // अपडेट होने के बाद वापस प्रोफाइल पेज पर भेज दो
@@ -696,7 +731,7 @@ const editAddress = async (req, res) => {
 };
 
 // AUTOMATIC Locate Location
-const fetchAddressFromGoogle = async (req, res) => {
+const fetchAddressFromOSM = async (req, res) => {
     try {
         const { lat, lng } = req.query;
         if (!lat || !lng) {
@@ -777,5 +812,5 @@ module.exports = {
     registerUser, loginUser, postResetPassword, getResetPassword, forgotPassword,getVerifyOtpPage, verifyOtp,
     addToCart, cartProducts, removeToCart,
     increaseQty, descreaseQty, logoutUser, cartCheckout, getOrders, getBill, getProfile,updateProfile,
-    addAddress, deleteAddress, makeAddressPrimary, editAddress, fetchAddressFromGoogle
+    addAddress, deleteAddress, makeAddressPrimary, editAddress, fetchAddressFromOSM
 };

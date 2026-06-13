@@ -16,10 +16,6 @@ const userSchema = mongoose.Schema({
             }
         }
     ],  
-    orders: {
-        type: Array,
-        default: []
-    },
     picture: String,
     contact: Number,
 
@@ -47,7 +43,11 @@ const userSchema = mongoose.Schema({
         default: false
     },
     otp: String,
-    otpExpires: Date
+    otpExpires: Date,
+    otpAttempts: {
+        type: Number,
+        default: 0
+    }
 
 });
 

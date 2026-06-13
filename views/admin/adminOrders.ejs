@@ -124,9 +124,9 @@
                             <div class="w-10 h-10 rounded-xl bg-zinc-50 border border-zinc-200/60 flex items-center justify-center overflow-hidden shrink-0 shadow-inner font-black text-[10px] text-red-600 uppercase">
                               <% if (item.product && item.product.image) { %>
                                 <img src="/uploads/<%= item.product.image %>" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                                <span class="hidden w-full h-full items-center justify-center bg-red-50 text-red-600"><%= item.product.name ? item.product.name.substring(0,2) : 'KP' %></span>
+                                <span class="hidden w-full h-full items-center justify-center bg-red-50 text-red-600"><%= (item.product && item.product.name) ? item.product.name.substring(0,2) : 'KP' %></span>
                               <% } else { %>
-                                <span class="w-full h-full flex items-center justify-center bg-red-50 text-red-600"><%= item.product.name ? item.product.name.substring(0,2) : 'KP' %></span>
+                                <span class="w-full h-full flex items-center justify-center bg-red-50 text-red-600"><%= (item.product && item.product.name) ? item.product.name.substring(0,2) : 'KP' %></span>
                               <% } %>
                             </div>
 

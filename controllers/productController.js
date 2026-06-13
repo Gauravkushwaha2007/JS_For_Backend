@@ -35,7 +35,7 @@ const deleteProduct = async (req, res)=>{
     try{
         let product = await productModel.findById(req.params.id);
         
-        if(product.image){
+        if(product.image && product.image !== 'default-product.png'){
             let imgPath = path.join(__dirname, '../public/uploads', product.image)
             if(fs.existsSync(imgPath)){
                 fs.unlinkSync(imgPath)
@@ -64,7 +64,16 @@ const postEditProduct = async (req, res) => {
         const oldProduct = await productModel.findById(productId);
         if (!oldProduct) return res.status(404).send("Product not found");
 
-        let imagePath = req.file ? req.file.filename : oldProduct.image;
+        let imagePath = oldProduct.image;
+        if (req.file) {
+            imagePath = req.file.filename;
+            if (oldProduct.image && oldProduct.image !== 'default-product.png') {
+                let oldImgPath = path.join(__dirname, '../public/uploads', oldProduct.image);
+                if (fs.existsSync(oldImgPath)) {
+                    fs.unlinkSync(oldImgPath);
+                }
+            }
+        }
 
         await productModel.findByIdAndUpdate(productId, {
             name,
