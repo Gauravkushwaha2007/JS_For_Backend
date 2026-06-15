@@ -1,7 +1,7 @@
-<nav class="w-full px-4 md:px-12 py-4 flex items-center justify-between border-b border-emerald-100 bg-white/70 backdrop-blur-xl fixed top-0 left-0 z-50 transition-all duration-300 shadow-[0_4px_20px_rgba(0,0,0,0.03)] dark:bg-[#050906]/70 dark:border-emerald-950/40 dark:shadow-[0_4px_30px_rgba(0,0,0,0.3)]">
+<nav class="w-full px-4 md:px-12 py-4 flex items-center justify-between border-b border-[#24963f]/10 bg-white/70 backdrop-blur-xl fixed top-0 left-0 z-50 transition-all duration-300 shadow-[0_4px_20px_rgba(0,0,0,0.03)] dark:bg-[#050906]/70 dark:border-[#24963f]/10 dark:shadow-[0_4px_30px_rgba(0,0,0,0.3)]">
 
   <div class="flex items-center gap-2.5 group cursor-pointer shrink-0" onclick="window.location.href='/'">
-    <div class="w-8 h-8 bg-[#24963f] rounded-xl flex items-center justify-center group-hover:rotate-12 transition-transform duration-300 shadow-[0_0_15px_rgba(16,185,129,0.3)]">
+    <div class="w-8 h-8 bg-[#24963f] rounded-xl flex items-center justify-center group-hover:rotate-12 transition-transform duration-300 shadow-[0_0_15px_rgba(36,150,63,0.3)]">
       <i class="fa-solid fa-basket-shopping text-white text-sm"></i>
     </div>
     <div>
@@ -12,13 +12,13 @@
 
   <div class="hidden md:flex gap-6 lg:gap-8 text-[11px] font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 shrink-0">
     <a href="/" class="text-zinc-900 dark:text-white border-b-2 border-[#24963f] pb-1 transition-all">Home</a>
-    <a href="#categories" class="hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors duration-200">Categories</a>
-    <a href="/products/allProducts" class="hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors duration-200">All Products</a>
+    <a href="#categories" class="hover:text-[#24963f] dark:hover:text-[#24963f] transition-colors duration-200">Categories</a>
+    <a href="/products/allProducts" class="hover:text-[#24963f] dark:hover:text-[#24963f] transition-colors duration-200">All Products</a>
   </div>
 
   <div class="w-full max-w-[320px] lg:max-w-[420px] hidden sm:block mx-4 flex-1">
     <form id="searchForm" onsubmit="event.preventDefault(); return false;">
-      <div class="relative flex items-center bg-white dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800/80 rounded-xl p-2 px-3.5 overflow-visible transition-all duration-200 focus-within:border-emerald-500 focus-within:ring-2 focus-within:ring-emerald-500/20">
+      <div class="relative flex items-center bg-white dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800/80 rounded-xl p-2 px-3.5 overflow-visible transition-all duration-200 focus-within:border-[#24963f] focus-within:ring-2 focus-within:ring-[#24963f]/20">
         <span class="mr-2.5 z-10 shrink-0">
           <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-zinc-400 dark:text-zinc-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
             <circle cx="11" cy="11" r="8"/>
@@ -50,8 +50,8 @@
     
     <% if(user){ %>
       <div class="relative inline-block text-left group hidden md:block">
-        <button type="button" class="flex items-center gap-2 py-2 px-3.5 bg-white border border-zinc-200 rounded-xl hover:border-emerald-300 transition-all duration-200 dark:bg-zinc-900/80 dark:border-zinc-800">
-          <div class="w-5 h-5 rounded-lg bg-emerald-500 text-white flex items-center justify-center text-[9px] font-black uppercase shadow-[0_0_10px_rgba(16,185,129,0.2)]">
+        <button type="button" class="flex items-center gap-2 py-2 px-3.5 bg-white border border-zinc-200 rounded-xl hover:border-[#24963f]/30 transition-all duration-200 dark:bg-zinc-900/80 dark:border-zinc-800">
+          <div class="w-5 h-5 rounded-lg bg-[#24963f] text-white flex items-center justify-center text-[9px] font-black uppercase shadow-[0_0_10px_rgba(36,150,63,0.2)]">
             <%= user.name ? user.name.substring(0, 2) : 'A' %>
           </div>
           <span class="text-xs font-bold text-zinc-700 dark:text-zinc-200">My Account</span>
@@ -60,7 +60,7 @@
 
         <div class="absolute right-0 w-52 mt-2 origin-top-right bg-white border border-zinc-200 rounded-2xl shadow-xl opacity-0 scale-95 pointer-events-none group-hover:opacity-100 group-hover:scale-100 group-hover:pointer-events-auto transition-all duration-150 z-50 dark:bg-[#090f0b] dark:border-zinc-800">
           <div class="p-3.5 border-b border-zinc-100 dark:border-zinc-900/60">
-            <span class="inline-block text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-500/20">
+            <span class="inline-block text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded bg-[#24963f]/10 text-[#24963f] dark:bg-[#24963f]/10 dark:text-[#24963f] border border-[#24963f]/20 dark:border-[#24963f]/20">
               <%= user.role ? user.role : 'Customer' %>
             </span>
             <p class="text-xs font-bold text-zinc-800 dark:text-zinc-100 truncate mt-2"><%= user.name %></p>
@@ -73,10 +73,10 @@
                 <i class="fa-solid fa-bars-progress text-[11px]"></i> Admin Live Orders
               </a>
             <% } %>
-            <a href="/users/cart/products" class="flex items-center gap-2.5 px-3 py-2 text-xs font-semibold text-zinc-600 hover:bg-emerald-50 hover:text-emerald-600 rounded-xl transition-all dark:text-zinc-400 dark:hover:bg-emerald-500/10 dark:hover:text-emerald-400">
+            <a href="/users/cart/products" class="flex items-center gap-2.5 px-3 py-2 text-xs font-semibold text-zinc-600 hover:bg-[#24963f]/10 hover:text-[#24963f] rounded-xl transition-all dark:text-zinc-400 dark:hover:bg-[#24963f]/10 dark:hover:text-[#24963f]">
               <i class="fa-solid fa-basket-shopping text-[11px] opacity-70"></i> My Cart Page
             </a>
-            <a href="/users/orders" class="flex items-center gap-2.5 px-3 py-2 text-xs font-semibold text-zinc-600 hover:bg-emerald-50 hover:text-emerald-600 rounded-xl transition-all dark:text-zinc-400 dark:hover:bg-emerald-500/10 dark:hover:text-emerald-400">
+            <a href="/users/orders" class="flex items-center gap-2.5 px-3 py-2 text-xs font-semibold text-zinc-600 hover:bg-[#24963f]/10 hover:text-[#24963f] rounded-xl transition-all dark:text-zinc-400 dark:hover:bg-[#24963f]/10 dark:hover:text-[#24963f]">
               <i class="fa-solid fa-clock-rotate-left text-[11px] opacity-70"></i> Orders History
             </a>
           </div>
@@ -91,7 +91,7 @@
     <% } else { %>
       <div class="hidden md:flex items-center gap-2">
         <a href="/users/login" class="px-3 py-2 text-xs font-bold text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white transition-colors duration-200">Login</a>
-        <a href="/users/register" class="px-4 py-2 text-xs font-bold bg-emerald-500 text-white rounded-xl hover:bg-emerald-400 shadow-md shadow-emerald-500/10 active:scale-95 transition-all duration-200">Sign Up</a>
+        <a href="/users/register" class="px-4 py-2 text-xs font-bold bg-[#24963f] text-white rounded-xl hover:bg-[#1e7e34] shadow-md shadow-[#24963f]/10 active:scale-95 transition-all duration-200">Sign Up</a>
       </div>
     <% } %>
 
@@ -102,8 +102,8 @@
 
     <% const homepageCartItems = (user && user.cart) ? user.cart.filter(item => item && item.product).length : 0; %>
     <% if(user && user.cart && homepageCartItems > 0) { %>
-      <a id="header-cart-link" href="/users/cart/products" class="flex items-center gap-2 sm:gap-3 bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-900/60 px-3 py-1.5 rounded-xl transition-all duration-300 shadow-[0_4px_15px_rgba(16,185,129,0.08)] group">
-        <div class="relative flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 bg-emerald-500/15 rounded-lg text-[#24963f] dark:text-emerald-400">
+      <a id="header-cart-link" href="/users/cart/products" class="flex items-center gap-2 sm:gap-3 bg-[#24963f]/10 dark:bg-emerald-950/20 border border-[#24963f]/20 dark:border-emerald-900/60 px-3 py-1.5 rounded-xl transition-all duration-300 shadow-[0_4px_15px_rgba(36,150,63,0.08)] group">
+        <div class="relative flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 bg-[#24963f]/15 rounded-lg text-[#24963f] dark:text-emerald-400">
           <i class="fa-solid fa-basket-shopping text-sm sm:text-base group-hover:scale-110 transition-transform duration-200"></i>
           <span id="header-cart-count" class="absolute -top-1.5 -right-1.5 bg-red-600 text-white font-black text-[9px] sm:text-[10px] w-4 h-4 sm:w-5 sm:h-5 rounded-full flex items-center justify-center shadow-md border-2 border-white dark:border-zinc-950">
             <%= homepageCartItems %>
@@ -139,11 +139,11 @@
     <div class="bg-zinc-50 dark:bg-zinc-900/40 rounded-2xl p-4 mb-5 border border-zinc-100 dark:border-zinc-900/30">
       <% if(user){ %>
         <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-xl bg-emerald-500 text-white flex items-center justify-center text-xs font-black uppercase shadow-sm">
+          <div class="w-10 h-10 rounded-xl bg-[#24963f] text-white flex items-center justify-center text-xs font-black uppercase shadow-sm">
             <%= user.name ? user.name.substring(0, 2) : 'A' %>
           </div>
           <div class="truncate">
-            <span class="inline-block text-[8px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 dark:bg-emerald-500/10 dark:text-emerald-400 mb-1">
+            <span class="inline-block text-[8px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded bg-[#24963f]/10 text-[#24963f] dark:bg-emerald-500/10 dark:text-emerald-400 mb-1">
               <%= user.role ? user.role : 'Customer' %>
             </span>
             <p class="text-sm font-extrabold text-zinc-900 dark:text-white truncate leading-none"><%= user.name %></p>
@@ -154,7 +154,7 @@
           <p class="text-xs font-bold text-zinc-500 dark:text-zinc-400 mb-2.5">Explore your fresh grocery basket</p>
           <div class="grid grid-cols-2 gap-2">
             <a href="/users/login" class="flex items-center justify-center py-2 px-3 bg-zinc-100 dark:bg-zinc-800 text-zinc-800 dark:text-white text-xs font-extrabold rounded-xl">LOGIN</a>
-            <a href="/users/register" class="flex items-center justify-center py-2 px-3 bg-emerald-500 text-white text-xs font-extrabold rounded-xl">SIGN UP</a>
+            <a href="/users/register" class="flex items-center justify-center py-2 px-3 bg-[#24963f] text-white text-xs font-extrabold rounded-xl">SIGN UP</a>
           </div>
         </div>
       <% } %>
@@ -164,7 +164,7 @@
       <div>
         <p class="font-bold text-[10px] uppercase text-zinc-400 dark:text-zinc-500 mb-2.5 tracking-wider">Navigation</p>
         <nav class="space-y-1 text-xs font-bold">
-          <a href="/" class="flex items-center gap-3.5 py-2.5 px-3 rounded-xl bg-emerald-50 text-[#24963f] dark:bg-emerald-950/20 dark:text-emerald-400">
+          <a href="/" class="flex items-center gap-3.5 py-2.5 px-3 rounded-xl bg-[#24963f]/10 text-[#24963f] dark:bg-emerald-950/20 dark:text-emerald-400">
             <i class="fa-solid fa-house text-sm"></i> <span>Home</span>
           </a>
           <a href="#categories" onclick="toggleNavMenu()" class="flex items-center gap-3.5 py-2.5 px-3 rounded-xl text-zinc-600 hover:bg-zinc-50 dark:text-zinc-400 dark:hover:bg-zinc-900/40 transition-all">
@@ -245,7 +245,7 @@
               <img src="${imgSrc}" class="w-8 h-8 rounded-lg object-cover bg-zinc-50 border border-zinc-100 dark:border-zinc-800">
               <div class="flex-1 min-w-0">
                 <p class="text-xs font-bold text-zinc-800 dark:text-zinc-200 truncate">${nameText}</p>
-                <p class="text-[10px] text-emerald-600 font-extrabold">${priceText}</p>
+                <p class="text-[10px] text-[#24963f] font-extrabold">${priceText}</p>
               </div>
               <i class="fa-solid fa-chevron-right text-[8px] text-zinc-400 pr-1"></i>
             `;
@@ -289,17 +289,13 @@
       }
     });
 
-    // Handle styling states without breaking core button visibility wrappers
+    // Handle styling states by toggling active ring classes rather than overwriting className
     document.querySelectorAll('.category-nav-link').forEach(link => {
-      link.className = "bg-zinc-900 border border-zinc-800 px-4 py-2.5 rounded-xl whitespace-nowrap text-zinc-300 hover:text-white cursor-pointer transition-colors category-nav-link";
+      link.classList.remove('ring-2', 'ring-[#24963f]', 'ring-offset-2', 'scale-[1.02]');
     });
 
-    if (element && element.classList.contains('category-nav-link')) {
-      if (targetCategory === 'all') {
-        element.className = "category-nav-link bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 px-4 py-2.5 rounded-xl whitespace-nowrap cursor-pointer";
-      } else {
-        element.className = "category-nav-link bg-emerald-600 border border-emerald-500 px-4 py-2.5 rounded-xl whitespace-nowrap text-white cursor-pointer transition-colors";
-      }
+    if (element) {
+      element.classList.add('ring-2', 'ring-[#24963f]', 'ring-offset-2', 'scale-[1.02]');
     }
   }
 
@@ -343,8 +339,8 @@
 
     if (totalItems > 0) {
       return `
-        <a id="header-cart-link" href="/users/cart/products" class="flex items-center gap-2 sm:gap-3 bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-900/60 px-3 py-1.5 rounded-xl transition-all duration-300 shadow-[0_4px_15px_rgba(16,185,129,0.08)] group">
-          <div class="relative flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 bg-emerald-500/15 rounded-lg text-[#24963f] dark:text-emerald-400">
+        <a id="header-cart-link" href="/users/cart/products" class="flex items-center gap-2 sm:gap-3 bg-[#24963f]/10 dark:bg-emerald-950/20 border border-[#24963f]/20 dark:border-emerald-900/60 px-3 py-1.5 rounded-xl transition-all duration-300 shadow-[0_4px_15px_rgba(36,150,63,0.08)] group">
+          <div class="relative flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 bg-[#24963f]/15 rounded-lg text-[#24963f] dark:text-emerald-400">
             <i class="fa-solid fa-basket-shopping text-sm sm:text-base group-hover:scale-110 transition-transform duration-200"></i>
             <span id="header-cart-count" class="absolute -top-1.5 -right-1.5 bg-red-600 text-white font-black text-[9px] sm:text-[10px] w-4 h-4 sm:w-5 sm:h-5 rounded-full flex items-center justify-center shadow-md border-2 border-white dark:border-zinc-950">${totalItems}</span>
           </div>

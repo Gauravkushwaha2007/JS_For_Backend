@@ -31,7 +31,7 @@
             <div class="max-h-60 overflow-y-auto space-y-1 pr-0.5">
               <% user.addresses.forEach((addr, idx) => { %>
                 <button onclick="selectHeaderAddress('<%= addr.title %>', '<%= addr.flatNo %>', '<%= addr.area %>', '<%= addr.city %>', '<%= addr._id %>')" 
-                        class="w-full text-left p-2.5 hover:bg-emerald-50/60 rounded-xl transition-all flex flex-col gap-0.5 group">
+                        class="w-full text-left p-2.5 hover:bg-[#24963f]/10 rounded-xl transition-all flex flex-col gap-0.5 group">
                   <div class="flex items-center justify-between w-full">
                     <span class="text-[10px] font-black uppercase text-gray-700 bg-gray-100 px-1.5 py-0.5 rounded group-hover:bg-[#24963f] group-hover:text-white transition-colors">
                       <%= addr.title %>
@@ -46,7 +46,7 @@
               <% }) %>
             </div>
             <div class="pt-1.5 border-t border-gray-50 mt-1">
-              <a href="/users/profile" class="flex items-center justify-center gap-2 w-full py-2 px-3 bg-emerald-50 hover:bg-[#24963f] text-emerald-700 hover:text-white text-xs font-extrabold rounded-xl transition-all duration-200">
+              <a href="/users/profile" class="flex items-center justify-center gap-2 w-full py-2 px-3 bg-[#24963f]/10 hover:bg-[#24963f] text-[#24963f] hover:text-white text-xs font-extrabold rounded-xl transition-all duration-200">
                 <i class="fa-solid fa-circle-plus text-sm"></i> ADD NEW ADDRESS
               </a>
             </div>
@@ -63,7 +63,7 @@
     </div>
 
     <div class="w-full max-w-[420px] hidden sm:block mx-4 flex-1 relative">
-      <div class="relative flex items-center bg-white border border-gray-200 rounded-xl p-2 px-3.5 overflow-hidden transition-all duration-200 focus-within:border-[#24963f] focus-within:ring-2 focus-within:ring-emerald-500/20">
+      <div class="relative flex items-center bg-white border border-gray-200 rounded-xl p-2 px-3.5 overflow-hidden transition-all duration-200 focus-within:border-[#24963f] focus-within:ring-2 focus-within:ring-[#24963f]/20">
         <span class="mr-2.5 z-10 shrink-0">
           <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
             <circle cx="11" cy="11" r="8"/>
@@ -98,7 +98,7 @@
 
           <div class="absolute right-0 w-56 mt-2 origin-top-right bg-white border border-gray-100 rounded-2xl shadow-[0_10px_30px_rgba(0,0,0,0.08)] opacity-0 scale-95 pointer-events-none group-hover:opacity-100 group-hover:scale-100 group-hover:pointer-events-auto transition-all duration-150 z-50">
             <div class="p-4 border-b border-gray-50">
-              <span class="inline-block text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded <%= user.role === 'admin' ? 'bg-red-50 text-red-600 border border-red-100' : 'bg-emerald-50 text-emerald-600 border border-emerald-100' %>">
+              <span class="inline-block text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded <%= user.role === 'admin' ? 'bg-red-50 text-red-600 border border-red-100' : 'bg-[#24963f]/10 text-[#24963f] border border-[#24963f]/20' %>">
                 <%= user.role ? user.role : 'Customer' %>
               </span>
               <p class="text-sm font-extrabold text-gray-900 truncate mt-1.5"><%= user.name %></p>
@@ -225,7 +225,7 @@
           <p class="text-xs font-bold text-gray-800 mt-1"><%= primaryAddr.flatNo %>, <%= primaryAddr.area %></p>
           <p class="text-[11px] text-gray-400"><%= primaryAddr.city %> - <%= primaryAddr.pincode %></p>
           
-          <a href="/users/profile" class="mt-2.5 flex items-center justify-center gap-1.5 w-full py-1.5 px-3 bg-white border border-emerald-200 text-[#24963f] text-[11px] font-extrabold rounded-lg transition-all">
+          <a href="/users/profile" class="mt-2.5 flex items-center justify-center gap-1.5 w-full py-1.5 px-3 bg-white border border-[#24963f]/30 text-[#24963f] text-[11px] font-extrabold rounded-lg transition-all">
             <i class="fa-solid fa-map-location-dot"></i> Change or Add Address
           </a>
         </div>

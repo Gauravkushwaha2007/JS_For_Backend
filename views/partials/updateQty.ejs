@@ -1,7 +1,7 @@
 <div id="cart-toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 pointer-events-none opacity-0 translate-y-4 transition-all duration-300 ease-out w-[calc(100%-2rem)] max-w-md select-none">
   <div id="toast-bg" class="bg-white text-gray-900 px-4 py-3.5 rounded-2xl shadow-[0_10px_30px_rgba(0,0,0,0.08)] border border-gray-100 flex items-center justify-between gap-3 pointer-events-auto">
     <div class="flex items-center gap-3 min-w-0 flex-1">
-      <div id="toast-icon-box" class="w-9 h-9 rounded-xl bg-emerald-50 text-[#24963f] flex items-center justify-center border border-emerald-100/50 shrink-0">
+      <div id="toast-icon-box" class="w-9 h-9 rounded-xl bg-[#24963f]/10 text-[#24963f] flex items-center justify-center border border-[#24963f]/20 shrink-0">
         <i id="toast-icon" class="fa-solid fa-basket-shopping text-sm"></i>
       </div>
       <div class="min-w-0 flex-1">
@@ -47,7 +47,7 @@
       reloadTimeout = setTimeout(() => { closeToastWithoutReload(); }, 3500);
     } else {
       toastBg.className = "bg-white text-gray-900 px-4 py-3.5 rounded-2xl shadow-[0_10px_30px_rgba(0,0,0,0.08)] border border-gray-100 flex items-center justify-between gap-3 pointer-events-auto";
-      toastIconBox.className = "w-9 h-9 rounded-xl bg-emerald-50 text-[#24963f] flex items-center justify-center border border-emerald-100/50 shrink-0";
+      toastIconBox.className = "w-9 h-9 rounded-xl bg-[#24963f]/10 text-[#24963f] flex items-center justify-center border border-[#24963f]/20 shrink-0";
       toastIcon.className = "fa-solid fa-basket-shopping text-sm";
       toastBadge.className = "text-[10px] font-black tracking-wider uppercase text-[#24963f]";
       toastBadge.textContent = "Added To Basket";
@@ -146,10 +146,10 @@
 
           actionBox.innerHTML = isHomeProductCard
             ? `
-              <div class="flex items-center bg-emerald-500/[0.09] text-black rounded-lg overflow-hidden shadow-sm font-black text-xs">
-                <button onclick="descreaseQty('${productId}')" class="px-3 py-2 hover:bg-emerald-400 transition-colors text-xs font-black">-</button>
+              <div class="flex items-center bg-[#24963f]/[0.09] text-black rounded-lg overflow-hidden shadow-sm font-black text-xs">
+                <button onclick="descreaseQty('${productId}')" class="px-3 py-2 hover:bg-[#24963f] hover:text-white transition-colors text-xs font-black">-</button>
                 <span id="quantityNumber-${productId}" class="px-1.5 min-w-[18px] text-center font-black text-xs">1</span>
-                <button onclick="increaseQty('${productId}')" class="px-3 py-2 hover:bg-emerald-400 transition-colors text-xs font-black">+</button>
+                <button onclick="increaseQty('${productId}')" class="px-3 py-2 hover:bg-[#24963f] hover:text-white transition-colors text-xs font-black">+</button>
               </div>
             `
             : isAllProductsPage
