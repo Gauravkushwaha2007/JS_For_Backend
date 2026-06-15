@@ -59,16 +59,24 @@
             </h3>
             
             <div class="flex flex-col sm:flex-row items-start sm:items-center gap-6">
-              <% if(product && product.image){ %>
-                <div class="w-24 h-24 bg-white rounded-xl border border-zinc-200 p-2 flex items-center justify-center relative overflow-hidden shadow-sm flex-shrink-0 group">
+              <% if(product && product.images && product.images.length > 0){ %>
+                <div class="flex items-center gap-2 flex-wrap max-w-full sm:max-w-[300px]">
+                  <% product.images.forEach(img => { %>
+                    <div class="w-16 h-16 bg-white rounded-xl border border-zinc-200 p-1.5 flex items-center justify-center relative overflow-hidden shadow-sm shrink-0 group">
+                      <img src="/uploads/<%= img %>" class="max-w-full max-h-full object-contain transition-transform duration-300 group-hover:scale-105" alt="product">
+                    </div>
+                  <% }) %>
+                </div>
+              <% } else if(product && product.image){ %>
+                <div class="w-16 h-16 bg-white rounded-xl border border-zinc-200 p-1.5 flex items-center justify-center relative overflow-hidden shadow-sm shrink-0 group">
                   <img src="/uploads/<%= product.image %>" class="max-w-full max-h-full object-contain transition-transform duration-300 group-hover:scale-105" alt="product">
                 </div>
               <% } %>
               
               <div class="w-full">
                 <label class="block">
-                  <span class="sr-only">Choose Product Image</span>
-                  <input type="file" name="image" <%= product ? '' : 'required' %>
+                  <span class="sr-only">Choose Product Images</span>
+                  <input type="file" name="images" <%= product ? '' : 'required' %> multiple
                          class="block w-full text-xs text-gray-500
                                 file:mr-4 file:py-2.5 file:px-4
                                 file:rounded-xl file:border-0
@@ -77,7 +85,7 @@
                                 hover:file:bg-red-600 hover:file:text-white
                                 file:transition-all file:cursor-pointer" />
                 </label>
-                <p class="text-[10px] text-gray-400 mt-2.5">PNG format with clear background looks exceptionally sleek on product display cards.</p>
+                <p class="text-[10px] text-gray-400 mt-2.5">Hold Ctrl (Windows) / Cmd (Mac) to select multiple images. PNGs look exceptionally sleek.</p>
               </div>
             </div>
           </div>

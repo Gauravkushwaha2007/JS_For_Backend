@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('partials/head') %>
+  <title><%= typeof title !== 'undefined' ? title : 'Error occurred' %> | KushMart</title>
+</head>
+<body class="bg-gray-50 text-gray-950 min-h-screen flex flex-col justify-between antialiased">
+
+  <% if (typeof hideHeader === 'undefined' || !hideHeader) { %>
+    <%- include('partials/header') %>
+  <% } %>
+
+  <main class="flex-1 flex items-center justify-center p-6 my-10">
+    <div class="max-w-md w-full bg-white border border-gray-100 p-8 sm:p-10 rounded-[32px] shadow-xl shadow-gray-100/40 text-center relative overflow-hidden">
+      <!-- Decorative background glow -->
+      <div class="absolute -top-12 -right-12 w-32 h-32 bg-rose-500/5 rounded-full blur-2xl"></div>
+      <div class="absolute -bottom-12 -left-12 w-32 h-32 bg-emerald-500/5 rounded-full blur-2xl"></div>
+
+      <!-- Icon Box -->
+      <div class="w-20 h-20 mx-auto rounded-3xl bg-rose-50 text-rose-500 border border-rose-100 flex items-center justify-center shadow-inner mb-6 transition-all duration-300 hover:scale-105">
+        <% if (typeof status !== 'undefined' && status === 403) { %>
+          <i class="fa-solid fa-shield-halved text-3xl"></i>
+        <% } else if (typeof status !== 'undefined' && status === 404) { %>
+          <i class="fa-solid fa-magnifying-glass text-3xl"></i>
+        <% } else { %>
+          <i class="fa-solid fa-circle-exclamation text-3xl"></i>
+        <% } %>
+      </div>
+
+      <!-- HTTP Status Code badge -->
+      <% if (typeof status !== 'undefined') { %>
+        <span class="inline-block text-[10px] font-black tracking-widest uppercase py-1 px-3.5 bg-gray-100 text-gray-500 rounded-full mb-3">
+          Error <%= status %>
+        </span>
+      <% } %>
+
+      <!-- Error Message -->
+      <h1 class="text-2xl sm:text-3xl font-black tracking-tight text-gray-900 mb-3">
+        <%= typeof message !== 'undefined' ? message : 'Something went wrong' %>
+      </h1>
+
+      <!-- Detailed description -->
+      <p class="text-xs sm:text-sm text-gray-500 font-medium leading-relaxed mb-8 max-w-sm mx-auto">
+        <%= typeof detail !== 'undefined' ? detail : 'We encountered an error while processing your request. Please go back or contact support if the issue persists.' %>
+      </p>
+
+      <!-- Action Button -->
+      <a href="<%= typeof buttonLink !== 'undefined' ? buttonLink : '/' %>" 
+         class="inline-flex items-center gap-2 bg-[#24963f] hover:bg-[#1e7e34] text-white text-xs font-black px-6 py-3.5 rounded-xl transition-all shadow-md shadow-emerald-700/10 active:scale-95 uppercase tracking-wider">
+        <i class="fa-solid fa-arrow-left"></i>
+        <span><%= typeof buttonText !== 'undefined' ? buttonText : 'Back to Safety' %></span>
+      </a>
+    </div>
+  </main>
+
+  <footer class="bg-white border-t border-gray-100 py-6 text-center select-none shrink-0">
+    <p class="text-[10px] font-black uppercase tracking-widest text-gray-400">&copy; <%= new Date().getFullYear() %> KushMart. All rights reserved.</p>
+  </footer>
+
+  <%- include('partials/header-scripts') %>
+</body>
+</html>

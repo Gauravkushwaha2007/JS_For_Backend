@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><%= product.name %> | Apna Mart</title>
+  <link rel="icon" type="image/png" href="/favicon.png">
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -32,30 +33,78 @@
 
   <main class="max-w-7xl mx-auto px-6 py-8 grid grid-cols-1 md:grid-cols-12 gap-12 items-start">
     
-    <div class="md:col-span-5 flex flex-col items-center justify-center border border-gray-100 rounded-[32px] p-10 relative min-h-[400px] md:min-h-[500px] shadow-sm transition-all duration-300" style="background-color: <%= product.bgColor || '#f9fafb' %>;">
-      <img src="/uploads/<%= product.image %>" alt="<%= product.name %>" class="max-w-full max-h-[380px] object-contain drop-shadow-2xl hover:scale-105 transition-transform duration-500">
+    <!-- Product Images Column -->
+    <div class="md:col-span-5 flex flex-col gap-6">
       
-      <% if(product.discount > 0) { %>
-        <span class="absolute top-6 left-6 bg-red-500 text-white text-[10px] font-black px-3.5 py-1.5 rounded-xl uppercase tracking-widest shadow-md shadow-red-500/20">
-          <%= Math.round((product.discount / (product.price + product.discount)) * 100) %>% OFF
-        </span>
-      <% } %>
+      <!-- Main Image Card -->
+      <div class="w-full flex items-center justify-center border border-gray-100 rounded-[32px] p-8 relative min-h-[350px] sm:min-h-[450px] shadow-sm transition-all duration-300 group" style="background-color: <%= product.bgColor || '#f9fafb' %>;">
+        
+        <!-- Main Image Elements -->
+        <div class="relative w-full h-[280px] sm:h-[350px] flex items-center justify-center">
+          <% if (product.images && product.images.length > 0) { %>
+            <% product.images.forEach((img, idx) => { %>
+              <img id="detailSlide-<%= idx %>" 
+                   src="/uploads/<%= img %>" 
+                   alt="<%= product.name %>" 
+                   class="detail-slide absolute max-w-full max-h-full object-contain drop-shadow-2xl transition-all duration-500 <%= idx === 0 ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none' %>"
+                   onerror="this.src='/uploads/default-product.png'">
+            <% }) %>
+          <% } else { %>
+            <img src="/uploads/<%= product.image || 'default-product.png' %>" 
+                 alt="<%= product.name %>" 
+                 class="max-w-full max-h-full object-contain drop-shadow-2xl hover:scale-105 transition-transform duration-500"
+                 onerror="this.src='/uploads/default-product.png'">
+          <% } %>
+        </div>
 
-      <div class="absolute bottom-6 left-6 right-6">
-        <% if (product.stock == 0) { %>
-          <span class="w-full text-center block bg-red-500/10 border border-red-500/20 text-red-600 text-[10px] font-black py-2 px-4 rounded-xl uppercase tracking-wider">
-            🚨 Out of Stock (Re-stocking Soon)
-          </span>
-        <% } else if (product.stock <= 10) { %>
-          <span class="w-full text-center block bg-amber-500/10 border border-amber-500/20 text-amber-600 text-[10px] font-black py-2 px-4 rounded-xl uppercase tracking-wider animate-pulse">
-            ⚡ Hurry Up! Only <%= product.stock %> units left in stock
-          </span>
-        <% } else { %>
-          <span class="w-full text-center block bg-emerald-50/80 border border-emerald-100 text-emerald-600 text-[10px] font-bold py-2 px-4 rounded-xl uppercase tracking-wider">
-            ✅ In Stock (Available)
+        <!-- Off Badge -->
+        <% if(product.discount > 0) { %>
+          <span class="absolute top-6 left-6 bg-red-500 text-white text-[10px] font-black px-3.5 py-1.5 rounded-xl uppercase tracking-widest shadow-md shadow-red-500/20 z-10">
+            <%= Math.round((product.discount / (product.price + product.discount)) * 100) %>% OFF
           </span>
         <% } %>
+
+        <!-- Navigation Chevrons (Only if multiple images exist) -->
+        <% if (product.images && product.images.length > 1) { %>
+          <button onclick="prevDetailSlide(event)" class="absolute left-4 top-1/2 -translate-y-1/2 w-9 h-9 rounded-xl bg-white/90 hover:bg-emerald-600 hover:text-white text-emerald-700 flex items-center justify-center transition-all opacity-0 group-hover:opacity-100 active:scale-90 shadow-md border border-gray-100/50 z-20 cursor-pointer">
+            <i class="fa-solid fa-chevron-left text-xs"></i>
+          </button>
+          <button onclick="nextDetailSlide(event)" class="absolute right-4 top-1/2 -translate-y-1/2 w-9 h-9 rounded-xl bg-white/90 hover:bg-emerald-600 hover:text-white text-emerald-700 flex items-center justify-center transition-all opacity-0 group-hover:opacity-100 active:scale-90 shadow-md border border-gray-100/50 z-20 cursor-pointer">
+            <i class="fa-solid fa-chevron-right text-xs"></i>
+          </button>
+        <% } %>
+
+        <!-- Stock Status Label -->
+        <div class="absolute bottom-6 left-6 right-6 z-10">
+          <% if (product.stock == 0) { %>
+            <span class="w-full text-center block bg-red-500/10 border border-red-500/20 text-red-600 text-[10px] font-black py-2 px-4 rounded-xl uppercase tracking-wider">
+              🚨 Out of Stock (Re-stocking Soon)
+            </span>
+          <% } else if (product.stock <= 10) { %>
+            <span class="w-full text-center block bg-amber-500/10 border border-amber-500/20 text-amber-600 text-[10px] font-black py-2 px-4 rounded-xl uppercase tracking-wider animate-pulse">
+              ⚡ Hurry Up! Only <%= product.stock %> units left in stock
+            </span>
+          <% } else { %>
+            <span class="w-full text-center block bg-emerald-50/80 border border-emerald-100 text-emerald-600 text-[10px] font-bold py-2 px-4 rounded-xl uppercase tracking-wider">
+              ✅ In Stock (Available)
+            </span>
+          <% } %>
+        </div>
       </div>
+
+      <!-- Thumbnail Carousel (Only if multiple images exist) -->
+      <% if (product.images && product.images.length > 1) { %>
+        <div class="flex items-center justify-center gap-3 flex-wrap select-none">
+          <% product.images.forEach((img, idx) => { %>
+            <button onclick="setDetailSlide(<%= idx %>)" 
+                    id="detailThumb-<%= idx %>"
+                    class="detail-thumb w-14 h-14 rounded-2xl bg-white p-1.5 border-2 transition-all hover:scale-105 active:scale-95 shadow-sm overflow-hidden flex items-center justify-center flex-shrink-0 cursor-pointer <%= idx === 0 ? 'border-[#24963f] shadow-md scale-105' : 'border-gray-100' %>">
+              <img src="/uploads/<%= img %>" alt="thumb" class="max-w-full max-h-full object-contain" onerror="this.src='/uploads/default-product.png'">
+            </button>
+          <% }) %>
+        </div>
+      <% } %>
+
     </div>
 
 <div class="md:col-span-7 flex flex-col space-y-8">
@@ -110,7 +159,7 @@
       <p class="text-[9px] text-gray-400 font-bold uppercase tracking-wider mt-1">(Inclusive of all taxes)</p>
     </div>
 
-    <div class="flex flex-col items-end">
+    <div id="action-box-<%= product._id %>" class="flex flex-col items-end shrink-0">
       <% if(product.stock > 0) { %>
         
         <% 
@@ -163,5 +212,58 @@
   
   <%- include('partials/header-scripts') %>
   <%- include('partials/updateQty') %>
+
+  <% if (product.images && product.images.length > 1) { %>
+    <script>
+      let currentDetailIdx = 0;
+      const totalDetailSlides = <%= product.images.length %>;
+
+      function showDetailSlide(index) {
+        if (index >= totalDetailSlides) {
+          currentDetailIdx = 0;
+        } else if (index < 0) {
+          currentDetailIdx = totalDetailSlides - 1;
+        } else {
+          currentDetailIdx = index;
+        }
+
+        // Hide all slides, show active
+        document.querySelectorAll('.detail-slide').forEach((slide, i) => {
+          if (i === currentDetailIdx) {
+            slide.classList.remove('opacity-0', 'scale-95', 'pointer-events-none');
+            slide.classList.add('opacity-100', 'scale-100');
+          } else {
+            slide.classList.remove('opacity-100', 'scale-100');
+            slide.classList.add('opacity-0', 'scale-95', 'pointer-events-none');
+          }
+        });
+
+        // Update active class on thumbnails
+        document.querySelectorAll('.detail-thumb').forEach((thumb, i) => {
+          if (i === currentDetailIdx) {
+            thumb.classList.remove('border-gray-100');
+            thumb.classList.add('border-[#24963f]', 'shadow-md', 'scale-105');
+          } else {
+            thumb.classList.remove('border-[#24963f]', 'shadow-md', 'scale-105');
+            thumb.classList.add('border-gray-100');
+          }
+        });
+      }
+
+      function nextDetailSlide(event) {
+        event.stopPropagation();
+        showDetailSlide(currentDetailIdx + 1);
+      }
+
+      function prevDetailSlide(event) {
+        event.stopPropagation();
+        showDetailSlide(currentDetailIdx - 1);
+      }
+
+      function setDetailSlide(index) {
+        showDetailSlide(index);
+      }
+    </script>
+  <% } %>
 </body>
 </html>

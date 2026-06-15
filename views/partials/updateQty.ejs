@@ -203,9 +203,11 @@
         });
         
       } else {
-        if(data.isStockError || data.message?.toLowerCase().includes('stock')) {
-          showCartToast(data.message || "Out of stock!", true);
-        } else { window.location.href = '/users/login'; }
+        if (res.status === 401 || data.loginRequired) {
+          window.location.href = '/users/login';
+        } else {
+          showCartToast(data.message || "Something went wrong.", true);
+        }
       }
     } catch (err) { console.error("Cart Error:", err); }
   }

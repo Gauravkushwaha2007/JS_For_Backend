@@ -11,6 +11,10 @@ const productSchema = mongoose.Schema({
         type: String,
         default: 'default-product.png' // 🎯 खाली स्ट्रिंग की जगह डिफ़ॉल्ट इमेज का नाम रखना सेफ है
     },
+    images: {
+        type: [String],
+        default: []
+    },
     price: {
         type: Number,
         required: [true, "Base retail price is required"],

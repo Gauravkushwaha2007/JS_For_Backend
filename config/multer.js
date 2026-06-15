@@ -6,11 +6,27 @@ const storage = multer.diskStorage({
         cb(null, path.join(__dirname, '../public/uploads'));
     },
     filename: function (req, file, cb) {
-        const uniqueName = Date.now() + path.extname(file.originalname);
-        cb(null, uniqueName);
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, uniqueSuffix + path.extname(file.originalname));
     }
 });
 
-const upload = multer({ storage });
+const fileFilter = (req, file, cb) => {
+    const filetypes = /jpeg|jpg|png|webp|gif/;
+    const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+    const mimetype = filetypes.test(file.mimetype);
+
+    if (mimetype && extname) {
+        return cb(null, true);
+    } else {
+        cb(new Error('Only image files (jpeg, jpg, png, webp, gif) are allowed!'), false);
+    }
+};
+
+const upload = multer({ 
+    storage,
+    fileFilter,
+    limits: { fileSize: 5 * 1024 * 1024 } // 5MB limit
+});
 
 module.exports = upload;

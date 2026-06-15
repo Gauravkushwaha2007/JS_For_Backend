@@ -1,7 +1,12 @@
 <header class="sticky top-0 bg-white border-b border-gray-100 shadow-sm z-40">
   <div class="max-w-7xl mx-auto px-4 md:px-6 h-20 flex items-center justify-between gap-4">
     
-    <div class="flex items-center gap-6 shrink-0">
+    <div class="flex items-center gap-3 md:gap-6 shrink-0">
+      <!-- Premium Back Button (Shown on sub-pages dynamically) -->
+      <button id="global-back-btn" onclick="handleGlobalBack(event)" class="hidden items-center justify-center w-10 h-10 rounded-xl bg-gray-50 border border-gray-200 text-gray-600 hover:bg-[#24963f] hover:text-white hover:border-[#24963f] active:scale-90 transition-all shadow-sm shrink-0 cursor-pointer">
+        <i class="fa-solid fa-arrow-left text-sm"></i>
+      </button>
+
       <a href="/" class="text-2xl font-black tracking-tighter text-[#24963f]">KUSH<span class="text-black">MART</span></a>
       
       <div class="hidden lg:block border-l border-gray-200 pl-6 relative">
@@ -359,4 +364,23 @@
 
     headerCartLink.outerHTML = renderHeaderCart(summary);
   };
+
+  window.handleGlobalBack = function(event) {
+    event.preventDefault();
+    if (document.referrer && document.referrer.includes(window.location.host)) {
+      window.history.back();
+    } else {
+      window.location.href = '/';
+    }
+  };
+
+  document.addEventListener('DOMContentLoaded', () => {
+    if (window.location.pathname !== '/' && window.location.pathname !== '') {
+      const backBtn = document.getElementById('global-back-btn');
+      if (backBtn) {
+        backBtn.classList.remove('hidden');
+        backBtn.classList.add('flex');
+      }
+    }
+  });
 </script>

@@ -4,12 +4,8 @@ const router = express.Router();
 const userModel = require('../models/userModel');
 const productModel = require('../models/productModel');
 
-
-
 router.get('/', async(req, res)=>{
-    
     try{
-
         let query = {};
         if(req.query.category){
             query.category = req.query.category;
@@ -19,7 +15,7 @@ router.get('/', async(req, res)=>{
             query.name = { $regex: req.query.search, $options: 'i' };
         }
 
-        let products = await productModel.find(query)
+        let products = await productModel.find(query);
         let user = res.locals.user || req.user || null;
         
         let totalCartPrice = 0;
@@ -27,7 +23,7 @@ router.get('/', async(req, res)=>{
         if(user){
             const populatedUser = await userModel.findById(user._id).populate('cart.product');
 
-                if (populatedUser && populatedUser.cart){
+            if (populatedUser && populatedUser.cart){
                 user.cart = populatedUser.cart.filter(item => item.product !== null);
 
                 user.cart.forEach(item => {
@@ -35,7 +31,6 @@ router.get('/', async(req, res)=>{
                         totalCartPrice += (Number(item.product.price) * Number(item.quantity || 1));
                     }
                 });
-
             }
         }
 
@@ -47,11 +42,16 @@ router.get('/', async(req, res)=>{
         });
     }
     catch(error){
-        console.log('Error in home route', error.message, error)
-        res.status(500).send("Server error", error)
+        console.log('Error in home route', error.message, error);
+        res.status(500).render('error', {
+            status: 500,
+            message: "Internal Server Error",
+            detail: "We encountered an unexpected error while loading the store homepage. Please try again later.",
+            buttonText: "Retry",
+            buttonLink: "/"
+        });
     }
 });
-
 
 // 📡 लाइव सर्च एंडपॉइंट (यह फ्रंटएंड की रिक्वेस्ट को हैंडल करेगा)
 router.get('/products/search', async (req, res) => {
@@ -74,7 +74,7 @@ router.get('/products/search', async (req, res) => {
 });
 
 router.get('/about', (req, res)=>{
-    res.render('about')
+    res.render('about');
 });
 
 module.exports = router;

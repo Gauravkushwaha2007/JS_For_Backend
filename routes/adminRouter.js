@@ -14,16 +14,32 @@ adminRouter.get('/orders', isLoggedIn, isAdmin, async (req, res) => {
         res.render('admin/adminOrders', { orders, user: req.user, activePage: 'liveOrders' });
     } catch (err) {
         console.error("Admin Orders Error:", err);
-        res.status(500).send("Server Error");
+        res.status(500).render('error', {
+            status: 500,
+            message: "Fulfillment Console Error",
+            detail: "We encountered an unexpected error while fetching store orders. Please try again later.",
+            buttonText: "Go Back Home",
+            buttonLink: "/"
+        });
     }
 });
 
 adminRouter.post('/orders/update/:id', isLoggedIn, isAdmin, async (req, res) => {
-    let { status } = req.body; // 'Dispatched' या 'Delivered'
-    await orderModel.findByIdAndUpdate(req.params.id, { status });
-    res.redirect('/admin/orders');
+    try {
+        let { status } = req.body; // 'Dispatched' या 'Delivered'
+        await orderModel.findByIdAndUpdate(req.params.id, { status });
+        res.redirect('/admin/orders');
+    } catch (err) {
+        console.error("Update Order Error:", err);
+        res.status(500).render('error', {
+            status: 500,
+            message: "Order Status Update Failed",
+            detail: "We were unable to update the status of this order. Please try again.",
+            buttonText: "Return to Console",
+            buttonLink: "/admin/orders"
+        });
+    }
 });
-
 
 // getAnalytics Dashboard 
 adminRouter.get('/analytics', isLoggedIn, isAdmin, async (req, res) =>{
@@ -73,10 +89,14 @@ adminRouter.get('/analytics', isLoggedIn, isAdmin, async (req, res) =>{
 
     } catch (error) {
         console.error("Analytics Error:", error.message);
-        res.status(500).send("Error fetching analytics data");
+        res.status(500).render('error', {
+            status: 500,
+            message: "Analytics Retrieval Failed",
+            detail: "We encountered an unexpected error while loading the store analytics dashboard.",
+            buttonText: "Go Back Home",
+            buttonLink: "/"
+        });
     }
 });
-
-
 
 module.exports = adminRouter;
