@@ -73,6 +73,7 @@ productRouter.get('/allProducts', async(req, res)=>{
     }
 });
 
+
 productRouter.get('/view/:id', viewProduct);
 
 productRouter.get('/create', isLoggedIn, isAdmin, (req, res)=>{
