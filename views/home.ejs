@@ -78,8 +78,7 @@
       </h3>
       <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-1">Select a category to view fresh premium essentials instantly.</p>
     </div>
-    
-    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
       
       <!-- Atta, Rice & Dal -->
       <div onclick="filterByCategory('staples', this)" class="category-nav-link relative overflow-hidden rounded-2xl p-4 h-28 sm:h-32 flex flex-col justify-between transition-all duration-300 cursor-pointer shadow-[0_4px_12px_rgba(0,0,0,0.02)] border border-amber-100 bg-amber-50/40 hover:shadow-md hover:scale-[1.02] group">
@@ -122,6 +121,50 @@
         </div>
         <div class="absolute right-1 bottom-1 w-14 h-14 sm:w-20 sm:h-20 flex items-center justify-center pointer-events-none">
           <img src="/images/category_snacks.png" alt="Snacks & Munchies" class="w-full h-full object-contain group-hover:scale-110 transition-transform duration-300">
+        </div>
+      </div>
+
+      <!-- Cold Drinks & Juices -->
+      <div onclick="filterByCategory('beverages', this)" class="category-nav-link relative overflow-hidden rounded-2xl p-4 h-28 sm:h-32 flex flex-col justify-between transition-all duration-300 cursor-pointer shadow-[0_4px_12px_rgba(0,0,0,0.02)] border border-red-100 bg-red-50/40 hover:shadow-md hover:scale-[1.02] group">
+        <div class="z-10">
+          <p class="text-xs sm:text-sm font-black text-red-900 leading-tight">Cold Drinks<br>& Juices</p>
+          <span class="text-[9px] uppercase font-bold text-red-600/80 tracking-wider block mt-1">Beverages</span>
+        </div>
+        <div class="absolute right-1 bottom-1 w-14 h-14 sm:w-20 sm:h-20 flex items-center justify-center pointer-events-none">
+          <img src="/images/category_beverages.png" alt="Cold Drinks & Juices" class="w-full h-full object-contain group-hover:scale-110 transition-transform duration-300">
+        </div>
+      </div>
+
+      <!-- Bakery, Cakes & Bread -->
+      <div onclick="filterByCategory('bakery', this)" class="category-nav-link relative overflow-hidden rounded-2xl p-4 h-28 sm:h-32 flex flex-col justify-between transition-all duration-300 cursor-pointer shadow-[0_4px_12px_rgba(0,0,0,0.02)] border border-orange-100 bg-orange-50/40 hover:shadow-md hover:scale-[1.02] group">
+        <div class="z-10">
+          <p class="text-xs sm:text-sm font-black text-orange-900 leading-tight">Bakery,<br>Cakes & Bread</p>
+          <span class="text-[9px] uppercase font-bold text-orange-600/80 tracking-wider block mt-1">Freshly Baked</span>
+        </div>
+        <div class="absolute right-1 bottom-1 w-14 h-14 sm:w-20 sm:h-20 flex items-center justify-center pointer-events-none">
+          <img src="/images/category_bakery.png" alt="Bakery, Cakes & Bread" class="w-full h-full object-contain group-hover:scale-110 transition-transform duration-300">
+        </div>
+      </div>
+
+      <!-- Personal Care & Hygiene -->
+      <div onclick="filterByCategory('personalcare', this)" class="category-nav-link relative overflow-hidden rounded-2xl p-4 h-28 sm:h-32 flex flex-col justify-between transition-all duration-300 cursor-pointer shadow-[0_4px_12px_rgba(0,0,0,0.02)] border border-teal-100 bg-teal-50/40 hover:shadow-md hover:scale-[1.02] group">
+        <div class="z-10">
+          <p class="text-xs sm:text-sm font-black text-teal-900 leading-tight">Personal Care<br>& Hygiene</p>
+          <span class="text-[9px] uppercase font-bold text-teal-600/80 tracking-wider block mt-1">Hygiene & Beauty</span>
+        </div>
+        <div class="absolute right-1 bottom-1 w-14 h-14 sm:w-20 sm:h-20 flex items-center justify-center pointer-events-none">
+          <img src="/images/category_personalcare.png" alt="Personal Care & Hygiene" class="w-full h-full object-contain group-hover:scale-110 transition-transform duration-300">
+        </div>
+      </div>
+
+      <!-- Household & Cleaning -->
+      <div onclick="filterByCategory('household', this)" class="category-nav-link relative overflow-hidden rounded-2xl p-4 h-28 sm:h-32 flex flex-col justify-between transition-all duration-300 cursor-pointer shadow-[0_4px_12px_rgba(0,0,0,0.02)] border border-purple-100 bg-purple-50/40 hover:shadow-md hover:scale-[1.02] group">
+        <div class="z-10">
+          <p class="text-xs sm:text-sm font-black text-purple-900 leading-tight">Household<br>& Cleaning</p>
+          <span class="text-[9px] uppercase font-bold text-purple-600/80 tracking-wider block mt-1">Home Utilities</span>
+        </div>
+        <div class="absolute right-1 bottom-1 w-14 h-14 sm:w-20 sm:h-20 flex items-center justify-center pointer-events-none">
+          <img src="/images/category_household.png" alt="Household & Cleaning" class="w-full h-full object-contain group-hover:scale-110 transition-transform duration-300">
         </div>
       </div>
 
@@ -316,6 +359,10 @@
             <li><a href="/?category=fruits" class="hover:text-[#24963f] transition-colors">Fresh Fruits & Veg</a></li>
             <li><a href="/?category=dairy" class="hover:text-[#24963f] transition-colors">Dairy, Bread & Eggs</a></li>
             <li><a href="/?category=snacks" class="hover:text-[#24963f] transition-colors">Snacks & Munchies</a></li>
+            <li><a href="/?category=beverages" class="hover:text-[#24963f] transition-colors">Cold Drinks & Juices</a></li>
+            <li><a href="/?category=bakery" class="hover:text-[#24963f] transition-colors">Bakery & Bread</a></li>
+            <li><a href="/?category=personalcare" class="hover:text-[#24963f] transition-colors">Personal Care</a></li>
+            <li><a href="/?category=household" class="hover:text-[#24963f] transition-colors">Household Essentials</a></li>
           </ul>
         </div>
 

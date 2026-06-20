@@ -156,25 +156,149 @@ const editAddress = async (req, res) => {
     }
 };
 
-// AUTOMATIC Locate Location
-const fetchAddressFromOSM = async (req, res) => {
+// AUTOMATIC Locate Location via Google Maps (with OpenStreetMap fallback)
+const fetchAddressFromGoogle = async (req, res) => {
     try {
         const { lat, lng } = req.query;
         if (!lat || !lng) {
             return res.status(400).json({ success: false, message: "Coordinates are missing" });
         }
 
-        const osmUrl = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&addressdetails=1`;
+        const apiKey = process.env.GOOGLE_MAPS_API_KEY;
+        let useGoogle = false;
+        let googleData;
 
-        const response = await fetch(osmUrl, {
+        if (apiKey) {
+            try {
+                const googleUrl = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${apiKey}`;
+                const response = await fetch(googleUrl);
+                googleData = await response.json();
+                if (googleData.status === "OK" && googleData.results && googleData.results.length > 0) {
+                    useGoogle = true;
+                } else {
+                    console.warn("Google Geocoding API returned non-OK status:", googleData.status, googleData.error_message || "");
+                }
+            } catch (err) {
+                console.error("Failed to query Google Geocoding API, falling back to OSM:", err.message);
+            }
+        } else {
+            console.warn("Google Maps API Key is missing in environment variables, falling back to OSM.");
+        }
+
+        if (useGoogle && googleData) {
+            const results = googleData.results;
+            const addressComponents = results[0].address_components || [];
+
+            let flatNoParts = [];
+            let areaParts = [];
+            let city = '';
+            let state = '';
+            let pincode = '';
+            let landmark = '';
+
+            for (const comp of addressComponents) {
+                const types = comp.types;
+                if (types.includes('subpremise') || types.includes('premise') || types.includes('building')) {
+                    flatNoParts.push(comp.long_name);
+                } else if (types.includes('street_number')) {
+                    flatNoParts.unshift(comp.long_name);
+                } else if (
+                    types.includes('route') ||
+                    types.includes('neighborhood') ||
+                    types.includes('sublocality') ||
+                    types.includes('sublocality_level_1') ||
+                    types.includes('sublocality_level_2') ||
+                    types.includes('sublocality_level_3')
+                ) {
+                    areaParts.push(comp.long_name);
+                } else if (types.includes('locality')) {
+                    city = comp.long_name;
+                } else if (types.includes('administrative_area_level_2') && !city) {
+                    city = comp.long_name;
+                } else if (types.includes('administrative_area_level_1')) {
+                    state = comp.long_name;
+                } else if (types.includes('postal_code')) {
+                    pincode = comp.long_name;
+                } else if (
+                    types.includes('point_of_interest') ||
+                    types.includes('establishment') ||
+                    types.includes('park') ||
+                    types.includes('place_of_worship')
+                ) {
+                    landmark = comp.long_name;
+                }
+            }
+
+            // Find landmark in all results if not found in results[0]
+            if (!landmark) {
+                for (const result of results) {
+                    const found = result.address_components.find(c =>
+                        c.types.includes('point_of_interest') ||
+                        c.types.includes('establishment') ||
+                        c.types.includes('park') ||
+                        c.types.includes('place_of_worship') ||
+                        c.types.includes('landmark')
+                    );
+                    if (found) {
+                        landmark = found.long_name;
+                        break;
+                    }
+                }
+            }
+
+            const formattedAddress = results[0].formatted_address || '';
+            const addressPartsList = formattedAddress.split(',').map(s => s.trim());
+
+            let flatNo = flatNoParts.join(', ').trim();
+            if (!flatNo && addressPartsList.length > 0) {
+                const firstPart = addressPartsList[0];
+                if (firstPart !== city && firstPart !== state && firstPart !== pincode) {
+                    flatNo = firstPart;
+                }
+            }
+            if (!flatNo) {
+                flatNo = 'Near Location';
+            }
+
+            let area = areaParts.join(', ').trim();
+            if (!area && addressPartsList.length > 1) {
+                area = addressPartsList.slice(1, Math.min(3, addressPartsList.length - 1)).join(', ');
+            }
+            if (!area) {
+                area = 'Local Area';
+            }
+
+            if (!city) {
+                city = 'Local City';
+            }
+
+            let addressInfo = {
+                flatNo: flatNo,
+                area: area,
+                landmark: landmark ? landmark.trim() : '',
+                city: city,
+                state: state || '',
+                pincode: pincode.trim()
+            };
+
+            return res.json({
+                success: true,
+                data: addressInfo
+            });
+        }
+
+        // Fallback to OSM / Nominatim
+        console.log("Geocoding: Querying OpenStreetMap reverse geocoding API.");
+        const osmUrl = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&addressdetails=1`;
+        const osmResponse = await fetch(osmUrl, {
             headers: {
                 'User-Agent': 'ApnaMartStore/1.0'
             }
         });
-        const osmData = await response.json();
+        const osmData = await osmResponse.json();
 
         if (!osmData || !osmData.address) {
-            return res.json({ success: false, message: "Location details not found" });
+            return res.json({ success: false, message: "Location details not found from any map provider." });
         }
 
         const addr = osmData.address;
@@ -230,5 +354,5 @@ module.exports = {
     deleteAddress,
     makeAddressPrimary,
     editAddress,
-    fetchAddressFromOSM
+    fetchAddressFromGoogle
 };

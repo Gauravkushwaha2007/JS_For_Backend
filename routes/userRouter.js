@@ -16,7 +16,7 @@ const {
 } = require('../controllers/orderController');
 
 const {
-    getProfile, updateProfile, addAddress, deleteAddress, editAddress, makeAddressPrimary, fetchAddressFromOSM
+    getProfile, updateProfile, addAddress, deleteAddress, editAddress, makeAddressPrimary, fetchAddressFromGoogle
 } = require('../controllers/profileController');
 
 const userRouter = express.Router();
@@ -55,7 +55,7 @@ userRouter.get('/orders/bill/:orderId', isLoggedIn, getBill);
 userRouter.get('/profile', isLoggedIn, getProfile);
 userRouter.post('/profile/update', isLoggedIn, updateProfile);
 userRouter.post('/profile/address/add', isLoggedIn, addAddress);
-userRouter.get('/profile/address/fetch-address', isLoggedIn, fetchAddressFromOSM);
+userRouter.get('/profile/address/fetch-address', isLoggedIn, fetchAddressFromGoogle);
 userRouter.post('/profile/address/delete/:addressId', isLoggedIn, deleteAddress);
 userRouter.post('/profile/address/edit/:addressId', isLoggedIn, editAddress);
 userRouter.post('/profile/address/default/:addressId', isLoggedIn, makeAddressPrimary);

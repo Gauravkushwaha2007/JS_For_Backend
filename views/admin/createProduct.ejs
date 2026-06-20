@@ -131,16 +131,139 @@
               </div>
             </div>
 
-            <div>
+            <div class="relative">
               <label class="block text-xs font-bold text-gray-700 mb-1.5">Product Department Hierarchy</label>
-              <select name="category" required 
-                      class="admin-input w-full text-xs font-medium p-3.5 border border-gray-200 rounded-xl bg-white focus:outline-none shadow-sm transition-all cursor-pointer">
-                <option value="" disabled <%= !product ? 'selected' : '' %>>-- Choose Department Category --</option>
-                <option value="fruits" <%= product && product.category === 'fruits' ? 'selected' : '' %>>Fruits & Veggies</option>
-                <option value="staples" <%= product && product.category === 'staples' ? 'selected' : '' %>>Atta, Rice & Dal</option>
-                <option value="dairy" <%= product && product.category === 'dairy' ? 'selected' : '' %>>Dairy, Bread & Eggs</option>
-                <option value="snacks" <%= product && product.category === 'snacks' ? 'selected' : '' %>>Snacks & Munchies</option>
-              </select>
+              <input type="hidden" name="category" id="category-input" required value="<%= product ? product.category : '' %>">
+              
+              <!-- Custom Dropdown Trigger Button -->
+              <button type="button" id="dropdown-trigger-btn"
+                      class="w-full flex items-center justify-between text-xs font-semibold p-3.5 border border-gray-200 rounded-xl bg-white focus:outline-none shadow-sm transition-all cursor-pointer hover:border-red-500/40 text-left">
+                <span id="dropdown-selected-content" class="flex items-center gap-2 text-gray-500">
+                  <i class="fa-solid fa-layer-group text-red-500"></i>
+                  <span>-- Choose Department Category --</span>
+                </span>
+                <i class="fa-solid fa-chevron-down text-gray-400 text-[10px] transition-transform duration-200" id="dropdown-chevron"></i>
+              </button>
+
+              <!-- Custom Dropdown Panel -->
+              <div id="dropdown-menu-panel"
+                   class="absolute left-0 right-0 mt-2 bg-white border border-zinc-200/80 rounded-2xl shadow-2xl overflow-hidden hidden z-50 transition-all duration-200 origin-top scale-95 opacity-0">
+                <div class="p-2 max-h-80 overflow-y-auto space-y-1" id="dropdown-options-list">
+                  
+                  <!-- Fruits & Veggies -->
+                  <div onclick="selectCategory('fruits', 'Fruits & Veggies', '🍎', 'emerald')"
+                       class="dropdown-option flex items-center gap-3 p-2.5 hover:bg-emerald-50 rounded-xl cursor-pointer transition-colors group"
+                       data-value="fruits">
+                    <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center text-base shrink-0 group-hover:scale-105 transition-transform">
+                      🍎
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <p class="text-xs font-bold text-gray-800">Fruits & Veggies</p>
+                      <p class="text-[10px] text-gray-400 truncate">Farm fresh vegetables & fruits</p>
+                    </div>
+                    <i class="fa-solid fa-check text-xs text-emerald-600 hidden check-icon shrink-0"></i>
+                  </div>
+
+                  <!-- Atta, Rice & Dal -->
+                  <div onclick="selectCategory('staples', 'Atta, Rice & Dal', '🌾', 'amber')"
+                       class="dropdown-option flex items-center gap-3 p-2.5 hover:bg-amber-50 rounded-xl cursor-pointer transition-colors group"
+                       data-value="staples">
+                    <div class="w-8 h-8 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center text-base shrink-0 group-hover:scale-105 transition-transform">
+                      🌾
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <p class="text-xs font-bold text-gray-800">Atta, Rice & Dal</p>
+                      <p class="text-[10px] text-gray-400 truncate">Wheat, pulses, rice & kitchen staples</p>
+                    </div>
+                    <i class="fa-solid fa-check text-xs text-amber-600 hidden check-icon shrink-0"></i>
+                  </div>
+
+                  <!-- Dairy, Bread & Eggs -->
+                  <div onclick="selectCategory('dairy', 'Dairy, Bread & Eggs', '🥛', 'blue')"
+                       class="dropdown-option flex items-center gap-3 p-2.5 hover:bg-blue-50 rounded-xl cursor-pointer transition-colors group"
+                       data-value="dairy">
+                    <div class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center text-base shrink-0 group-hover:scale-105 transition-transform">
+                      🥛
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <p class="text-xs font-bold text-gray-800">Dairy, Bread & Eggs</p>
+                      <p class="text-[10px] text-gray-400 truncate">Milk, butter, bread, cheese & eggs</p>
+                    </div>
+                    <i class="fa-solid fa-check text-xs text-blue-600 hidden check-icon shrink-0"></i>
+                  </div>
+
+                  <!-- Snacks & Munchies -->
+                  <div onclick="selectCategory('snacks', 'Snacks & Munchies', '🍪', 'pink')"
+                       class="dropdown-option flex items-center gap-3 p-2.5 hover:bg-pink-50 rounded-xl cursor-pointer transition-colors group"
+                       data-value="snacks">
+                    <div class="w-8 h-8 rounded-lg bg-pink-50 text-pink-600 flex items-center justify-center text-base shrink-0 group-hover:scale-105 transition-transform">
+                      🍪
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <p class="text-xs font-bold text-gray-800">Snacks & Munchies</p>
+                      <p class="text-[10px] text-gray-400 truncate">Chips, cookies, namkeen & munchies</p>
+                    </div>
+                    <i class="fa-solid fa-check text-xs text-pink-600 hidden check-icon shrink-0"></i>
+                  </div>
+
+                  <!-- Cold Drinks & Juices -->
+                  <div onclick="selectCategory('beverages', 'Cold Drinks & Juices', '🥤', 'red')"
+                       class="dropdown-option flex items-center gap-3 p-2.5 hover:bg-red-50 rounded-xl cursor-pointer transition-colors group"
+                       data-value="beverages">
+                    <div class="w-8 h-8 rounded-lg bg-red-50 text-red-600 flex items-center justify-center text-base shrink-0 group-hover:scale-105 transition-transform">
+                      🥤
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <p class="text-xs font-bold text-gray-800">Cold Drinks & Juices</p>
+                      <p class="text-[10px] text-gray-400 truncate">Sodas, juices, energy drinks, tea & coffee</p>
+                    </div>
+                    <i class="fa-solid fa-check text-xs text-red-600 hidden check-icon shrink-0"></i>
+                  </div>
+
+                  <!-- Bakery & Bread -->
+                  <div onclick="selectCategory('bakery', 'Bakery & Bread', '🍞', 'orange')"
+                       class="dropdown-option flex items-center gap-3 p-2.5 hover:bg-orange-50 rounded-xl cursor-pointer transition-colors group"
+                       data-value="bakery">
+                    <div class="w-8 h-8 rounded-lg bg-orange-50 text-orange-600 flex items-center justify-center text-base shrink-0 group-hover:scale-105 transition-transform">
+                      🍞
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <p class="text-xs font-bold text-gray-800">Bakery & Bread</p>
+                      <p class="text-[10px] text-gray-400 truncate">Cakes, croissants, fresh buns & pastries</p>
+                    </div>
+                    <i class="fa-solid fa-check text-xs text-orange-600 hidden check-icon shrink-0"></i>
+                  </div>
+
+                  <!-- Personal Care -->
+                  <div onclick="selectCategory('personalcare', 'Personal Care', '🧴', 'teal')"
+                       class="dropdown-option flex items-center gap-3 p-2.5 hover:bg-teal-50 rounded-xl cursor-pointer transition-colors group"
+                       data-value="personalcare">
+                    <div class="w-8 h-8 rounded-lg bg-teal-50 text-teal-600 flex items-center justify-center text-base shrink-0 group-hover:scale-105 transition-transform">
+                      🧴
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <p class="text-xs font-bold text-gray-800">Personal Care</p>
+                      <p class="text-[10px] text-gray-400 truncate">Soaps, shampoos, body washes & grooming</p>
+                    </div>
+                    <i class="fa-solid fa-check text-xs text-teal-600 hidden check-icon shrink-0"></i>
+                  </div>
+
+                  <!-- Household Essentials -->
+                  <div onclick="selectCategory('household', 'Household Essentials', '🧼', 'purple')"
+                       class="dropdown-option flex items-center gap-3 p-2.5 hover:bg-purple-50 rounded-xl cursor-pointer transition-colors group"
+                       data-value="household">
+                    <div class="w-8 h-8 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center text-base shrink-0 group-hover:scale-105 transition-transform">
+                      🧼
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <p class="text-xs font-bold text-gray-800">Household Essentials</p>
+                      <p class="text-[10px] text-gray-400 truncate">Cleaning liquids, detergents & utility items</p>
+                    </div>
+                    <i class="fa-solid fa-check text-xs text-purple-600 hidden check-icon shrink-0"></i>
+                  </div>
+
+                </div>
+              </div>
             </div>
           </div>
 
@@ -200,6 +323,91 @@
   </div>
   
   <%- include('../partials/loader') %>
+
+  <script>
+    // Toggle Category Dropdown Menu
+    const dropdownBtn = document.getElementById('dropdown-trigger-btn');
+    const dropdownPanel = document.getElementById('dropdown-menu-panel');
+    const dropdownChevron = document.getElementById('dropdown-chevron');
+    const categoryInput = document.getElementById('category-input');
+
+    if (dropdownBtn && dropdownPanel) {
+      dropdownBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isHidden = dropdownPanel.classList.contains('hidden');
+        if (isHidden) {
+          dropdownPanel.classList.remove('hidden');
+          setTimeout(() => {
+            dropdownPanel.classList.remove('scale-95', 'opacity-0');
+            dropdownPanel.classList.add('scale-100', 'opacity-100');
+          }, 10);
+          dropdownChevron.classList.add('rotate-180');
+        } else {
+          closeDropdown();
+        }
+      });
+    }
+
+    function closeDropdown() {
+      if (dropdownPanel && !dropdownPanel.classList.contains('hidden')) {
+        dropdownPanel.classList.remove('scale-100', 'opacity-100');
+        dropdownPanel.classList.add('scale-95', 'opacity-0');
+        dropdownChevron.classList.remove('rotate-180');
+        setTimeout(() => {
+          dropdownPanel.classList.add('hidden');
+        }, 150);
+      }
+    }
+
+    // Close on outside click
+    document.addEventListener('click', (e) => {
+      if (dropdownPanel && !dropdownPanel.contains(e.target) && !dropdownBtn.contains(e.target)) {
+        closeDropdown();
+      }
+    });
+
+    // Select category function
+    function selectCategory(value, label, emoji, colorClass) {
+      // Update hidden input
+      categoryInput.value = value;
+
+      // Update button trigger content
+      const selectedContent = document.getElementById('dropdown-selected-content');
+      selectedContent.innerHTML = `
+        <span class="inline-flex items-center gap-1.5 px-2 py-1 rounded-lg bg-${colorClass}-50 text-${colorClass}-700 font-bold border border-${colorClass}-200/50">
+          <span class="mr-1 text-sm">${emoji}</span>
+          ${label}
+        </span>
+      `;
+      selectedContent.className = "flex items-center gap-2";
+
+      // Update check icons and active states in the dropdown options
+      document.querySelectorAll('.dropdown-option').forEach(opt => {
+        const checkIcon = opt.querySelector('.check-icon');
+        if (opt.getAttribute('data-value') === value) {
+          opt.classList.add('bg-zinc-50', 'ring-1', 'ring-red-500/10');
+          if (checkIcon) checkIcon.classList.remove('hidden');
+        } else {
+          opt.classList.remove('bg-zinc-50', 'ring-1', 'ring-red-500/10');
+          if (checkIcon) checkIcon.classList.add('hidden');
+        }
+      });
+
+      // Close menu
+      closeDropdown();
+    }
+
+    // Initialize selection on load (e.g. for Edit Mode)
+    window.addEventListener('DOMContentLoaded', () => {
+      const initialVal = categoryInput.value;
+      if (initialVal) {
+        const option = document.querySelector(`.dropdown-option[data-value="${initialVal}"]`);
+        if (option) {
+          option.click();
+        }
+      }
+    });
+  </script>
 
 </body>
 </html>
