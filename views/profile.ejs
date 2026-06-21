@@ -5,6 +5,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>My Account - Apna Mart</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+    }
+  </script>
+  <script>
+    (function () {
+      const savedTheme = localStorage.getItem('theme');
+      const html = document.documentElement;
+      if (savedTheme === 'dark') { html.classList.add('dark'); } 
+      else { html.classList.remove('dark'); }
+    })();
+  </script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap');
@@ -52,12 +65,12 @@
               <span>My Addresses</span>
             </a>
 
-            <a href="/users/cart/products" class="flex items-center gap-3 px-3 py-2.5 text-xs font-bold text-gray-600 hover:bg-gray-50 hover:text-[#24963f] rounded-xl transition-all">
+            <a href="/users/cart/products" class="flex items-center gap-3 px-3 py-2.5 text-xs font-bold text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 hover:text-[#24963f] dark:hover:text-[#24963f] rounded-xl transition-all">
               <i class="fa-solid fa-basket-shopping text-sm opacity-70"></i>
               <span>My Cart</span>
             </a>
             
-            <a href="/users/orders" class="flex items-center gap-3 px-3 py-3 text-xs font-bold text-zinc-500 hover:text-[#24963f] hover:bg-zinc-50 dark:hover:bg-zinc-800/50 rounded-xl transition-all group">
+            <a href="/users/orders" class="flex items-center gap-3 px-3 py-3 text-xs font-bold text-zinc-500 dark:text-zinc-400 hover:text-[#24963f] dark:hover:text-[#24963f] hover:bg-zinc-50 dark:hover:bg-zinc-800/50 rounded-xl transition-all group">
               <i class="fa-solid fa-bag-shopping text-sm text-zinc-400 group-hover:text-[#24963f] shrink-0"></i> 
               <span>My Orders</span>
             </a>
@@ -83,7 +96,7 @@
 
       </div>
 
-      <div class="flex-1 p-6 sm:p-8 bg-zinc-50/30 dark:bg-transparent flex flex-col gap-8">
+      <div class="flex-1 p-6 sm:p-8 bg-zinc-50/30 dark:bg-zinc-950/45 flex flex-col gap-8">
         
       <div class="bg-white dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800/60 rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row justify-between sm:items-center gap-4 shadow-sm">
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-2 text-xs w-full max-w-xl">
