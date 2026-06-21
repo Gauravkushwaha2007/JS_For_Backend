@@ -325,8 +325,8 @@
 
       </div>
 
-      <div class="select-none pointer-events-none mt-6 overflow-hidden">
-        <h1 class="text-[12vw] font-black leading-none tracking-[-0.05em] text-center text-[#24963f]/[0.04] dark:text-emerald-500/[0.02] opacity-[0.95] [font-family:'Archivo_Black',sans-serif] transition-transform duration-300 hover:rotate-6 inline-block w-full cursor-pointer pointer-events-auto">
+      <div class="select-none pointer-events-none mt-6 overflow-visible">
+        <h1 id="big-footer-logo" class="text-[12vw] font-black leading-none tracking-[-0.05em] text-center text-[#24963f]/[0.04] dark:text-emerald-500/[0.02] opacity-[0.95] [font-family:'Archivo_Black',sans-serif] transition-all duration-700 ease-out hover:text-[#24963f]/15 dark:hover:text-emerald-500/10 inline-block w-full cursor-pointer pointer-events-auto">
           KUSH MART
         </h1>
       </div>
@@ -547,6 +547,42 @@ document.addEventListener('click', (e) => {
           realGrid.classList.remove('hidden');
         }, 400);
       }
+    });
+  </script>
+
+  <!-- BIG FOOTER LOGO INTERACTIVE HOVER EFFECT -->
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      const logo = document.getElementById('big-footer-logo');
+      if (!logo) return;
+
+      logo.addEventListener('mousemove', (e) => {
+        const rect = logo.getBoundingClientRect();
+        
+        // Calculate mouse position relative to element center
+        const x = e.clientX - (rect.left + rect.width / 2);
+        const y = e.clientY - (rect.top + rect.height / 2);
+        
+        // Normalize coordinates to [-1, 1]
+        const normX = x / (rect.width / 2);
+        const normY = y / (rect.height / 2);
+        
+        // Calculate tilt angles (max 12 degrees for premium feel)
+        const rotateX = -normY * 12;
+        const rotateY = normX * 12;
+        
+        // Calculate translation (max 15px for dynamic weight)
+        const translateX = normX * 15;
+        const translateY = normY * 10;
+        
+        logo.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translate3d(${translateX}px, ${translateY}px, 0) scale(1.03)`;
+        logo.style.transition = 'transform 0.1s cubic-bezier(0.25, 1, 0.5, 1), color 0.7s ease-out';
+      });
+
+      logo.addEventListener('mouseleave', () => {
+        logo.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) translate3d(0, 0, 0) scale(1)';
+        logo.style.transition = 'transform 0.6s cubic-bezier(0.25, 1, 0.5, 1), color 0.7s ease-out';
+      });
     });
   </script>
   <%- include('partials/updateQty') %>
