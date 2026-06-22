@@ -209,7 +209,85 @@
 
 </div>
   </main>
-  
+
+  <!-- RELATED PRODUCTS SECTION -->
+  <section class="max-w-7xl mx-auto px-6 py-12 border-t border-gray-100 mt-6 select-none">
+    <div class="flex items-baseline justify-between mb-8">
+      <div>
+        <h3 class="text-xl font-black tracking-tight text-gray-900 flex items-center gap-2">
+          <i class="fa-solid fa-wand-magic-sparkles text-amber-500 text-sm animate-pulse"></i> Suggested Products For You
+        </h3>
+        <p class="text-xs text-gray-500 font-semibold mt-1">Based on this category and popular fresh items</p>
+      </div>
+      <a href="/products/allProducts" class="text-xs font-black text-zinc-500 hover:text-[#24963f] transition-colors flex items-center gap-1">
+        View Catalogue <i class="fa-solid fa-chevron-right text-[9px] ml-0.5"></i>
+      </a>
+    </div>
+
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+      <% if (typeof relatedProducts !== 'undefined' && relatedProducts && relatedProducts.length > 0) { %>
+        <% relatedProducts.forEach(function(item) { %>
+          <div class="product-card group bg-white border border-gray-200/80 rounded-2xl p-4 hover:border-[#24963f]/40 hover:shadow-xl hover:shadow-gray-200/20 transition-all duration-300 flex flex-col justify-between">
+            <div>
+              <div class="h-36 bg-gray-50/60 border border-gray-100 rounded-xl mb-3.5 overflow-hidden relative flex items-center justify-center transition-all group-hover:bg-opacity-80" style="background-color: <%= item.bgColor || '#f9fafb' %>;">
+                <a href="/products/view/<%= item._id %>" class="w-full h-full block flex items-center justify-center p-4">
+                  <img src="/uploads/<%= item.image %>" alt="<%= item.name %>" class="max-w-full max-h-full object-contain group-hover:scale-105 transition-transform duration-500" onerror="this.src='/uploads/default-product.png'">
+                </a>
+                <% if(item.discount > 0) { %>
+                  <span class="absolute top-2 left-2 bg-red-500 text-white text-[8px] font-black px-2 py-0.5 rounded-lg shadow-sm">
+                    <%= Math.round((item.discount / (item.price + item.discount)) * 100) %>% OFF
+                  </span>
+                <% } %>
+              </div>
+              
+              <span class="text-[9px] bg-gray-100 text-gray-500 px-2 py-0.5 rounded font-bold uppercase tracking-wider">
+                <%= item.category || 'Fresh Farm' %>
+              </span>
+              
+              <h4 class="font-bold text-xs text-gray-800 group-hover:text-[#24963f] mt-1.5 transition-colors line-clamp-1">
+                <a href="/products/view/<%= item._id %>" class="hover:underline">
+                  <%= item.name %>
+                </a>
+              </h4>
+              <p class="text-[10px] text-gray-400 mt-0.5"><%= item.quantity || 'Pack' %></p>
+            </div>
+            
+            <div class="flex justify-between items-center mt-3 pt-2 border-t border-gray-100">
+              <div class="flex flex-col">
+                <span class="font-black text-sm text-black">₹<%= item.price %></span>
+                <% if(item.discount > 0) { %>
+                  <span class="text-[9px] text-gray-400 line-through">₹<%= item.price + item.discount %></span>
+                <% } %>
+              </div>
+              
+              <div class="product-action-container" id="action-box-<%= item._id %>">
+                <% 
+                  let relativeCartItem = user && user.cart ? user.cart.find(c => c.product && c.product._id.toString() === item._id.toString()) : null; 
+                %>
+
+                <% if (relativeCartItem) { %>
+                  <div class="flex items-center bg-[#24963f]/[0.09] text-black rounded-lg overflow-hidden border border-[#24963f]/20 font-black text-xs">
+                    <button onclick="descreaseQty('<%= item._id %>')" class="px-2.5 py-1.5 hover:bg-[#24963f] hover:text-white transition-colors text-xs font-black">-</button>
+                    <span id="quantityNumber-<%= item._id %>" class="px-1 min-w-[16px] text-center font-black text-xs"><%= relativeCartItem.quantity %></span>
+                    <button onclick="increaseQty('<%= item._id %>')" class="px-2.5 py-1.5 hover:bg-[#24963f] hover:text-white transition-colors text-xs font-black">+</button>
+                  </div>
+                <% } else { %>
+                  <button onclick="addToCart('<%= item._id %>', '<%= item.price %>')" class="text-center text-[10px] font-extrabold px-3 py-1.5 bg-emerald-50 text-[#24963f] border border-[#24963f]/20 rounded-xl hover:bg-[#24963f] hover:text-white transition-all duration-200 shadow-sm">
+                    + ADD
+                  </button>
+                <% } %>
+              </div>
+            </div>
+          </div>
+        <% }) %>
+      <% } else { %>
+        <div class="col-span-full text-center py-6 text-gray-400 text-xs font-semibold">
+          No related items found.
+        </div>
+      <% } %>
+    </div>
+  </section>
+
   <%- include('partials/header-scripts') %>
   <%- include('partials/updateQty') %>
 

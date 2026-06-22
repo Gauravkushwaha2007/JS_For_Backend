@@ -345,5 +345,24 @@
   <%- include('partials/cartPage/removeToCart') %>
   <%- include('partials/loader') %>
 
+  <script>
+    // ⚡ Reload page if retrieved from history (back-forward cache) to reflect empty/updated cart
+    window.addEventListener('pageshow', function(event) {
+      const historyTraversal = event.persisted || 
+                               (typeof window.performance != 'undefined' && 
+                                window.performance.navigation.type === 2);
+      
+      const isBackForward = historyTraversal || 
+                            (window.performance && 
+                             window.performance.getEntriesByType && 
+                             window.performance.getEntriesByType('navigation')[0] && 
+                             window.performance.getEntriesByType('navigation')[0].type === 'back_forward');
+                             
+      if (isBackForward) {
+        window.location.reload();
+      }
+    });
+  </script>
+
 </body>
 </html>

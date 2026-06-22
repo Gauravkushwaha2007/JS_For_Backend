@@ -222,11 +222,25 @@ const viewProduct = async (req, res)=>{
             } 
         }
         
+        // Fetch up to 4 related products in the same category (backfill if needed)
+        let relatedProducts = await productModel.find({
+            category: product.category,
+            _id: { $ne: product._id }
+        }).limit(4);
+
+        if (relatedProducts.length < 4) {
+            const additionalProducts = await productModel.find({
+                _id: { $ne: product._id, $nin: relatedProducts.map(p => p._id) }
+            }).limit(4 - relatedProducts.length);
+            relatedProducts = [...relatedProducts, ...additionalProducts];
+        }
+        
         res.render('productDetail', { 
             product: product, 
             user: user,
             totalCartPrice: totalCartPrice,
-            stock: stock
+            stock: stock,
+            relatedProducts: relatedProducts
         });
     }
 

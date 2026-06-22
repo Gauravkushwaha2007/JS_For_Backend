@@ -1,11 +1,14 @@
-const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
-const userModel = require('c:/Users/sir/OneDrive/Desktop/BackendAgain/Scatch/models/userModel');
+const userModel = require('./models/userModel');
+const db = require('./config/dbConnection');
 
 async function main() {
-  const mongoUrl = 'mongodb://localhost:27017/Scatch';
-  console.log('Connecting to:', mongoUrl);
-  await mongoose.connect(mongoUrl);
+  await new Promise((resolve, reject) => {
+    if (db.readyState === 1) return resolve();
+    db.once('connected', resolve);
+    db.once('error', reject);
+  });
+  console.log('Connected to database!');
   
   const email = 'admin@kushmart.com';
   const password = 'adminPassword123';
@@ -31,8 +34,14 @@ async function main() {
     });
     console.log('Created new Admin user:', email);
   }
-  
-  await mongoose.disconnect();
 }
 
-main().catch(console.error);
+main()
+  .then(() => {
+    console.log('Done');
+    process.exit(0);
+  })
+  .catch((err) => {
+    console.error(err);
+    process.exit(1);
+  });

@@ -27,11 +27,29 @@ const establishUserSession = (req, userId) => {
 const registerUser = async (req, res) => {
     try {
         let { name, email, password, contact } = req.body;
+
+        if (!name || !email || !password || !contact) {
+            return res.render('auth/login', { mode: 'register', error: 'All fields are required!' });
+        }
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            return res.render('auth/login', { mode: 'register', error: 'Please enter a valid email address!' });
+        }
+
+        const phoneRegex = /^[6-9]\d{9}$/;
+        if (!phoneRegex.test(contact)) {
+            return res.render('auth/login', { mode: 'register', error: 'Please enter a valid 10-digit mobile number!' });
+        }
+
+        if (password.length < 6) {
+            return res.render('auth/login', { mode: 'register', error: 'Password must be at least 6 characters long!' });
+        }
     
         let registeredUser = await userModel.findOne({ email });
         if (registeredUser) {
             if (registeredUser.isVerified) {
-                return res.render('auth/register', { error: 'This email is already registered!' });
+                return res.render('auth/login', { mode: 'register', error: 'This email is already registered!' });
             }
             
             // User is registered but not verified yet. Allow them to resend details and get a fresh OTP.
@@ -102,7 +120,7 @@ const registerUser = async (req, res) => {
     }
     catch (error) {
         console.error(error.message);
-        return res.render('auth/register', { error: 'Something went wrong. Please try again.' });
+        return res.render('auth/login', { mode: 'register', error: 'Something went wrong. Please try again.' });
     }
 };
 
@@ -113,16 +131,16 @@ const loginUser = async (req, res)=>{
         let user = await userModel.findOne({email});
         
         if(!user) {
-            return res.render('auth/login', { error: 'User not found! Please check your email.' });
+            return res.render('auth/login', { mode: 'login', error: 'User not found! Please check your email.' });
         }
         
         let isMatch = await bcrypt.compare(password, user.password);
         if(!isMatch){
-            return res.render('auth/login', { error: 'Wrong password! Please try again.' });
+            return res.render('auth/login', { mode: 'login', error: 'Wrong password! Please try again.' });
         }
 
         if (!user.isVerified) {
-            return res.render('auth/login', { error: 'Your account is not verified! Please check your email for OTP.' });
+            return res.render('auth/login', { mode: 'login', error: 'Your account is not verified! Please check your email for OTP.' });
         }
 
         await establishUserSession(req, user._id);
@@ -131,7 +149,7 @@ const loginUser = async (req, res)=>{
     }
     catch(error){
         console.log(error.message);
-        return res.render('auth/login', { error: 'Something went wrong. Please try again.' });
+        return res.render('auth/login', { mode: 'login', error: 'Something went wrong. Please try again.' });
     }
 };
 
@@ -205,7 +223,9 @@ const forgotPassword = async (req, res) => {
         const user = await userModel.findOne({ email });
 
         if (!user) {
-            return res.render('auth/forgot-password', { 
+            return res.render('auth/login', { 
+                mode: 'forgot',
+                error: null,
                 message: 'This email is not registered with us.', 
                 type: 'error' 
             });
@@ -228,14 +248,16 @@ const forgotPassword = async (req, res) => {
              <p>अगर आपने यह रिक्वेस्ट नहीं की है, तो इस ईमेल को इग्नोर करें।</p>`
         );
 
-        return res.render('auth/forgot-password', { 
+        return res.render('auth/login', { 
+            mode: 'forgot',
+            error: null,
             message: 'A secure reset link has been sent to your email!', 
             type: 'success' 
         });
 
     } catch (error) {
         console.error(error.message);
-        return res.render('auth/forgot-password', { message: 'Something went wrong. Try again.', type: 'error' });
+        return res.render('auth/login', { mode: 'forgot', error: 'Something went wrong. Try again.', message: null, type: null });
     }
 };
 

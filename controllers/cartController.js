@@ -325,11 +325,41 @@ const cartCheckout = async (req, res) => {
     }
 };
 
+// GET CART DATA (JSON API)
+const getCartData = async (req, res) => {
+    try {
+        const user = await userModel.findById(req.user._id).populate('cart.product');
+        if (!user) {
+            return res.status(401).json({ success: false, message: 'User not found' });
+        }
+        
+        // Filter out null products
+        user.cart = user.cart.filter(item => item.product !== null);
+        
+        let totalCartPrice = 0;
+        user.cart.forEach(item => {
+            if (item.product && item.product.price) {
+                totalCartPrice += (Number(item.product.price) * Number(item.quantity || 1));
+            }
+        });
+
+        res.json({
+            success: true,
+            products: user.cart,
+            totalCartPrice
+        });
+    } catch (error) {
+        console.error("getCartData Error:", error);
+        res.status(500).json({ success: false, message: "Failed to load cart data" });
+    }
+};
+
 module.exports = {
     addToCart,
     removeToCart,
     cartProducts,
     descreaseQty,
     increaseQty,
-    cartCheckout
+    cartCheckout,
+    getCartData
 };

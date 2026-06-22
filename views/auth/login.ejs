@@ -3,67 +3,109 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login | Kush Mart</title>
+  <title>Kush Mart | Authentication</title>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="https://cdn.tailwindcss.com"></script>
-
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+    }
+  </script>
+  <script>
+    (function () {
+      const savedTheme = localStorage.getItem('theme');
+      const html = document.documentElement;
+      if (savedTheme === 'dark') { html.classList.add('dark'); } 
+      else { html.classList.remove('dark'); }
+    })();
+  </script>
   <style>
     body { 
       font-family: 'Plus Jakarta Sans', sans-serif; 
     }
-    /* प्रीमियम लाइट डॉटेड ग्रिड बैकग्राउंड फॉर मॉडर्न UI फील */
     .bg-pattern {
       background-color: #fcfdfc;
       background-image: radial-gradient(#24963f0a 1.5px, transparent 1.5px), radial-gradient(#24963f0a 1.5px, #fcfdfc 1.5px);
       background-size: 24px 24px;
       background-position: 0 0, 12px 12px;
     }
-    /* सॉफ्ट नेचुरल शैडो */
     .premium-shadow {
       box-shadow: 0 20px 50px -12px rgba(36, 150, 63, 0.08), 0 0 1px 1px rgba(0, 0, 0, 0.02);
     }
+    /* Smooth transitions for swapping forms */
+    .auth-form {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
   </style>
 </head>
+<body class="bg-pattern text-gray-900 antialiased flex items-center justify-center min-h-screen px-4 py-8 dark:bg-zinc-950">
 
-<body class="bg-pattern text-gray-900 antialiased flex items-center justify-center min-h-screen px-4">
+  <% 
+    let currentMode = typeof mode !== 'undefined' && mode ? mode : 'login'; 
+    let currentError = typeof error !== 'undefined' && error ? error : null;
+    let currentMessage = typeof message !== 'undefined' && message ? message : null;
+    let currentType = typeof type !== 'undefined' && type ? type : null;
+  %>
 
-  <div class="relative bg-white border border-gray-100/80 premium-shadow p-8 sm:p-10 rounded-3xl w-full max-w-md transition-all duration-300">
+  <div class="relative bg-white dark:bg-zinc-900 border border-gray-100/80 dark:border-zinc-800 premium-shadow p-8 sm:p-10 rounded-3xl w-full max-w-md transition-all duration-300">
     
-    <a href="/" class="absolute top-5 right-5 text-gray-400 hover:text-gray-900 transition-all p-2 rounded-xl hover:bg-gray-50 border border-transparent hover:border-gray-100">
+    <a href="/" class="absolute top-5 right-5 text-gray-400 hover:text-gray-900 dark:hover:text-white transition-all p-2 rounded-xl hover:bg-gray-50 dark:hover:bg-zinc-800 border border-transparent hover:border-gray-100 dark:hover:border-zinc-700">
       <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
         <line x1="18" y1="6" x2="6" y2="18"></line>
         <line x1="6" y1="6" x2="18" y2="18"></line>
       </svg>
     </a>
     
-    <div class="text-center mb-8">
-      <div class="inline-flex items-center gap-2 mb-5 group cursor-pointer">
+    <div class="text-center mb-6">
+      <div class="inline-flex items-center gap-2 mb-4 group cursor-pointer" onclick="window.location.href='/'">
         <div class="w-9 h-9 bg-[#24963f] rounded-xl flex items-center justify-center group-hover:rotate-6 transition-transform duration-300 shadow-md shadow-emerald-700/20">
           <i class="fa-solid fa-basket-shopping text-white text-sm"></i>
         </div>
         <div class="text-left">
-          <h1 class="text-xl font-black tracking-tighter text-[#24963f] leading-none">KUSH<span class="text-black">MART</span></h1>
-          <span class="text-[9px] uppercase font-black tracking-widest text-gray-400 block mt-0.5">Supermart & Grocery</span>
+          <h1 class="text-xl font-black tracking-tighter text-[#24963f] leading-none">KUSH<span class="text-black dark:text-white">MART</span></h1>
+          <span class="text-[9px] uppercase font-black tracking-widest text-gray-400 dark:text-zinc-500 block mt-0.5">Supermart & Grocery</span>
         </div>
       </div>
       
-      <h2 class="text-gray-900 text-2xl font-black tracking-tight mb-1.5">Welcome Back!</h2>
-      <p class="text-gray-400 text-xs font-semibold">Login to access your fresh basket</p>
+      <!-- Dynamic Titles -->
+      <h2 id="auth-title" class="text-gray-900 dark:text-white text-2xl font-black tracking-tight mb-1.5">
+        <%= currentMode === 'login' ? 'Welcome Back!' : currentMode === 'register' ? 'Create Account' : 'Reset Password' %>
+      </h2>
+      <p id="auth-subtitle" class="text-gray-400 dark:text-zinc-500 text-xs font-semibold">
+        <%= currentMode === 'login' ? 'Login to access your fresh basket' : currentMode === 'register' ? 'Start your fresh grocery journey' : 'Recover your account password' %>
+      </p>
     </div>
 
-    <form action="/users/login" method="POST" onsubmit="showLoader(event)" class="space-y-4">
-      <% if (typeof error !== 'undefined' && error) { %>
-        <div id="errorPopup" class="mb-6 p-4 rounded-xl text-xs font-bold flex items-center justify-between border bg-rose-50 border-rose-200 text-rose-700 dark:bg-rose-950/40 dark:border-rose-900/50 dark:text-rose-400 animate-pulse">
+    <!-- Error/Message Notification Popups -->
+    <div id="notification-area">
+      <% if (currentError) { %>
+        <div id="errorPopup" class="mb-4 p-4 rounded-xl text-xs font-bold flex items-center justify-between border bg-rose-50 border-rose-200 text-rose-700 dark:bg-rose-950/40 dark:border-rose-900/50 dark:text-rose-400 animate-pulse">
           <div class="flex items-center gap-2.5">
             <i class="fa-solid fa-circle-exclamation text-sm text-rose-500"></i>
-            <span><%= error %></span>
+            <span><%= currentError %></span>
           </div>
-          <button type="button" onclick="closePopup()" class="text-rose-400 hover:text-rose-700 dark:hover:text-rose-200 transition-colors pl-2">
+          <button type="button" onclick="closePopup('errorPopup')" class="text-rose-400 hover:text-rose-700 dark:hover:text-rose-200 transition-colors pl-2">
             <i class="fa-solid fa-xmark text-sm"></i>
           </button>
         </div>
       <% } %>
+
+      <% if (currentMessage) { %>
+        <div id="messagePopup" class="mb-4 p-4 rounded-xl text-xs font-bold flex items-center justify-between border <%= currentType === 'success' ? 'bg-emerald-50 border-emerald-200 text-emerald-700 dark:bg-emerald-950/40 dark:border-emerald-900/50 dark:text-emerald-400' : 'bg-rose-50 border-rose-200 text-rose-700 dark:bg-rose-950/40 dark:border-rose-900/50 dark:text-rose-400' %>">
+          <div class="flex items-center gap-2.5">
+            <i class="fa-solid <%= currentType === 'success' ? 'fa-circle-check text-emerald-500' : 'fa-circle-exclamation text-rose-500' %> text-sm"></i>
+            <span><%= currentMessage %></span>
+          </div>
+          <button type="button" onclick="closePopup('messagePopup')" class="text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors pl-2">
+            <i class="fa-solid fa-xmark text-sm"></i>
+          </button>
+        </div>
+      <% } %>
+    </div>
+
+    <!-- 1. LOGIN FORM -->
+    <form id="login-form" action="/users/login" method="POST" onsubmit="showLoader(event)" class="auth-form space-y-4 <%= currentMode === 'login' ? '' : 'hidden' %>">
       <div class="space-y-1.5">
         <label class="text-[10px] font-black uppercase tracking-wider text-gray-400 pl-1">Email Address</label>
         <div class="relative group">
@@ -73,7 +115,7 @@
             name="email" 
             placeholder="Enter your email" 
             required
-            class="w-full bg-gray-50/50 border border-gray-200 rounded-xl py-3.5 pl-11 pr-4 text-xs font-bold text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-emerald-500/10 focus:bg-white focus:border-[#24963f] transition-all"
+            class="w-full bg-gray-50/50 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-800 rounded-xl py-3.5 pl-11 pr-4 text-xs font-bold text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-emerald-500/10 focus:bg-white dark:focus:bg-zinc-800 focus:border-[#24963f] transition-all"
           >
         </div>
       </div>
@@ -81,25 +123,29 @@
       <div class="space-y-1.5">
         <div class="flex justify-between items-center pl-1">
           <label class="text-[10px] font-black uppercase tracking-wider text-gray-400">Password</label>
-          <a href="/users/forgot-password" class="text-xs font-bold text-[#24963f] hover:text-[#1e7e34] dark:text-emerald-400 dark:hover:text-emerald-300 transition-colors duration-200">
+          <button type="button" onclick="switchMode('forgot')" class="text-xs font-bold text-[#24963f] hover:text-[#1e7e34] dark:text-emerald-400 dark:hover:text-emerald-300 transition-colors duration-200 focus:outline-none">
             Forgot Password?
-          </a>
+          </button>
         </div>
         <div class="relative group">
           <i class="fa-solid fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#24963f] transition-colors text-xs"></i>
           <input 
             type="password" 
             name="password" 
+            id="login-password"
             placeholder="••••••••" 
             required
-            class="w-full bg-gray-50/50 border border-gray-200 rounded-xl py-3.5 pl-11 pr-4 text-xs font-bold text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-emerald-500/10 focus:bg-white focus:border-[#24963f] transition-all"
+            class="w-full bg-gray-50/50 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-800 rounded-xl py-3.5 pl-11 pr-12 text-xs font-bold text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-emerald-500/10 focus:bg-white dark:focus:bg-zinc-800 focus:border-[#24963f] transition-all"
           >
+          <button type="button" id="toggle-login-password" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-zinc-300 transition-colors focus:outline-none select-none">
+            <i id="login-eye-icon" class="fa-regular fa-eye text-xs transition-transform duration-200"></i>
+          </button>
         </div>
       </div>
 
       <div class="flex items-center text-[11px] font-extrabold tracking-wide text-gray-500 pt-1">
-        <label class="flex items-center gap-2 cursor-pointer hover:text-gray-800 transition-colors select-none">
-          <input type="checkbox" class="accent-[#24963f] h-4 w-4 rounded-md border-gray-200 bg-gray-50 focus:ring-0">
+        <label class="flex items-center gap-2 cursor-pointer hover:text-gray-800 dark:hover:text-zinc-200 transition-colors select-none">
+          <input type="checkbox" class="accent-[#24963f] h-4 w-4 rounded-md border-gray-200 dark:border-zinc-700 bg-gray-50 focus:ring-0">
           Remember me on this device
         </label>
       </div>
@@ -111,31 +157,230 @@
         </button>
       </div>
       
+      <p class="text-center text-xs font-bold text-gray-400 dark:text-zinc-500 pt-4">
+        New to Kush Mart? 
+        <button type="button" onclick="switchMode('register')" class="text-[#24963f] font-black hover:text-[#1e7e34] transition-colors ml-1 focus:outline-none">Create an account</button>
+      </p>
+    </form>
+
+    <!-- 2. REGISTER FORM -->
+    <form id="register-form" action="/users/register" method="POST" onsubmit="showLoader(event)" class="auth-form space-y-4 <%= currentMode === 'register' ? '' : 'hidden' %>">
+      <div class="space-y-1.5">
+        <label class="text-[10px] font-black uppercase tracking-wider text-gray-400 pl-1">Full Name</label>
+        <div class="relative group">
+          <i class="fa-solid fa-user absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#24963f] transition-colors text-xs"></i>
+          <input 
+            type="text" 
+            name="name" 
+            placeholder="Enter your full name" 
+            required
+            class="w-full bg-gray-50/50 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-800 rounded-xl py-3.5 pl-11 pr-4 text-xs font-bold text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-emerald-500/10 focus:bg-white dark:focus:bg-zinc-800 focus:border-[#24963f] transition-all"
+          >
+        </div>
+      </div>
+      
+      <div class="space-y-1.5">
+        <label class="text-[10px] font-black uppercase tracking-wider text-gray-400 pl-1">Email Address</label>
+        <div class="relative group">
+          <i class="fa-solid fa-envelope absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#24963f] transition-colors text-xs"></i>
+          <input 
+            type="email" 
+            name="email" 
+            placeholder="Enter your email" 
+            required
+            class="w-full bg-gray-50/50 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-800 rounded-xl py-3.5 pl-11 pr-4 text-xs font-bold text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-emerald-500/10 focus:bg-white dark:focus:bg-zinc-800 focus:border-[#24963f] transition-all"
+          >
+        </div>
+      </div>
+
+      <div class="space-y-1.5">
+        <label class="text-[10px] font-black uppercase tracking-wider text-gray-400 pl-1">Password</label>
+        <div class="relative group">
+          <i class="fa-solid fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#24963f] transition-colors text-xs"></i>
+          <input 
+            type="password" 
+            name="password" 
+            id="register-password"
+            placeholder="Create a strong password" 
+            required
+            class="w-full bg-gray-50/50 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-800 rounded-xl py-3.5 pl-11 pr-12 text-xs font-bold text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-emerald-500/10 focus:bg-white dark:focus:bg-zinc-800 focus:border-[#24963f] transition-all"
+          >
+          <button type="button" id="toggle-register-password" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-zinc-300 transition-colors focus:outline-none select-none">
+            <i id="register-eye-icon" class="fa-regular fa-eye text-xs transition-transform duration-200"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="space-y-1.5">
+        <label class="text-[10px] font-black uppercase tracking-wider text-gray-400 pl-1">Contact Number</label>
+        <div class="relative group">
+          <i class="fa-solid fa-phone absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#24963f] transition-colors text-xs"></i>
+          <input 
+            type="tel" 
+            name="contact" 
+            placeholder="Enter phone number" 
+            required
+            minlength="10"
+            maxlength="10"
+            pattern="[6-9][0-9]{9}"
+            title="Please enter a valid 10-digit mobile number"
+            class="w-full bg-gray-50/50 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-800 rounded-xl py-3.5 pl-11 pr-4 text-xs font-bold text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-emerald-500/10 focus:bg-white dark:focus:bg-zinc-800 focus:border-[#24963f] transition-all"
+          >
+        </div>
+      </div>
+
+      <div class="pt-2">
+        <button type="submit" class="w-full bg-[#24963f] text-white hover:bg-[#1e7e34] transition-all py-3.5 rounded-xl font-extrabold text-xs uppercase tracking-wider shadow-lg shadow-emerald-700/10 active:scale-[0.99] flex items-center justify-center gap-2">
+          <span>Register Now</span>
+          <i class="fa-solid fa-user-plus text-[10px]"></i>
+        </button>
+      </div>
+      
+      <p class="text-center text-xs font-bold text-gray-400 dark:text-zinc-500 pt-4">
+        Already have an account? 
+        <button type="button" onclick="switchMode('login')" class="text-[#24963f] font-black hover:text-[#1e7e34] transition-colors ml-1 focus:outline-none">Sign in</button>
+      </p>
+    </form>
+
+    <!-- 3. FORGOT PASSWORD FORM -->
+    <form id="forgot-form" action="/users/forgot-password" method="POST" onsubmit="showLoader(event)" class="auth-form space-y-4 <%= currentMode === 'forgot' ? '' : 'hidden' %>">
+      <p class="text-xs text-gray-500 dark:text-zinc-400 text-center font-semibold mb-2">
+        Apna registered email address enter karein. Hum aapko ek password reset link bhejenge.
+      </p>
+      
+      <div class="space-y-1.5">
+        <label class="text-[10px] font-black uppercase tracking-wider text-gray-400 pl-1">Email Address</label>
+        <div class="relative group">
+          <i class="fa-solid fa-envelope absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#24963f] transition-colors text-xs"></i>
+          <input 
+            type="email" 
+            name="email" 
+            placeholder="Enter your email" 
+            required
+            class="w-full bg-gray-50/50 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-800 rounded-xl py-3.5 pl-11 pr-4 text-xs font-bold text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-emerald-500/10 focus:bg-white dark:focus:bg-zinc-800 focus:border-[#24963f] transition-all"
+          >
+        </div>
+      </div>
+
+      <div class="pt-2">
+        <button type="submit" class="w-full bg-[#24963f] text-white hover:bg-[#1e7e34] transition-all py-3.5 rounded-xl font-extrabold text-xs uppercase tracking-wider shadow-lg shadow-emerald-700/10 active:scale-[0.99] flex items-center justify-center gap-2">
+          <span>Send Reset Link</span>
+          <i class="fa-solid fa-paper-plane text-[10px]"></i>
+        </button>
+      </div>
+      
+      <p class="text-center text-xs font-bold text-gray-400 dark:text-zinc-500 pt-4">
+        Remember your password? 
+        <button type="button" onclick="switchMode('login')" class="text-[#24963f] font-black hover:text-[#1e7e34] transition-colors ml-1 focus:outline-none">Sign in</button>
+      </p>
     </form>
 
     <div class="relative flex py-3 items-center my-2">
-      <div class="flex-grow border-t border-gray-100"></div>
-      <span class="flex-shrink mx-4 text-[9px] font-black text-gray-300 uppercase tracking-widest">Fresh Grocery Store</span>
-      <div class="flex-grow border-t border-gray-100"></div>
+      <div class="flex-grow border-t border-gray-100 dark:border-zinc-800"></div>
+      <span class="flex-shrink mx-4 text-[9px] font-black text-gray-300 dark:text-zinc-700 uppercase tracking-widest">Fresh Grocery Store</span>
+      <div class="flex-grow border-t border-gray-100 dark:border-zinc-800"></div>
     </div>
 
-    <p class="text-center text-xs font-bold text-gray-400">
-      New to Kush Mart? 
-      <a href="/users/register" class="text-[#24963f] font-black hover:text-[#1e7e34] transition-colors ml-1">Create an account</a>
-    </p>
-
   </div>
+
   <script>
-    function closePopup() {
-      const popup = document.getElementById('errorPopup');
+    // Toggle notifications
+    function closePopup(id) {
+      const popup = document.getElementById(id);
       if (popup) {
         popup.style.opacity = '0';
         popup.style.transition = 'opacity 0.3s ease';
-        setTimeout(() => {
-          popup.remove();
-        }, 300);
+        setTimeout(() => popup.remove(), 300);
       }
     }
+
+    // Switch between modes dynamically (Client-Side Swap)
+    function switchMode(mode) {
+      // Hide all notifications on switch
+      const notifArea = document.getElementById('notification-area');
+      if (notifArea) notifArea.innerHTML = '';
+
+      const loginForm = document.getElementById('login-form');
+      const registerForm = document.getElementById('register-form');
+      const forgotForm = document.getElementById('forgot-form');
+
+      const title = document.getElementById('auth-title');
+      const subtitle = document.getElementById('auth-subtitle');
+
+      // Hide all first
+      loginForm.classList.add('hidden');
+      registerForm.classList.add('hidden');
+      forgotForm.classList.add('hidden');
+
+      if (mode === 'login') {
+        loginForm.classList.remove('hidden');
+        title.innerText = 'Welcome Back!';
+        subtitle.innerText = 'Login to access your fresh basket';
+      } else if (mode === 'register') {
+        registerForm.classList.remove('hidden');
+        title.innerText = 'Create Account';
+        subtitle.innerText = 'Start your fresh grocery journey';
+      } else if (mode === 'forgot') {
+        forgotForm.classList.remove('hidden');
+        title.innerText = 'Reset Password';
+        subtitle.innerText = 'Recover your account password';
+      }
+      
+      // Update browser history state to match
+      const pathMap = {
+        login: '/users/login',
+        register: '/users/register',
+        forgot: '/users/forgot-password'
+      };
+      if (pathMap[mode]) {
+        window.history.replaceState({ mode: mode }, '', pathMap[mode]);
+      }
+    }
+
+    // Initialize password eye logic for login and register
+    document.addEventListener('DOMContentLoaded', () => {
+      // 1. Login Password
+      const toggleLoginBtn = document.getElementById('toggle-login-password');
+      const loginPassInput = document.getElementById('login-password');
+      const loginEyeIcon = document.getElementById('login-eye-icon');
+
+      if (toggleLoginBtn && loginPassInput && loginEyeIcon) {
+        toggleLoginBtn.addEventListener('click', () => {
+          const isPassword = loginPassInput.type === 'password';
+          loginPassInput.type = isPassword ? 'text' : 'password';
+          loginEyeIcon.style.transform = 'scale(0.8) rotate(15deg)';
+          setTimeout(() => {
+            loginEyeIcon.className = isPassword ? 'fa-regular fa-eye-slash text-xs transition-transform duration-200' : 'fa-regular fa-eye text-xs transition-transform duration-200';
+            loginEyeIcon.style.transform = 'scale(1) rotate(0deg)';
+          }, 100);
+        });
+      }
+
+      // 2. Register Password
+      const toggleRegisterBtn = document.getElementById('toggle-register-password');
+      const registerPassInput = document.getElementById('register-password');
+      const registerEyeIcon = document.getElementById('register-eye-icon');
+
+      if (toggleRegisterBtn && registerPassInput && registerEyeIcon) {
+        toggleRegisterBtn.addEventListener('click', () => {
+          const isPassword = registerPassInput.type === 'password';
+          registerPassInput.type = isPassword ? 'text' : 'password';
+          registerEyeIcon.style.transform = 'scale(0.8) rotate(15deg)';
+          setTimeout(() => {
+            registerEyeIcon.className = isPassword ? 'fa-regular fa-eye-slash text-xs transition-transform duration-200' : 'fa-regular fa-eye text-xs transition-transform duration-200';
+            registerEyeIcon.style.transform = 'scale(1) rotate(0deg)';
+          }, 100);
+        });
+      }
+
+      // Auto-detect view mode based on location pathname if rendered via router
+      const path = window.location.pathname;
+      if (path.includes('register')) {
+        switchMode('register');
+      } else if (path.includes('forgot-password')) {
+        switchMode('forgot');
+      }
+    });
   </script>
 
   <%- include('../partials/loader') %>

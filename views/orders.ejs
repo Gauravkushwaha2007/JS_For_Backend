@@ -3,6 +3,22 @@
 <head>
   <title>Your Orders | KushNova</title>
   <%- include('partials/head') %>
+  <style>
+    @keyframes pulse-slow-amber {
+      0%, 100% { transform: scale(1.05); filter: drop-shadow(0 0 4px rgba(245, 158, 11, 0.4)); }
+      50% { transform: scale(1.12); filter: drop-shadow(0 0 12px rgba(245, 158, 11, 0.7)); }
+    }
+    @keyframes pulse-slow-blue {
+      0%, 100% { transform: scale(1.05); filter: drop-shadow(0 0 4px rgba(59, 130, 246, 0.4)); }
+      50% { transform: scale(1.12); filter: drop-shadow(0 0 12px rgba(59, 130, 246, 0.7)); }
+    }
+    .animate-pulse-slow-amber {
+      animation: pulse-slow-amber 2s infinite ease-in-out;
+    }
+    .animate-pulse-slow-blue {
+      animation: pulse-slow-blue 2s infinite ease-in-out;
+    }
+  </style>
 </head>
 
 <body class="bg-[#f8f9fa] text-gray-900 antialiased dark:bg-[#050906] dark:text-zinc-100 transition-colors duration-300">
@@ -15,15 +31,60 @@
 
     <main class="flex-1 p-4 sm:p-6 lg:p-8 select-none">
       <% if (typeof orderSuccessMessage !== 'undefined' && orderSuccessMessage) { %>
-        <div id="orderSuccessPopup" class="mb-6 p-4 rounded-xl text-xs font-bold flex items-center justify-between border bg-emerald-50 border-emerald-200 text-emerald-700 dark:bg-emerald-950/40 dark:border-emerald-900/50 dark:text-emerald-400 animate-bounce">
-          <div class="flex items-center gap-2.5">
-            <i class="fa-solid fa-circle-check text-sm text-emerald-500"></i>
-            <span><%= orderSuccessMessage %></span>
+        <div id="orderSuccessPopup" class="fixed top-6 right-6 z-50 select-none max-w-md w-[calc(100%-3rem)] transition-all duration-500 ease-out transform -translate-y-6 opacity-0 shadow-[0_15px_35px_rgba(16,185,129,0.12)] bg-white dark:bg-zinc-950 border border-emerald-500/20 rounded-2xl overflow-hidden">
+          <div class="p-4 flex items-center gap-3.5">
+            <div class="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center border border-emerald-500/20 shrink-0">
+              <i class="fa-solid fa-circle-check text-lg"></i>
+            </div>
+            <div class="min-w-0 flex-1">
+              <p class="text-[10px] font-black tracking-wider uppercase text-emerald-600 dark:text-emerald-400">Order Placed!</p>
+              <p class="text-xs font-bold text-gray-800 dark:text-zinc-200 mt-0.5"><%= orderSuccessMessage %></p>
+            </div>
+            <button type="button" onclick="dismissOrderPopup()" class="w-8 h-8 rounded-xl hover:bg-gray-50 dark:hover:bg-zinc-900 text-gray-400 hover:text-gray-900 dark:hover:text-zinc-200 flex items-center justify-center transition-all border border-transparent hover:border-gray-100 dark:hover:border-zinc-800 shrink-0">
+              <i class="fa-solid fa-xmark text-sm"></i>
+            </button>
           </div>
-          <button type="button" onclick="document.getElementById('orderSuccessPopup').remove()" class="text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-200 transition-colors pl-2">
-            <i class="fa-solid fa-xmark text-sm"></i>
-          </button>
+          <!-- Progress Timer Line -->
+          <div class="h-1 bg-emerald-500 w-full transition-all ease-linear" id="orderSuccessProgress" style="width: 100%;"></div>
         </div>
+        
+        <script>
+          document.addEventListener("DOMContentLoaded", () => {
+            const popup = document.getElementById("orderSuccessPopup");
+            const progress = document.getElementById("orderSuccessProgress");
+            if (!popup) return;
+
+            // Trigger Slide in
+            setTimeout(() => {
+              popup.classList.remove("-translate-y-6", "opacity-0");
+              popup.classList.add("translate-y-0", "opacity-100");
+            }, 100);
+
+            // Animate progress bar (4.5 seconds duration)
+            const duration = 4500;
+            const interval = 10;
+            let elapsed = 0;
+            const timer = setInterval(() => {
+              elapsed += interval;
+              const remainingPercent = Math.max(0, 100 - (elapsed / duration) * 100);
+              if (progress) progress.style.width = `${remainingPercent}%`;
+              
+              if (elapsed >= duration) {
+                clearInterval(timer);
+                dismissOrderPopup();
+              }
+            }, interval);
+
+            window.dismissOrderPopup = () => {
+              clearInterval(timer);
+              popup.classList.remove("translate-y-0", "opacity-100");
+              popup.classList.add("-translate-y-6", "opacity-0", "pointer-events-none");
+              setTimeout(() => {
+                popup.remove();
+              }, 500);
+            };
+          });
+        </script>
       <% } %>
       <div class="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-white dark:bg-zinc-900 p-5 rounded-2xl border border-gray-100 dark:border-zinc-800 shadow-sm">
         <div>
@@ -56,7 +117,7 @@
         
         <div class="space-y-6">
           <% orders.forEach(order => { %>
-            <div class="border border-gray-100 dark:border-zinc-800/80 rounded-2xl bg-white dark:bg-zinc-900/40 shadow-sm overflow-hidden hover:shadow-md transition-all duration-300">
+            <div class="order-container border border-gray-100 dark:border-zinc-800/80 rounded-2xl bg-white dark:bg-zinc-900/40 shadow-sm overflow-hidden hover:shadow-md transition-all duration-300" data-order-id="<%= order._id %>" data-order-status="<%= order.status %>">
               
               <div class="bg-gray-50/70 dark:bg-zinc-900/50 px-5 py-4 border-b border-gray-100 dark:border-zinc-800 flex flex-wrap items-center justify-between gap-3">
                 <div class="flex items-center gap-5 text-xs font-semibold">
@@ -73,7 +134,7 @@
                   </div>
                 </div>
                 
-                <div>
+                <div id="status-pill-<%= order._id %>">
                   <% if(order.status === 'Pending') { %>
                     <span class="text-[10px] font-black px-3 py-1.5 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 uppercase tracking-wider flex items-center gap-1.5 animate-pulse">
                       <i class="fa-solid fa-circle-notch animate-spin text-[9px]"></i> Processing
@@ -141,6 +202,114 @@
                 <% }) %>
               </div>
 
+              <!-- Visual Step-Progress Live Tracker Bar -->
+              <div class="px-5 pb-5 border-b border-gray-50/60 dark:border-zinc-800/40" id="tracker-box-<%= order._id %>">
+                <div class="bg-gray-50/50 dark:bg-zinc-950/20 rounded-2xl p-4 sm:p-5 border border-gray-100 dark:border-zinc-800/60">
+                  <div class="flex justify-between items-center mb-3">
+                    <span class="text-[10px] font-black uppercase text-gray-400 tracking-wider">Live Delivery Status</span>
+                    <span class="text-[10px] font-black text-[#24963f] tracking-wide flex items-center gap-1.5 status-text-label">
+                      <% if(order.status === 'Pending') { %>
+                        <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-ping"></span> Packing Essentials
+                      <% } else if(order.status === 'Dispatched') { %>
+                        <span class="w-1.5 h-1.5 rounded-full bg-blue-500 animate-ping"></span> Out For Delivery
+                      <% } else if(order.status === 'Delivered') { %>
+                        <span class="w-1.5 h-1.5 rounded-full bg-[#24963f]"></span> Delivered Successfully
+                      <% } else { %>
+                        Cancelled
+                      <% } %>
+                    </span>
+                  </div>
+
+                  <div class="tracker-active-view <%= order.status === 'Cancelled' ? 'hidden' : '' %>">
+                    <!-- Progress Bar Container -->
+                    <div class="relative flex items-center justify-between w-full mt-4 select-none px-4">
+                      
+                      <!-- Background Progress line -->
+                      <div class="absolute left-10 right-10 top-3 h-1 bg-gray-200 dark:bg-zinc-800 z-0 rounded-full"></div>
+                      
+                      <!-- Dynamic Active Progress line -->
+                      <% 
+                        let progressWidth = '0%';
+                        if(order.status === 'Pending') progressWidth = '33%';
+                        else if(order.status === 'Dispatched') progressWidth = '66%';
+                        else if(order.status === 'Delivered') progressWidth = '100%';
+                      %>
+                      <div class="absolute left-10 top-3 h-1 bg-[#24963f] z-0 rounded-full transition-all duration-1000 ease-out progress-bar-line" style="width: calc(<%= progressWidth %> - 8px);"></div>
+
+                      <!-- Step 1: Placed -->
+                      <div class="relative z-10 flex flex-col items-center step-placed">
+                        <div class="step-circle w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-black shadow-sm transition-all duration-300 border-2 bg-[#24963f] border-[#24963f] text-white">
+                          <i class="fa-solid fa-check"></i>
+                        </div>
+                        <span class="text-[9px] font-black text-gray-800 dark:text-zinc-200 uppercase tracking-wider mt-1.5">Placed</span>
+                      </div>
+
+                      <!-- Step 2: Packing -->
+                      <% 
+                        let step2Bg = 'bg-gray-100 border-gray-200 text-gray-400 dark:bg-zinc-800 dark:border-zinc-700 dark:text-zinc-500';
+                        if(order.status === 'Pending') {
+                          step2Bg = 'bg-amber-500 border-amber-500 text-white shadow-md animate-pulse-slow-amber';
+                        } else if(order.status === 'Dispatched' || order.status === 'Delivered') {
+                          step2Bg = 'bg-[#24963f] border-[#24963f] text-white';
+                        }
+                      %>
+                      <div class="relative z-10 flex flex-col items-center step-packed">
+                        <div class="step-circle w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-black shadow-sm transition-all duration-300 border-2 <%= step2Bg %>">
+                          <% if(order.status !== 'Pending' && order.status !== 'Cancelled') { %>
+                            <i class="fa-solid fa-check"></i>
+                          <% } else { %>
+                            <i class="fa-solid fa-box-open"></i>
+                          <% } %>
+                        </div>
+                        <span class="text-[9px] font-black text-gray-800 dark:text-zinc-200 uppercase tracking-wider mt-1.5">Packed</span>
+                      </div>
+
+                      <!-- Step 3: Dispatched -->
+                      <% 
+                        let step3Bg = 'bg-gray-100 border-gray-200 text-gray-400 dark:bg-zinc-800 dark:border-zinc-700 dark:text-zinc-500';
+                        if(order.status === 'Dispatched') {
+                          step3Bg = 'bg-blue-500 border-blue-500 text-white shadow-md animate-pulse-slow-blue';
+                        } else if(order.status === 'Delivered') {
+                          step3Bg = 'bg-[#24963f] border-[#24963f] text-white';
+                        }
+                      %>
+                      <div class="relative z-10 flex flex-col items-center step-shipped">
+                        <div class="step-circle w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-black shadow-sm transition-all duration-300 border-2 <%= step3Bg %>">
+                          <% if(order.status === 'Delivered') { %>
+                            <i class="fa-solid fa-check"></i>
+                          <% } else { %>
+                            <i class="fa-solid fa-truck-fast"></i>
+                          <% } %>
+                        </div>
+                        <span class="text-[9px] font-black text-gray-800 dark:text-zinc-200 uppercase tracking-wider mt-1.5">Shipped</span>
+                      </div>
+
+                      <!-- Step 4: Delivered -->
+                      <% 
+                        let step4Bg = 'bg-gray-100 border-gray-200 text-gray-400 dark:bg-zinc-800 dark:border-zinc-700 dark:text-zinc-500';
+                        if(order.status === 'Delivered') {
+                          step4Bg = 'bg-[#24963f] border-[#24963f] text-white shadow-md shadow-emerald-500/20 scale-105';
+                        }
+                      %>
+                      <div class="relative z-10 flex flex-col items-center step-arrived">
+                        <div class="step-circle w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-black shadow-sm transition-all duration-300 border-2 <%= step4Bg %>">
+                          <i class="fa-solid fa-house-chimney-user"></i>
+                        </div>
+                        <span class="text-[9px] font-black text-gray-800 dark:text-zinc-200 uppercase tracking-wider mt-1.5">Arrived</span>
+                      </div>
+
+                    </div>
+                  </div>
+
+                  <div class="tracker-cancelled-view <%= order.status !== 'Cancelled' ? 'hidden' : '' %>">
+                    <div class="flex items-center gap-2 p-3 bg-rose-50 dark:bg-rose-950/20 border border-rose-200 dark:border-rose-900/50 rounded-xl text-xs font-bold text-rose-600 dark:text-rose-400">
+                      <i class="fa-solid fa-circle-xmark text-sm"></i>
+                      <span>This order was cancelled. Feel free to re-order items from the shop.</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
               <div class="px-5 py-4 bg-gray-50/40 dark:bg-zinc-900/20 border-t border-gray-100 dark:border-zinc-800 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 
                 <div class="space-y-0.5 max-w-sm">
@@ -172,6 +341,205 @@
     </main>
   </div>
 
+  <script>
+    // ⏰ Live Order status Polling Logic
+    document.addEventListener("DOMContentLoaded", () => {
+      // Find all order containers to check if we have any active ones
+      const orderContainers = document.querySelectorAll(".order-container");
+      let activeOrderIds = [];
+
+      orderContainers.forEach(container => {
+        const orderId = container.dataset.orderId;
+        const status = container.dataset.orderStatus;
+        if (status === "Pending" || status === "Dispatched") {
+          activeOrderIds.push(orderId);
+        }
+      });
+
+      // If there are active orders, poll status every 7 seconds
+      if (activeOrderIds.length > 0) {
+        const intervalId = setInterval(async () => {
+          try {
+            const response = await fetch("/users/orders/status");
+            const data = await response.json();
+            
+            if (data && data.success && data.orders) {
+              let stillHasActive = false;
+              
+              data.orders.forEach(updatedOrder => {
+                const container = document.querySelector(`.order-container[data-order-id="${updatedOrder._id}"]`);
+                if (!container) return;
+                
+                const oldStatus = container.dataset.orderStatus;
+                const newStatus = updatedOrder.status;
+                
+                if (newStatus === "Pending" || newStatus === "Dispatched") {
+                  stillHasActive = true;
+                }
+                
+                if (oldStatus !== newStatus) {
+                  container.dataset.orderStatus = newStatus;
+                  updateOrderUI(updatedOrder._id, newStatus);
+                }
+              });
+              
+              if (!stillHasActive) {
+                clearInterval(intervalId);
+                console.log("No active orders remaining. Polling stopped.");
+              }
+            }
+          } catch (error) {
+            console.error("Polling error:", error);
+          }
+        }, 7000);
+      }
+
+      // UI Update Logic for live order statuses
+      function updateOrderUI(orderId, status) {
+        // 1. Update top status badge/pill
+        const statusPill = document.getElementById(`status-pill-${orderId}`);
+        if (statusPill) {
+          if (status === 'Pending') {
+            statusPill.innerHTML = `
+              <span class="text-[10px] font-black px-3 py-1.5 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 uppercase tracking-wider flex items-center gap-1.5 animate-pulse">
+                <i class="fa-solid fa-circle-notch animate-spin text-[9px]"></i> Processing
+              </span>
+            `;
+          } else if (status === 'Dispatched') {
+            statusPill.innerHTML = `
+              <span class="text-[10px] font-black px-3 py-1.5 rounded-xl bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20 uppercase tracking-wider flex items-center gap-1.5">
+                <i class="fa-solid fa-truck-fast text-[11px]"></i> Out For Delivery
+              </span>
+            `;
+          } else if (status === 'Delivered') {
+            statusPill.innerHTML = `
+              <span class="text-[10px] font-black px-3 py-1.5 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 uppercase tracking-wider flex items-center gap-1.5">
+                <i class="fa-solid fa-circle-check text-[11px]"></i> Delivered
+              </span>
+            `;
+          } else if (status === 'Cancelled') {
+            statusPill.innerHTML = `
+              <span class="text-[10px] font-black px-3 py-1.5 rounded-xl bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20 uppercase tracking-wider flex items-center gap-1.5">
+                <i class="fa-solid fa-circle-xmark text-[11px]"></i> Cancelled
+              </span>
+            `;
+          }
+        }
+
+        // 2. Update Live Delivery Status subtitle label
+        const trackerBox = document.getElementById(`tracker-box-${orderId}`);
+        if (!trackerBox) return;
+        
+        const textLabel = trackerBox.querySelector(".status-text-label");
+        if (textLabel) {
+          if (status === 'Pending') {
+            textLabel.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-ping"></span> Packing Essentials`;
+          } else if (status === 'Dispatched') {
+            textLabel.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-blue-500 animate-ping"></span> Out For Delivery`;
+          } else if (status === 'Delivered') {
+            textLabel.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-[#24963f]"></span> Delivered Successfully`;
+          } else if (status === 'Cancelled') {
+            textLabel.innerHTML = `Cancelled`;
+          }
+        }
+
+        // 3. Toggle normal/cancelled tracker views
+        const activeView = trackerBox.querySelector(".tracker-active-view");
+        const cancelledView = trackerBox.querySelector(".tracker-cancelled-view");
+        
+        if (status === "Cancelled") {
+          if (activeView) activeView.classList.add("hidden");
+          if (cancelledView) cancelledView.classList.remove("hidden");
+          return;
+        } else {
+          if (activeView) activeView.classList.remove("hidden");
+          if (cancelledView) cancelledView.classList.add("hidden");
+        }
+
+        // 4. Update progress bar line width
+        const progressLine = trackerBox.querySelector(".progress-bar-line");
+        if (progressLine) {
+          let progressWidth = "0%";
+          if (status === 'Pending') progressWidth = "33%";
+          else if (status === 'Dispatched') progressWidth = "66%";
+          else if (status === 'Delivered') progressWidth = "100%";
+          
+          progressLine.style.width = `calc(${progressWidth} - 8px)`;
+        }
+
+        // 5. Update Step Circles and Icons
+        const step2Circle = trackerBox.querySelector(".step-packed .step-circle");
+        const step3Circle = trackerBox.querySelector(".step-shipped .step-circle");
+        const step4Circle = trackerBox.querySelector(".step-arrived .step-circle");
+
+        // Helper to clear classes
+        const clearStepClasses = (circle) => {
+          circle.className = "step-circle w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-black shadow-sm transition-all duration-300 border-2";
+        };
+
+        if (status === 'Pending') {
+          // Step 2 is active
+          if (step2Circle) {
+            clearStepClasses(step2Circle);
+            step2Circle.classList.add("bg-amber-500", "border-amber-500", "text-white", "shadow-md", "animate-pulse-slow-amber");
+            step2Circle.innerHTML = `<i class="fa-solid fa-box-open"></i>`;
+          }
+          // Step 3 is inactive
+          if (step3Circle) {
+            clearStepClasses(step3Circle);
+            step3Circle.classList.add("bg-gray-100", "border-gray-200", "text-gray-400", "dark:bg-zinc-800", "dark:border-zinc-700", "dark:text-zinc-500");
+            step3Circle.innerHTML = `<i class="fa-solid fa-truck-fast"></i>`;
+          }
+          // Step 4 is inactive
+          if (step4Circle) {
+            clearStepClasses(step4Circle);
+            step4Circle.classList.add("bg-gray-100", "border-gray-200", "text-gray-400", "dark:bg-zinc-800", "dark:border-zinc-700", "dark:text-zinc-500");
+            step4Circle.innerHTML = `<i class="fa-solid fa-house-chimney-user"></i>`;
+          }
+        } 
+        else if (status === 'Dispatched') {
+          // Step 2 is completed
+          if (step2Circle) {
+            clearStepClasses(step2Circle);
+            step2Circle.classList.add("bg-[#24963f]", "border-[#24963f]", "text-white");
+            step2Circle.innerHTML = `<i class="fa-solid fa-check"></i>`;
+          }
+          // Step 3 is active
+          if (step3Circle) {
+            clearStepClasses(step3Circle);
+            step3Circle.classList.add("bg-blue-500", "border-blue-500", "text-white", "shadow-md", "animate-pulse-slow-blue");
+            step3Circle.innerHTML = `<i class="fa-solid fa-truck-fast"></i>`;
+          }
+          // Step 4 is inactive
+          if (step4Circle) {
+            clearStepClasses(step4Circle);
+            step4Circle.classList.add("bg-gray-100", "border-gray-200", "text-gray-400", "dark:bg-zinc-800", "dark:border-zinc-700", "dark:text-zinc-500");
+            step4Circle.innerHTML = `<i class="fa-solid fa-house-chimney-user"></i>`;
+          }
+        } 
+        else if (status === 'Delivered') {
+          // Step 2 is completed
+          if (step2Circle) {
+            clearStepClasses(step2Circle);
+            step2Circle.classList.add("bg-[#24963f]", "border-[#24963f]", "text-white");
+            step2Circle.innerHTML = `<i class="fa-solid fa-check"></i>`;
+          }
+          // Step 3 is completed
+          if (step3Circle) {
+            clearStepClasses(step3Circle);
+            step3Circle.classList.add("bg-[#24963f]", "border-[#24963f]", "text-white");
+            step3Circle.innerHTML = `<i class="fa-solid fa-check"></i>`;
+          }
+          // Step 4 is active/completed
+          if (step4Circle) {
+            clearStepClasses(step4Circle);
+            step4Circle.classList.add("bg-[#24963f]", "border-[#24963f]", "text-white", "shadow-md", "shadow-emerald-500/20", "scale-105");
+            step4Circle.innerHTML = `<i class="fa-solid fa-house-chimney-user"></i>`;
+          }
+        }
+      }
+    });
+  </script>
   <%- include('partials/header-scripts') %>
 </body>
 </html>

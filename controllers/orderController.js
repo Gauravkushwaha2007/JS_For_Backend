@@ -92,7 +92,19 @@ const getBill = async (req, res)=>{
     }
 };
 
+// GET LIVE ORDERS STATUS (JSON API)
+const getOrdersStatus = async (req, res) => {
+    try {
+        const orders = await orderModel.find({ user: req.user._id }, { _id: 1, status: 1 });
+        res.json({ success: true, orders });
+    } catch (error) {
+        console.error("Error in getOrdersStatus:", error);
+        res.status(500).json({ success: false, message: "Failed to load order statuses" });
+    }
+};
+
 module.exports = {
     getOrders,
-    getBill
+    getBill,
+    getOrdersStatus
 };

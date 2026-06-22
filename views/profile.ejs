@@ -52,10 +52,10 @@
               <i class="fa-solid fa-user text-sm"></i>
             </div>
             <div class="min-w-0">
-              <h1 class="text-xs font-black text-zinc-800 dark:text-zinc-100 truncate tracking-tight">
+              <h1 id="welcome-name" class="text-xs font-black text-zinc-800 dark:text-zinc-100 truncate tracking-tight">
                 Hi, <%= user.name ? user.name.split(' ')[0] : 'User' %>!
               </h1>
-              <p class="text-[10px] text-zinc-400 font-bold truncate mt-0.5"><%= user.contact || user.email %></p>
+              <p id="sidebar-contact" class="text-[10px] text-zinc-400 font-bold truncate mt-0.5"><%= user.contact || user.email %></p>
             </div>
           </div>
 
@@ -102,15 +102,15 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-2 text-xs w-full max-w-xl">
           <div>
             <span class="text-[10px] font-bold text-zinc-400 uppercase tracking-wide block">Account Holder</span>
-            <span class="font-extrabold text-zinc-800 dark:text-zinc-200"><%= user.name %></span>
+            <span id="holder-name" class="font-extrabold text-zinc-800 dark:text-zinc-200"><%= user.name %></span>
           </div>
           <div>
             <span class="text-[10px] font-bold text-zinc-400 uppercase tracking-wide block">Email ID / Phone</span>
-            <span class="font-extrabold text-zinc-800 dark:text-zinc-200 truncate block"><%= user.contact || user.email %></span>
+            <span id="holder-contact" class="font-extrabold text-zinc-800 dark:text-zinc-200 truncate block"><%= user.contact || user.email %></span>
           </div>
         </div>
         
-        <button onclick="toggleProfileModal(true, '<%= user.name %>', '<%= user.contact || '' %>')" class="flex items-center gap-1.5 px-3 py-2 bg-zinc-50 hover:bg-zinc-100 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-200 text-[11px] font-black rounded-xl transition-all border border-zinc-200/50 dark:border-zinc-700 shadow-sm shrink-0">
+        <button onclick="toggleProfileModal(true)" class="flex items-center gap-1.5 px-3 py-2 bg-zinc-50 hover:bg-zinc-100 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-200 text-[11px] font-black rounded-xl transition-all border border-zinc-200/50 dark:border-zinc-700 shadow-sm shrink-0">
           <i class="fa-solid fa-user-pen"></i>
           EDIT PROFILE
         </button>
@@ -129,7 +129,7 @@
             </button>
           </div>
 
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div id="address-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <% if(user.addresses && user.addresses.length > 0) { %>
               <% user.addresses.forEach(addr => { %>
                 <div class="bg-white dark:bg-zinc-900 border <%= addr.isDefault ? 'border-[#24963f] ring-2 ring-[#24963f]/10' : 'border-zinc-200/60 dark:border-zinc-800/80' %> rounded-2xl p-4 shadow-sm flex flex-col justify-between relative group hover:border-zinc-300 dark:hover:border-zinc-700 transition-all">
@@ -155,7 +155,7 @@
                         <button type="button" onclick="copyToClipboard('<%= addr.flatNo %>, <%= addr.area %>, <%= addr.city %> - <%= addr.pincode %>')" title="Copy Address" class="w-6 h-6 rounded-lg text-zinc-400 hover:text-[#24963f] hover:bg-emerald-50 dark:hover:bg-zinc-800 flex items-center justify-center transition-colors">
                           <i class="fa-regular fa-copy text-[10px]"></i>
                         </button>
-                        <button onclick="openEditAddressModal('<%= addr._id %>', '<%= addr.title %>', '<%= addr.flatNo %>', '<%= addr.area %>', '<%= addr.landmark %>', '<%= addr.city %>', '<%= addr.state %>', '<%= addr.pincode %>')" title="Edit Address" class="w-6 h-6 rounded-lg text-zinc-400 hover:text-[#24963f] hover:bg-emerald-50 dark:hover:bg-zinc-800 flex items-center justify-center transition-colors">
+                        <button onclick="editAddressById('<%= addr._id %>')" title="Edit Address" class="w-6 h-6 rounded-lg text-zinc-400 hover:text-[#24963f] hover:bg-emerald-50 dark:hover:bg-zinc-800 flex items-center justify-center transition-colors">
                           <i class="fa-solid fa-pencil text-[10px]"></i>
                         </button>
                         
@@ -280,7 +280,7 @@
         <button onclick="toggleProfileModal(false)" class="w-7 h-7 bg-zinc-50 dark:bg-zinc-800 hover:bg-zinc-100 rounded-full text-zinc-400 hover:text-zinc-600 flex items-center justify-center transition-colors"><i class="fa-solid fa-xmark text-xs"></i></button>
       </div>
 
-      <form action="/users/profile/update" method="POST" class="space-y-4 text-xs">
+      <form id="profileForm" action="/users/profile/update" method="POST" class="space-y-4 text-xs">
         <div>
           <label class="block text-zinc-400 font-bold mb-1">Full Name</label>
           <input type="text" id="edit-profile-name" name="name" required placeholder="Your Name" class="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl p-3 font-semibold text-zinc-800 dark:text-zinc-200 outline-none focus:border-[#24963f] transition-colors">
@@ -297,24 +297,156 @@
     </div>
   </div>
 
+  <!-- Toast Notification System -->
+  <div id="profile-toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 pointer-events-none opacity-0 translate-y-4 transition-all duration-300 ease-out w-[calc(100%-2rem)] max-w-sm select-none">
+    <div id="p-toast-bg" class="bg-zinc-900 dark:bg-white text-white dark:text-zinc-950 px-4 py-3 rounded-2xl shadow-xl flex items-center justify-between gap-3 pointer-events-auto border border-zinc-800 dark:border-zinc-100">
+      <div class="flex items-center gap-2.5 min-w-0">
+        <div id="p-toast-icon-box" class="w-8 h-8 rounded-xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center shrink-0">
+          <i id="p-toast-icon" class="fa-solid fa-circle-check text-sm"></i>
+        </div>
+        <p id="p-toast-message" class="text-xs font-bold truncate"></p>
+      </div>
+      <button onclick="closeProfileToast()" class="text-zinc-400 dark:text-zinc-500 hover:text-white dark:hover:text-zinc-950 transition-colors">
+        <i class="fa-solid fa-xmark text-xs"></i>
+      </button>
+    </div>
+  </div>
+
   <script>
+    let userAddresses = <%- JSON.stringify(user.addresses || []) %>;
+    let toastTimeout = null;
+
+    function showProfileToast(message, isError = false) {
+      const toast = document.getElementById('profile-toast');
+      const iconBox = document.getElementById('p-toast-icon-box');
+      const icon = document.getElementById('p-toast-icon');
+      const msg = document.getElementById('p-toast-message');
+      
+      if (!toast || !msg) return;
+      msg.textContent = message;
+      
+      if (isError) {
+        iconBox.className = "w-8 h-8 rounded-xl bg-red-500/10 text-red-500 flex items-center justify-center shrink-0";
+        icon.className = "fa-solid fa-triangle-exclamation text-sm";
+      } else {
+        iconBox.className = "w-8 h-8 rounded-xl bg-[#24963f]/10 text-[#24963f] flex items-center justify-center shrink-0";
+        icon.className = "fa-solid fa-circle-check text-sm";
+      }
+      
+      toast.classList.remove('opacity-0', 'translate-y-4', 'pointer-events-none');
+      toast.classList.add('opacity-100', 'translate-y-0');
+      
+      if (toastTimeout) clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => {
+        closeProfileToast();
+      }, 3500);
+    }
+    
+    function closeProfileToast() {
+      if (toastTimeout) clearTimeout(toastTimeout);
+      const toast = document.getElementById('profile-toast');
+      if (toast) {
+        toast.classList.remove('opacity-100', 'translate-y-0');
+        toast.classList.add('opacity-0', 'translate-y-4', 'pointer-events-none');
+      }
+    }
+
+    function editAddressById(id) {
+      const addr = userAddresses.find(a => a._id.toString() === id);
+      if (!addr) return;
+      openEditAddressModal(addr._id, addr.title, addr.flatNo, addr.area, addr.landmark, addr.city, addr.state, addr.pincode);
+    }
+
+    function renderAddresses(addresses) {
+      userAddresses = addresses;
+      const grid = document.getElementById('address-grid');
+      if (!grid) return;
+      
+      if (!addresses || addresses.length === 0) {
+        grid.innerHTML = `
+          <div class="col-span-1 sm:col-span-2 text-center py-16 bg-white dark:bg-zinc-900 border border-dashed border-zinc-200 dark:border-zinc-800 rounded-3xl">
+            <div class="w-16 h-16 bg-zinc-50 dark:bg-zinc-950 text-zinc-300 dark:text-zinc-700 rounded-2xl flex items-center justify-center mx-auto mb-3">
+              <i class="fa-solid fa-map-location-dot text-2xl"></i>
+            </div>
+            <p class="text-xs font-black text-zinc-700 dark:text-zinc-300">No saved addresses found</p>
+            <p class="text-[11px] text-zinc-400 mt-1 max-w-[240px] mx-auto">Add your delivery address to start ordering freshest essentials.</p>
+          </div>
+        `;
+        return;
+      }
+      
+      grid.innerHTML = addresses.map(addr => {
+        const isDefault = addr.isDefault;
+        const borderClass = isDefault ? 'border-[#24963f] ring-2 ring-[#24963f]/10' : 'border-zinc-200/60 dark:border-zinc-800/80';
+        const titleIcon = addr.title === 'Home' ? 'fa-house' : addr.title === 'Office' ? 'fa-briefcase' : 'fa-location-dot';
+        const cleanFlatNo = (addr.flatNo || '').replace(/'/g, "\\'");
+        const cleanArea = (addr.area || '').replace(/'/g, "\\'");
+        const cleanCity = (addr.city || '').replace(/'/g, "\\'");
+        const cleanState = (addr.state || '').replace(/'/g, "\\'");
+        const cleanPincode = (addr.pincode || '').replace(/'/g, "\\'");
+
+        return `
+          <div class="bg-white dark:bg-zinc-900 border ${borderClass} rounded-2xl p-4 shadow-sm flex flex-col justify-between relative group hover:border-zinc-300 dark:hover:border-zinc-700 transition-all">
+            <div>
+              <div class="flex items-center justify-between gap-2 mb-2.5">
+                <div class="flex items-center gap-1.5">
+                  <span class="text-[10px] px-2 py-0.5 bg-zinc-100 dark:bg-zinc-800 font-black rounded uppercase tracking-wide text-zinc-600 dark:text-zinc-300 flex items-center gap-1">
+                    <i class="fa-solid ${titleIcon} text-[10px]"></i>
+                    ${addr.title}
+                  </span>
+                  ${isDefault ? `<span class="text-[9px] px-1.5 py-0.5 bg-[#24963f] text-white font-black rounded uppercase tracking-wider">Default</span>` : ''}
+                </div>
+
+                <div class="flex items-center gap-1 opacity-80 group-hover:opacity-100 transition-opacity">
+                  ${!isDefault ? `
+                    <button onclick="makeAddressPrimary('${addr._id}')" title="Set as Primary" class="w-6 h-6 rounded-lg text-zinc-400 hover:text-[#24963f] hover:bg-emerald-50 dark:hover:bg-zinc-800 flex items-center justify-center transition-colors">
+                      <i class="fa-solid fa-star text-[10px]"></i>
+                    </button>
+                  ` : ''}
+                  <button type="button" onclick="copyToClipboard('${cleanFlatNo}, ${cleanArea}, ${cleanCity} - ${cleanPincode}')" title="Copy Address" class="w-6 h-6 rounded-lg text-zinc-400 hover:text-[#24963f] hover:bg-emerald-50 dark:hover:bg-zinc-800 flex items-center justify-center transition-colors">
+                    <i class="fa-regular fa-copy text-[10px]"></i>
+                  </button>
+                  <button onclick="editAddressById('${addr._id}')" title="Edit Address" class="w-6 h-6 rounded-lg text-zinc-400 hover:text-[#24963f] hover:bg-emerald-50 dark:hover:bg-zinc-800 flex items-center justify-center transition-colors">
+                    <i class="fa-solid fa-pencil text-[10px]"></i>
+                  </button>
+                  <button onclick="deleteAddress('${addr._id}')" title="Delete Address" class="w-6 h-6 rounded-lg text-zinc-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-zinc-800 flex items-center justify-center transition-colors">
+                    <i class="fa-solid fa-trash-can text-[10px]"></i>
+                  </button>
+                </div>
+              </div>
+
+              <p class="text-xs font-black text-zinc-800 dark:text-zinc-100 leading-relaxed">${addr.flatNo}</p>
+              <p class="text-xs font-medium text-zinc-500 dark:text-zinc-400 mt-0.5">${addr.area}</p>
+              ${addr.landmark ? `
+                <p class="text-[11px] text-zinc-400 font-medium mt-1">
+                  <span class="text-zinc-300 dark:text-zinc-700">📌</span> ${addr.landmark}
+                </p>
+              ` : ''}
+              <p class="text-[10px] text-zinc-400 font-bold tracking-tight mt-2 border-t border-zinc-50 dark:border-zinc-800/60 pt-1.5">
+                ${addr.city}, ${addr.state} - ${addr.pincode}
+              </p>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
     async function makeAddressPrimary(addressId) {
-      if (confirm("Do you want to make this your primary delivery address?")) {
-        try {
-          let res = await fetch(`/users/profile/address/default/${addressId}`, { 
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' }
-          });
-          let data = await res.json();
-          if (data.success) {
-            location.reload();
-          } else {
-            alert(data.message || "Failed to update primary address.");
-          }
-        } catch (error) {
-          console.error("Error setting primary address:", error);
-          alert("Something went wrong!");
+      try {
+        let res = await fetch(`/users/profile/address/default/${addressId}`, { 
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' }
+        });
+        let data = await res.json();
+        if (data.success) {
+          renderAddresses(data.addresses);
+          showProfileToast(data.message || "Primary address updated successfully!");
+        } else {
+          showProfileToast(data.message || "Failed to update primary address.", true);
         }
+      } catch (error) {
+        console.error("Error setting primary address:", error);
+        showProfileToast("Something went wrong!", true);
       }
     }
 
@@ -327,13 +459,14 @@
           });
           let data = await res.json();
           if (data.success) {
-            location.reload();
+            renderAddresses(data.addresses);
+            showProfileToast(data.message || "Address deleted successfully!");
           } else {
-            alert(data.message || "Failed to delete address.");
+            showProfileToast(data.message || "Failed to delete address.", true);
           }
         } catch (error) {
           console.error("Error deleting address:", error);
-          alert("Something went wrong!");
+          showProfileToast("Something went wrong!", true);
         }
       }
     }
@@ -353,6 +486,7 @@
           document.getElementById('modalTitle').innerText = "Add New Address";
           document.getElementById('submitBtn').innerText = "Save Address";
           document.getElementById('addressForm').reset();
+          setAddressType('Home');
         }, 300);
       }
     }
@@ -362,10 +496,10 @@
       document.getElementById('modalTitle').innerText = "Update Address";
       document.getElementById('submitBtn').innerText = "Update Address";
       
-      document.getElementById('input-title').value = title;
+      setAddressType(title);
       document.getElementById('input-flatNo').value = flatNo;
       document.getElementById('input-area').value = area;
-      document.getElementById('input-landmark').value = (landmark === 'undefined' || landmark === 'null') ? '' : landmark;
+      document.getElementById('input-landmark').value = (landmark === 'undefined' || landmark === 'null' || !landmark) ? '' : landmark;
       document.getElementById('input-city').value = city;
       document.getElementById('input-state').value = state;
       document.getElementById('input-pincode').value = pincode;
@@ -379,7 +513,7 @@
       const btnText = document.getElementById('locationBtnText');
       
       if (!navigator.geolocation) {
-        alert("Your browser does not support location detection.");
+        showProfileToast("Your browser does not support location detection.", true);
         return;
       }
 
@@ -392,12 +526,10 @@
           const lng = position.coords.longitude;
 
           try {
-            // 2. अपने ही बैकएंड के एक रूट पर लेटिट्यूड और लोंगिट्यूड भेज रहे हैं (ताकि API Key चोरी न हो)
             let res = await fetch(`/users/profile/address/fetch-address?lat=${lat}&lng=${lng}`);
             let data = await res.json();
 
             if (data.success) {
-              // 3. जादुई ऑटो-फिल: फॉर्म के इनपुट्स में डेटा डालो
               document.getElementById('input-flatNo').value = data.data.flatNo || '';
               document.getElementById('input-area').value = data.data.area || '';
               document.getElementById('input-city').value = data.data.city || '';
@@ -405,22 +537,22 @@
               document.getElementById('input-pincode').value = data.data.pincode || '';
               
               btnText.innerText = "Location Detected Successfully!";
+              showProfileToast("Location details auto-filled!");
             } else {
-              alert(data.message || "Could not fetch address details.");
+              showProfileToast(data.message || "Could not fetch address details.", true);
               btnText.innerText = "Use Current Location";
             }
           } catch (err) {
             console.error(err);
-            alert("Error connecting to location server.");
+            showProfileToast("Error connecting to location server.", true);
             btnText.innerText = "Use Current Location";
           } finally {
             btn.disabled = false;
           }
         },
         (error) => {
-          // अगर यूजर ने लोकेशन परमिशन 'Deny' कर दी
           console.error(error);
-          alert("Please allow location permission to use this feature.");
+          showProfileToast("Please allow location permission to use this feature.", true);
           btnText.innerText = "Use Current Location";
           btn.disabled = false;
         },
@@ -428,19 +560,23 @@
       );
     }
 
-
     function copyToClipboard(text) {
       navigator.clipboard.writeText(text);
-      alert("Address copied to clipboard! 📋");
+      showProfileToast("Address copied to clipboard! 📋");
     }
 
-    function toggleProfileModal(show, name = '', phone = '') {
+    function toggleProfileModal(show) {
       const modal = document.getElementById('profileModal');
       const box = document.getElementById('profileModalBox');
       
       if (show) {
-        document.getElementById('edit-profile-name').value = name;
-        document.getElementById('edit-profile-phone').value = phone;
+        const curName = document.getElementById('holder-name').innerText;
+        let curPhone = document.getElementById('holder-contact').innerText;
+        if (curPhone.includes('@') && curPhone.includes('.')) {
+          curPhone = '';
+        }
+        document.getElementById('edit-profile-name').value = curName;
+        document.getElementById('edit-profile-phone').value = curPhone;
         modal.classList.remove('hidden');
         setTimeout(() => box.classList.remove('scale-95', 'opacity-0'), 10);
       } else {
@@ -450,6 +586,69 @@
         }, 300);
       }
     }
+
+    // Intercept forms submission
+    document.getElementById('profileForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const form = e.target;
+      const action = form.getAttribute('action');
+      const name = document.getElementById('edit-profile-name').value;
+      const phone = document.getElementById('edit-profile-phone').value;
+
+      try {
+        const res = await fetch(action, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, phone })
+        });
+        const data = await res.json();
+        if (data.success) {
+          toggleProfileModal(false);
+          document.getElementById('holder-name').innerText = data.name;
+          document.getElementById('holder-contact').innerText = data.contact || data.email;
+          document.getElementById('welcome-name').innerText = `Hi, ${data.name.split(' ')[0]}!`;
+          showProfileToast(data.message || "Profile updated successfully!");
+        } else {
+          showProfileToast(data.message || "Failed to update profile details.", true);
+        }
+      } catch (err) {
+        console.error(err);
+        showProfileToast("Server error during update.", true);
+      }
+    });
+
+    document.getElementById('addressForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const form = e.target;
+      const action = form.getAttribute('action');
+      
+      const title = document.getElementById('input-title').value;
+      const flatNo = document.getElementById('input-flatNo').value;
+      const area = document.getElementById('input-area').value;
+      const landmark = document.getElementById('input-landmark').value;
+      const city = document.getElementById('input-city').value;
+      const state = document.getElementById('input-state').value;
+      const pincode = document.getElementById('input-pincode').value;
+
+      try {
+        const res = await fetch(action, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ title, flatNo, area, landmark, city, state, pincode })
+        });
+        const data = await res.json();
+        if (data.success) {
+          toggleModal(false);
+          renderAddresses(data.addresses);
+          showProfileToast(data.message || "Address saved successfully!");
+        } else {
+          showProfileToast(data.message || "Failed to save address details.", true);
+        }
+      } catch (err) {
+        console.error(err);
+        showProfileToast("Server error during save address.", true);
+      }
+    });
   </script>
 </body>
 </html>

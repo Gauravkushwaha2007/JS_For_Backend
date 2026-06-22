@@ -1,3 +1,50 @@
+<!-- Slide-over Cart Drawer -->
+<div id="cartDrawerOverlay" onclick="closeCartDrawer()" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 hidden opacity-0 transition-opacity duration-300"></div>
+
+<div id="cartDrawer" class="fixed inset-y-0 right-0 w-full max-w-md bg-white dark:bg-zinc-950 shadow-2xl z-50 transform translate-x-full transition-transform duration-300 ease-in-out flex flex-col border-l border-gray-100 dark:border-zinc-900 select-none">
+  <!-- Drawer Header -->
+  <div class="p-5 border-b border-gray-100 dark:border-zinc-900 flex items-center justify-between">
+    <div class="flex items-center gap-2">
+      <div class="w-8 h-8 rounded-xl bg-[#24963f]/10 dark:bg-emerald-950/20 text-[#24963f] dark:text-emerald-400 flex items-center justify-center border border-[#24963f]/20">
+        <i class="fa-solid fa-basket-shopping text-sm"></i>
+      </div>
+      <h2 class="text-base font-extrabold text-gray-900 dark:text-white">Your Basket</h2>
+      <span id="drawer-cart-badge" class="bg-[#24963f]/10 dark:bg-emerald-950/25 text-[#24963f] dark:text-emerald-400 text-[10px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider">0 Items</span>
+    </div>
+    <button onclick="closeCartDrawer()" class="w-8 h-8 rounded-xl hover:bg-gray-50 dark:hover:bg-zinc-900 text-gray-400 hover:text-gray-900 dark:hover:text-zinc-200 flex items-center justify-center transition-all border border-transparent hover:border-gray-100 dark:hover:border-zinc-800">
+      <i class="fa-solid fa-xmark text-sm"></i>
+    </button>
+  </div>
+  
+  <!-- Drawer Items List -->
+  <div id="drawer-items-container" class="flex-1 overflow-y-auto p-5 space-y-4">
+    <!-- Dynamic Items will be rendered here -->
+  </div>
+  
+  <!-- Drawer Footer -->
+  <div id="drawer-footer" class="p-5 border-t border-gray-100 dark:border-zinc-900 bg-gray-50/50 dark:bg-zinc-900/10 space-y-4 hidden">
+    <div class="space-y-2.5 text-xs font-semibold text-gray-500 dark:text-zinc-400">
+      <div class="flex justify-between">
+        <span>Subtotal</span>
+        <span id="drawer-subtotal" class="text-gray-900 dark:text-white font-bold">₹0</span>
+      </div>
+      <div class="flex justify-between">
+        <span>Platform Fee</span>
+        <span class="text-gray-900 dark:text-white font-bold">₹20</span>
+      </div>
+      <div class="border-t border-dashed border-gray-200 dark:border-zinc-800/80 my-2"></div>
+      <div class="flex justify-between text-sm font-extrabold">
+        <span class="text-gray-800 dark:text-zinc-200">Total Payable</span>
+        <span id="drawer-total" class="text-gray-900 dark:text-white text-base font-black">₹0</span>
+      </div>
+    </div>
+    
+    <a id="drawer-checkout-btn" href="/users/cart/products" class="w-full bg-[#24963f] hover:bg-[#1e7e34] text-white py-3.5 rounded-xl font-black text-xs tracking-wider transition-all shadow-md shadow-emerald-700/10 active:scale-[0.99] flex items-center justify-center gap-2 uppercase">
+      Proceed to Checkout <i class="fa-solid fa-arrow-right text-[10px]"></i>
+    </a>
+  </div>
+</div>
+
 <div id="cart-toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 pointer-events-none opacity-0 translate-y-4 transition-all duration-300 ease-out w-[calc(100%-2rem)] max-w-md select-none">
   <div id="toast-bg" class="bg-white text-gray-900 px-4 py-3.5 rounded-2xl shadow-[0_10px_30px_rgba(0,0,0,0.08)] border border-gray-100 flex items-center justify-between gap-3 pointer-events-auto">
     <div class="flex items-center gap-3 min-w-0 flex-1">
@@ -74,6 +121,7 @@
     const selectors = [
       `[id="quantityNumber-${productId}"]`,
       `[id="qty-text-${productId}"]`,
+      `[id="drawer-qty-text-${productId}"]`,
       `#cart-display-qty`
     ];
     const elements = document.querySelectorAll(selectors.join(', '));
@@ -102,7 +150,14 @@
 
         findAndUpdateQtyElements(productId, data.quantity);
         updateCartPageTotals(productId, data.quantity, diff);
-        window.syncHeaderCart?.(data.cartSummary);
+        
+        // Sync header navbar counts
+        if (data.cartSummary) {
+          syncAllHeaderBadges(data.cartSummary.totalItems, data.cartSummary.totalCartPrice);
+        }
+        
+        // Refresh the drawer content dynamically
+        fetchAndPopulateCartDrawer(false);
       } else {
         showCartToast(data.message || "No more stock available.", true);
       }
@@ -122,7 +177,14 @@
 
         findAndUpdateQtyElements(productId, data.quantity);
         updateCartPageTotals(productId, data.quantity, diff);
-        window.syncHeaderCart?.(data.cartSummary);
+        
+        // Sync header navbar counts
+        if (data.cartSummary) {
+          syncAllHeaderBadges(data.cartSummary.totalItems, data.cartSummary.totalCartPrice);
+        }
+        
+        // Refresh the drawer content dynamically
+        fetchAndPopulateCartDrawer(false);
       } 
     } catch (err) { console.error(err); }
   }
@@ -135,8 +197,6 @@
       let data = await res.json();
       
       if(data.success) {
-        window.syncHeaderCart?.(data.cartSummary);
-
         showCartToast(data.message || "Product added to your basket!", false);
         
         const actionBox = document.getElementById(`action-box-${productId}`);
@@ -169,38 +229,13 @@
             `;
         }
 
-        if (data.cartSummary) return;
-
-        if (data.totalCartPrice || data.cartLength) {
-           triggerGlobalNavbarSync(data.totalCartPrice, data.cartLength);
-           return;
+        // Sync header navbar counts
+        if (data.cartSummary) {
+          syncAllHeaderBadges(data.cartSummary.totalItems, data.cartSummary.totalCartPrice);
         }
 
-        // Fallback pricing scraper logic
-        const totalElements = document.querySelectorAll('#header-cart-total, [id*="cart-total"], [id*="total-price"]');
-        const countElements = document.querySelectorAll('#header-cart-count, [id*="cart-count"], [id*="cart-qty"]');
-        
-        if(Number(productPrice) === 0) {
-          const mainPriceHeading = document.querySelector('.text-3xl.font-black.text-black');
-          if(mainPriceHeading) {
-            productPrice = Number(mainPriceHeading.innerText.replace(/[^\d]/g, '').trim());
-          }
-        }
-
-        countElements.forEach(el => {
-          if (el) {
-            let currentCount = parseInt(el.innerText.replace(/[^\d]/g, '')) || 0;
-            // Agar navbar badge simple number hai, to text replace nahi hoga layout crash se bachane ke liye
-            el.innerText = el.id === 'header-cart-count' ? currentCount + 1 : `${currentCount + 1} Items`;
-          }
-        });
-
-        totalElements.forEach(el => {
-          if (el) {
-            let currentTotal = Number(el.innerText.replace(/[^\d]/g, '')) || 0;
-            el.innerText = `₹${currentTotal + Number(productPrice)}`;
-          }
-        });
+        // 🚀 PREMIUN Slide open the cart drawer automatically on first add to basket!
+        fetchAndPopulateCartDrawer(true);
         
       } else {
         if (res.status === 401 || data.loginRequired) {
@@ -275,6 +310,32 @@
     });
   }
 
+  // 📡 Sync all header counts/badges across navbar variants
+  function syncAllHeaderBadges(totalItems, totalCartPrice) {
+    const totalElements = document.querySelectorAll('#header-cart-total');
+    const countElements = document.querySelectorAll('#header-cart-count');
+    
+    countElements.forEach(el => {
+      if (el) {
+        // Handle badge counts
+        if (el.tagName === 'SPAN' && !el.innerText.includes('Items')) {
+          el.innerText = totalItems;
+        } else {
+          el.innerText = `${totalItems} Items`;
+        }
+      }
+    });
+
+    totalElements.forEach(el => {
+      if (el) {
+        el.innerText = `₹${totalCartPrice}`;
+      }
+    });
+    
+    // Fallback sync dispatcher
+    triggerGlobalNavbarSync(totalCartPrice, totalItems);
+  }
+
   // 📡 Trigger Event Dispatch for Global Fallback Navbar Engine sync
   function triggerGlobalNavbarSync(price, itemsCount) {
      const syncEvent = new CustomEvent('cartUpdated', {
@@ -282,4 +343,189 @@
      });
      window.dispatchEvent(syncEvent);
   }
+
+  // ⚡ Reload page if retrieved from history (back-forward cache) to reflect empty/updated cart
+  window.addEventListener('pageshow', function(event) {
+    const historyTraversal = event.persisted || 
+                             (typeof window.performance != 'undefined' && 
+                              window.performance.navigation.type === 2);
+    
+    const isBackForward = historyTraversal || 
+                          (window.performance && 
+                           window.performance.getEntriesByType && 
+                           window.performance.getEntriesByType('navigation')[0] && 
+                           window.performance.getEntriesByType('navigation')[0].type === 'back_forward');
+                           
+    if (isBackForward) {
+      window.location.reload();
+    }
+  });
+
+  // 🚪 DRAWER STATE MANAGEMENT
+  function openCartDrawer() {
+    fetchAndPopulateCartDrawer(true);
+  }
+
+  // Bind key escape to close drawer
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      closeCartDrawer();
+    }
+  });
+
+  function closeCartDrawer() {
+    const overlay = document.getElementById("cartDrawerOverlay");
+    const drawer = document.getElementById("cartDrawer");
+    if (drawer && overlay) {
+      drawer.classList.add("translate-x-full");
+      drawer.classList.remove("translate-x-0");
+      overlay.classList.add("opacity-0");
+      setTimeout(() => {
+        overlay.classList.add("hidden");
+      }, 300);
+    }
+  }
+
+  async function fetchAndPopulateCartDrawer(openAfterFetch = false) {
+    try {
+      const response = await fetch("/users/cart/data");
+      const data = await response.json();
+      
+      if (data && data.success) {
+        renderDrawerItems(data.products, data.totalCartPrice);
+        
+        if (openAfterFetch) {
+          const overlay = document.getElementById("cartDrawerOverlay");
+          const drawer = document.getElementById("cartDrawer");
+          if (drawer && overlay) {
+            overlay.classList.remove("hidden");
+            // Allow CSS display hidden to apply before transition
+            setTimeout(() => {
+              overlay.classList.remove("opacity-0");
+              drawer.classList.remove("translate-x-full");
+              drawer.classList.add("translate-x-0");
+            }, 50);
+          }
+        }
+      } else {
+        // If not logged in, redirect to login page when clicking the cart
+        if (openAfterFetch) {
+          window.location.href = "/users/login";
+        }
+      }
+    } catch (error) {
+      console.error("Fetch cart drawer error:", error);
+    }
+  }
+
+  function renderDrawerItems(items, subtotal) {
+    const container = document.getElementById("drawer-items-container");
+    const badge = document.getElementById("drawer-cart-badge");
+    const footer = document.getElementById("drawer-footer");
+    const subtotalEl = document.getElementById("drawer-subtotal");
+    const totalEl = document.getElementById("drawer-total");
+    
+    if (!container) return;
+    
+    // Filter out null product items
+    const validItems = items.filter(item => item && item.product);
+    
+    // Update badge count
+    if (badge) badge.innerText = `${validItems.length} Items`;
+    
+    if (validItems.length === 0) {
+      // Empty Basket State View
+      container.innerHTML = `
+        <div class="h-full flex flex-col items-center justify-center text-center py-20">
+          <div class="w-16 h-16 bg-gray-50 dark:bg-zinc-900 rounded-2xl flex items-center justify-center mb-5 border border-gray-100 dark:border-zinc-800 shadow-inner">
+            <i class="fa-solid fa-basket-shopping text-2xl text-gray-300 dark:text-zinc-700"></i>
+          </div>
+          <h3 class="text-sm font-extrabold text-gray-800 dark:text-zinc-200">Your basket is empty</h3>
+          <p class="text-xs text-gray-400 dark:text-zinc-500 mt-1 max-w-[200px] mx-auto">Add fresh items from our store to start shopping!</p>
+          <button onclick="closeCartDrawer()" class="mt-5 bg-black dark:bg-zinc-800 text-white text-[10px] font-black px-5 py-2.5 rounded-xl uppercase tracking-wider transition-all hover:bg-gray-800 dark:hover:bg-zinc-700 active:scale-95">
+            Continue Shopping
+          </button>
+        </div>
+      `;
+      if (footer) footer.classList.add("hidden");
+      
+      // Sync navbar header badges to 0
+      syncAllHeaderBadges(0, 0);
+      return;
+    }
+    
+    // Render dynamic item cards
+    container.innerHTML = validItems.map(item => {
+      const prod = item.product;
+      const itemSubtotal = prod.price * item.quantity;
+      return `
+        <div class="bg-gray-50/50 dark:bg-zinc-900/20 border border-gray-100 dark:border-zinc-900/60 p-3 rounded-2xl flex items-center gap-3.5 hover:shadow-sm transition-shadow">
+          <div class="w-16 h-16 rounded-xl bg-white dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 flex items-center justify-center overflow-hidden shrink-0 shadow-inner">
+            <img src="/uploads/${prod.image}" class="w-full h-full object-contain p-1" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+            <span class="hidden w-full h-full items-center justify-center bg-emerald-50 dark:bg-emerald-950/20 font-bold text-xs text-[#24963f] dark:text-emerald-400 uppercase">${prod.name ? prod.name.substring(0,2) : 'KP'}</span>
+          </div>
+          
+          <div class="min-w-0 flex-1">
+            <h4 class="text-xs font-bold text-gray-900 dark:text-zinc-100 truncate">${prod.name}</h4>
+            <div class="flex items-center justify-between mt-1.5 gap-2">
+              <span class="text-xs font-black text-gray-900 dark:text-white">₹${itemSubtotal}</span>
+              
+              <!-- Mini Quantity selector inside drawer -->
+              <div class="flex items-center border border-gray-200 dark:border-zinc-800 rounded-lg bg-white dark:bg-zinc-900 p-0.5 shadow-sm">
+                <button onclick="descreaseQty('${prod._id}')" class="w-5 h-5 rounded-md hover:bg-gray-50 dark:hover:bg-zinc-800 text-gray-500 dark:text-zinc-400 flex items-center justify-center font-black text-[10px] active:scale-95 transition-all">-</button>
+                <span id="drawer-qty-text-${prod._id}" class="font-extrabold text-[11px] text-gray-800 dark:text-zinc-200 w-6 text-center">${item.quantity}</span>
+                <button onclick="increaseQty('${prod._id}')" class="w-5 h-5 rounded-md bg-black dark:bg-zinc-800 text-white flex items-center justify-center font-black text-[10px] active:scale-95 transition-all">+</button>
+              </div>
+            </div>
+          </div>
+          
+          <button onclick="removeItemFromDrawer('${prod._id}')" class="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 rounded-xl transition-colors shrink-0" title="Remove Item">
+            <i class="fa-regular fa-trash-can text-sm"></i>
+          </button>
+        </div>
+      `;
+    }).join('');
+    
+    // Update Totals
+    if (subtotalEl) subtotalEl.innerText = `₹${subtotal}`;
+    if (totalEl) totalEl.innerText = `₹${subtotal + 20}`;
+    if (footer) footer.classList.remove("hidden");
+  }
+
+  async function removeItemFromDrawer(productId) {
+    try {
+      let res = await fetch(`/users/cart/remove-product/${productId}`, { method: 'POST' });
+      let data = await res.json();
+      
+      if (data.success) {
+        // Find and update quantity to 0 on the main page
+        findAndUpdateQtyElements(productId, 0);
+        // Refresh the drawer content
+        fetchAndPopulateCartDrawer(false);
+        
+        // Fetch new cart summary details to sync header badges
+        const cartDataRes = await fetch("/users/cart/data");
+        const cartData = await cartDataRes.json();
+        if (cartData && cartData.success) {
+          const totalItems = cartData.products.length;
+          syncAllHeaderBadges(totalItems, cartData.totalCartPrice);
+        }
+      }
+    } catch (err) {
+      console.error("Remove drawer item error:", err);
+    }
+  }
+
+  // Intercept cart link clicks to open drawer
+  document.addEventListener("click", (e) => {
+    const cartLink = e.target.closest('a[href="/users/cart/products"]');
+    if (cartLink) {
+      // Allow standard navigation if on the cart page itself or if user is clicking checkout button inside the drawer
+      if (window.location.pathname === '/users/cart/products' || cartLink.id === 'drawer-checkout-btn') {
+        return;
+      }
+      e.preventDefault();
+      openCartDrawer();
+    }
+  });
 </script>

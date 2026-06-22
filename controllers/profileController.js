@@ -25,28 +25,28 @@ const updateProfile = async (req, res) => {
         const { name, phone } = req.body;
 
         if (!name || !phone) {
-            return res.status(400).render('error', {
-                status: 400,
-                message: "Missing Credentials",
-                detail: "Both your Name and Phone Number are required parameters to update your profile.",
-                buttonText: "My Profile",
-                buttonLink: "/users/profile"
+            return res.status(400).json({
+                success: false,
+                message: "Both Name and Phone Number are required."
             });
         }
 
-        await userModel.findByIdAndUpdate(userId, {
+        const user = await userModel.findByIdAndUpdate(userId, {
             $set: { name: name, contact: Number(phone) }
-        });
+        }, { new: true });
 
-        res.redirect('/users/profile');
+        res.json({
+            success: true,
+            message: "Profile updated successfully",
+            name: user.name,
+            contact: user.contact,
+            email: user.email
+        });
     } catch (error) {
         console.error("Profile Update Error:", error.message);
-        res.status(500).render('error', {
-            status: 500,
-            message: "Profile Update Failed",
-            detail: "We encountered an unexpected error while saving your profile changes.",
-            buttonText: "My Profile",
-            buttonLink: "/users/profile"
+        res.status(500).json({
+            success: false,
+            message: "We encountered an unexpected error while saving your profile changes."
         });
     }
 };
@@ -57,6 +57,7 @@ const addAddress = async (req, res) => {
         const { title, flatNo, area, landmark, city, state, pincode } = req.body;
 
         const user = await userModel.findById(req.user._id);
+        if (!user) return res.status(404).json({ success: false, message: "User not found" });
 
         const newAddress = { title, flatNo, area, landmark, city, state, pincode };
 
@@ -67,14 +68,16 @@ const addAddress = async (req, res) => {
         user.addresses.push(newAddress);
         await user.save();
 
-        res.redirect('/users/profile');
+        res.json({
+            success: true,
+            message: "Address added successfully",
+            addresses: user.addresses
+        });
     } catch (err) {
-        res.status(500).render('error', {
-            status: 500,
-            message: "Address Addition Failed",
-            detail: "We were unable to add the new delivery address to your profile book.",
-            buttonText: "My Profile",
-            buttonLink: "/users/profile"
+        console.error("Address Addition Error:", err.message);
+        res.status(500).json({
+            success: false,
+            message: "We were unable to add the new delivery address."
         });
     }
 };
@@ -85,11 +88,26 @@ const deleteAddress = async (req, res) => {
         const userId = req.user._id;
         const addressId = req.params.addressId;
 
-        await userModel.findByIdAndUpdate(userId, {
-            $pull: { addresses: { _id: addressId } }
-        });
+        const user = await userModel.findById(userId);
+        if (!user) return res.status(404).json({ success: false, message: "User not found" });
 
-        return res.json({ success: true, message: "Address deleted successfully" });
+        const addressToDelete = user.addresses.find(addr => addr._id.toString() === addressId);
+        const wasDefault = addressToDelete ? addressToDelete.isDefault : false;
+
+        user.addresses = user.addresses.filter(item => item._id.toString() !== addressId);
+
+        // If the deleted address was the default, set another one as default
+        if (wasDefault && user.addresses.length > 0) {
+            user.addresses[0].isDefault = true;
+        }
+
+        await user.save();
+
+        return res.json({
+            success: true,
+            message: "Address deleted successfully",
+            addresses: user.addresses
+        });
     } catch (error) {
         console.error("Delete Address Error:", error.message);
         return res.status(500).json({ success: false, message: "Server error while deleting" });
@@ -114,7 +132,11 @@ const makeAddressPrimary = async (req, res) => {
         });
 
         await user.save();
-        return res.json({ success: true, message: "Primary address updated" });
+        return res.json({
+            success: true,
+            message: "Primary address updated",
+            addresses: user.addresses
+        });
     } catch (error) {
         console.error("Primary Address Error:", error.message);
         return res.status(500).json({ success: false, message: "Server error" });
@@ -128,30 +150,32 @@ const editAddress = async (req, res) => {
         const addressId = req.params.addressId;
         const { title, flatNo, area, landmark, city, state, pincode } = req.body;
 
-        await userModel.updateOne(
-            { _id: userId, "addresses._id": addressId },
-            {
-                $set: {
-                    "addresses.$.title": title,
-                    "addresses.$.flatNo": flatNo,
-                    "addresses.$.area": area,
-                    "addresses.$.landmark": landmark,
-                    "addresses.$.city": city,
-                    "addresses.$.state": state,
-                    "addresses.$.pincode": pincode
-                }
-            }
-        );
+        const user = await userModel.findById(userId);
+        if (!user) return res.status(404).json({ success: false, message: "User not found" });
 
-        res.redirect('/users/profile');
+        const address = user.addresses.find(addr => addr._id.toString() === addressId);
+        if (!address) return res.status(404).json({ success: false, message: "Address not found" });
+
+        address.title = title;
+        address.flatNo = flatNo;
+        address.area = area;
+        address.landmark = landmark;
+        address.city = city;
+        address.state = state;
+        address.pincode = pincode;
+
+        await user.save();
+
+        res.json({
+            success: true,
+            message: "Address updated successfully",
+            addresses: user.addresses
+        });
     } catch (error) {
         console.error("Edit Address Error:", error.message);
-        res.status(500).render('error', {
-            status: 500,
-            message: "Address Modification Failed",
-            detail: "We encountered an unexpected error while updating your address details.",
-            buttonText: "My Profile",
-            buttonLink: "/users/profile"
+        res.status(500).json({
+            success: false,
+            message: "We encountered an unexpected error while updating your address details."
         });
     }
 };
